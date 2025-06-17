@@ -4,19 +4,26 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-// Import rute-rute yang kita butuhkan
-const authRoutes = require('./routes/authRoutes.js');
-const userRoutes = require('./routes/userRoutes.js'); // <-- KEMUNGKINAN BESAR BARIS INI YANG LUPA DITAMBAHKAN
+// ======= Tambahan koneksi MySQL ==========
+const db = require('./db'); // pastikan path benar jika kamu taruh di folder 'config'
+// ========================================
 
-// Konfigurasi View Engine (EJS)
+// Import rute-rute
+const authRoutes = require('./routes/authRoutes.js');
+const userRoutes = require('./routes/userRoutes.js');
+
+// View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
-// Middleware untuk menyajikan file statis (CSS, JS, Gambar) dari folder 'public'
+// Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Gunakan Rute yang sudah diimpor
+// Gunakan rute
 app.use('/', authRoutes);
-app.use('/mahasiswa', userRoutes); // Baris ini yang menyebabkan error karena 'userRoutes' belum didefinisikan di atas
+app.use('/mahasiswa', userRoutes);
+
+// Kirim koneksi database ke middleware lain jika dibutuhkan
+app.set('db', db); // jika kamu butuh akses db dari req.app.get('db')
 
 module.exports = app;
