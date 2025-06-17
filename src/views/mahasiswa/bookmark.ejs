@@ -12,14 +12,30 @@
 </head>
 <body class="bg-teal-50/50">
     <div class="flex h-screen">
-
+        
         <%- include('../partials/sidebar_mahasiswa', { user: user, title: title }) %>
 
         <main class="flex-1 p-8 overflow-y-auto">
             <h1 class="text-3xl font-bold text-gray-800 mb-8">Program Favorit Tersimpan</h1>
-            <div class="bg-white p-8 rounded-lg shadow-sm">
-                <p class="text-gray-600">Daftar program yang Anda tandai sebagai favorit akan muncul di sini.</p>
-                <p class="text-gray-500 text-sm mt-2">Fitur ini sedang dalam pengembangan.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <% if (programs.length > 0) { %>
+                    <% programs.forEach(p => { %>
+                        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex flex-col justify-between">
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800 mb-4"><%= p.judul %></h2>
+                                <p class="text-sm text-gray-600">Pusat: <%= p.pusat %></p>
+                                <p class="text-sm text-gray-600">Kuota: <%= p.kuota %></p>
+                                <p class="text-sm text-gray-600">Durasi: <%= p.durasi %></p>
+                            </div>
+                            <form action="/mahasiswa/bookmark/<%= p.id %>/delete" method="POST" class="mt-6">
+                                <button type="submit" class="w-full bg-red-100 text-red-600 text-center font-bold py-2 px-4 rounded-md hover:bg-red-200">Hapus Bookmark</button>
+                            </form>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="text-gray-500 col-span-full">Anda belum menyimpan program apa pun. Kembali ke halaman <a href="/mahasiswa/program" class="text-teal-600 font-semibold">Program Volunteer</a> untuk menyimpan.</p>
+                <% } %>
             </div>
         </main>
     </div>
