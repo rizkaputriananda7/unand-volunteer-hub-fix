@@ -13,4 +13,8 @@ router.post('/mahasiswa/login', authController.handleMahasiswaLogin);
 router.get('/pengurus/login', authController.showPengurusLoginPage);
 router.post('/pengurus/login', authController.handlePengurusLogin);
 
+// --- RUTE BARU UNTUK LOGIN ADMIN ---
+router.get('/admin/login', authController.showAdminLoginPage);
+router.post('/admin/login', authController.handleAdminLogin);
+
 module.exports = router; // <-- PASTIKAN BARIS INI ADA
