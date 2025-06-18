@@ -1,6 +1,7 @@
+// app.js
+
 const express = require('express');
 const path = require('path');
-const session = require('express-session');  // Import express-session
 const app = express();
 
 // ======= Tambahan koneksi MySQL ==========
@@ -16,24 +17,14 @@ const adminRoutes = require('./routes/adminRoutes.js');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
-// Middleware untuk mengakses file statis dan parsing form data
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
-// Tambahkan middleware session untuk autentikasi admin
-app.use(session({
-    secret: 'my-strong-session-secret',  // Gantilah dengan secret yang lebih kuat
-    resave: false,
-    saveUninitialized: true
-}));
-
-// Rute-rute untuk berbagai bagian aplikasi
 app.use('/', authRoutes);
 app.use('/mahasiswa', userRoutes);
 app.use('/', programRoutes);
 app.use('/pengurus', pengurusRoutes);
-app.use('/admin', adminRoutes);  // Rute admin untuk mengelola halaman admin
-
+app.use('/admin', adminRoutes);
 // Kirim koneksi database ke middleware lain jika dibutuhkan
 app.set('db', db); // jika kamu butuh akses db dari req.app.get('db')
 
