@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 
 // ======= Tambahan koneksi MySQL ==========
-const db = require('./db'); // pastikan path benar jika kamu taruh di folder 'config'
+const db = require('./config/database'); // pastikan path benar jika kamu taruh di folder 'config'
 // ========================================
 
 // Import rute-rute

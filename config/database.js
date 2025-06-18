@@ -5,7 +5,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '', // ganti sesuai password MySQL kamu
-  database: 'nama_database' // ganti sesuai database kamu
+  database: 'unand_volunteer_db' // ganti sesuai database kamu
 });
 
 connection.connect((err) => {
