@@ -102,3 +102,66 @@ exports.showAnalyticsPage = (req, res) => {
         distribution: distribution
     });
 };
+
+/**
+ * Fungsi untuk memperbarui informasi pengguna
+ */
+exports.updateUserInfo = (req, res) => {
+    const userId = req.params.id;  // Ambil ID pengguna
+    const { username, email } = req.body;  // Ambil data dari form
+    const user = allUsersData.find(user => user.id === userId);  // Temukan pengguna berdasarkan ID
+    user.username = username;
+    user.email = email;
+    res.redirect('/admin/manage-users');  // Redirect ke halaman manajemen pengguna
+};
+
+/**
+ * Fungsi untuk menghapus akun pengguna
+ */
+exports.deleteUserAccount = (req, res) => {
+    const userId = req.params.id;
+    allUsersData = allUsersData.filter(user => user.id !== userId);  // Hapus pengguna dari data
+    res.redirect('/admin/manage-users');  // Redirect ke halaman manajemen pengguna
+};
+
+/**
+ * Fungsi untuk menambah pusat volunteer
+ */
+exports.createCenter = (req, res) => {
+    const { name, description } = req.body;
+    const newCenter = { id: Date.now(), name, description };
+    pusatVolunteerData.push(newCenter);  // Menambahkan pusat baru ke data
+    res.redirect('/admin/manage-centers');  // Redirect ke halaman pusat volunteer
+};
+
+/**
+ * Fungsi untuk mengedit informasi pusat volunteer
+ */
+exports.updateCenterInfo = (req, res) => {
+    const centerId = req.params.id;
+    const { name, description } = req.body;
+    const center = pusatVolunteerData.find(center => center.id === centerId);
+    center.name = name;
+    center.description = description;
+    res.redirect('/admin/manage-centers');
+};
+
+/**
+ * Fungsi untuk membuat pengumuman
+ */
+exports.createAnnouncement = (req, res) => {
+    const { title, content } = req.body;
+    const newAnnouncement = { title, content, date: new Date() };
+    pengumumanData.push(newAnnouncement);  // Menambahkan pengumuman baru ke data
+    res.redirect('/admin/announcements');  // Redirect ke halaman pengumuman
+};
+
+/**
+ * Fungsi untuk menghapus pengumuman
+ */
+exports.deleteAnnouncement = (req, res) => {
+    const announcementId = req.params.id;
+    pengumumanData = pengumumanData.filter(announcement => announcement.id !== announcementId);  // Hapus pengumuman
+    res.redirect('/admin/announcements');  // Redirect ke halaman pengumuman
+};
+
