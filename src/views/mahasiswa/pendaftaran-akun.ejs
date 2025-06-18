@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pendaftaran Akun</title>
+</head>
+<body>
+  <h2>Pendaftaran Akun</h2>
+
+  <% if (error) { %>
+    <p style="color: red;"><%= error %></p>
+  <% } %>
+
+  <form action="/register" method="POST">
+    <label for="nim">NIM:</label><br>
+    <input type="text" id="nim" name="nim" maxlength="10" pattern=".{10,10}" required><br><br>
+
+    <label for="nama">Nama:</label><br>
+    <input type="text" id="nama" name="nama" maxlength="30" required><br><br>
+
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password" minlength="8" 
+      pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" 
+      title="Password minimal 8 karakter dan harus mengandung huruf dan angka" required><br><br>
+
+    <button type="submit">Daftar</button>
+  </form>
+</body>
+</html>
