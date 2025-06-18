@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Tambahkan middleware session untuk autentikasi admin
 app.use(session({
-    secret: 'your-session-secret',  // Gantilah dengan secret yang lebih kuat
+    secret: 'my-strong-session-secret',  // Gantilah dengan secret yang lebih kuat
     resave: false,
     saveUninitialized: true
 }));
