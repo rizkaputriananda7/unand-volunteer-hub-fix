@@ -1,0 +1,63 @@
+// models/staticData.js
+
+const pengumumanData = [
+  { id: 1, tanggal: '15 Juni 2025', judul: 'Hasil Seleksi Volunteer Mengajar Angkatan V', isi: 'Selamat kepada para peserta yang lolos! Silakan cek email masing-masing untuk informasi lebih lanjut mengenai tahap selanjutnya. Technical meeting akan diadakan pada tanggal 18 Juni 2025.'},
+  { id: 2, tanggal: '14 Juni 2025', judul: 'Pendaftaran Aksi Bersih Pantai Resmi Dibuka!', isi: 'Mari bergabung dalam aksi peduli lingkungan di Pantai Padang. Pendaftaran dibuka hingga 20 Juni 2025. Jadilah bagian dari perubahan!'},
+  { id: 3, tanggal: '10 Juni 2025', judul: 'Perubahan Jadwal Program Donor Darah', isi: 'Diinformasikan bahwa jadwal program donor darah diundur menjadi tanggal 30 Juni 2025 karena alasan teknis. Mohon maaf atas ketidaknyamanannya.'}
+];
+
+let programData = [
+    { id: 1, judul: 'Migas center Unand', pusat: 'Migas Center', kuota: 20, durasi: '12 Bulan', status: 'Penuh', kategori: 'Edukasi', isPublished: true },
+    { id: 2, judul: 'American Corner', pusat: 'American Corner', kuota: 20, durasi: '3 Bulan', status: 'Terbuka', kategori: 'Layanan', isPublished: true },
+    { id: 3, judul: 'GID BEI Unand', pusat: 'GID BEI Unand', kuota: 20, durasi: '6 Bulan', status: 'Terbuka', kategori: 'Finansial', isPublished: false },
+    { id: 4, judul: 'Volunteer Edukasi Anak Nagari', pusat: 'Pusat Pengabdian Masyarakat', kuota: 15, durasi: '4 Bulan', status: 'Terbuka', kategori: 'Edukasi', isPublished: true },
+    { id: 5, judul: 'Peduli Lingkungan Kampus Hijau', pusat: 'Fakultas Pertanian', kuota: 25, durasi: '2 Bulan', status: 'Terbuka', kategori: 'Lingkungan', isPublished: false }
+];
+
+const userData = { 
+    mahasiswa: { name: 'Naufal H.', role: 'Mahasiswa' },
+    pengurus: { name: 'Davyd', role: 'Pengurus' },
+    admin: { name: 'Admin', role: 'Admin Sistem' }
+};
+
+// --- DATA BARU UNTUK SEMUA PENGGUNA ---
+const allUsersData = [
+    { id: 101, nama: 'Naufal Hakim Zulian', nim_nip: '2311522026', role: 'Mahasiswa', status: 'Aktif' },
+    { id: 102, nama: 'Davyd Yehuda', nim_nip: '2311522014', role: 'Pengurus', status: 'Aktif' },
+    { id: 103, nama: 'Rizka Putri Ananda', nim_nip: '2311522036', role: 'Mahasiswa', status: 'Aktif' },
+    { id: 104, nama: 'Ahmad Iqbal Ramadhan', nim_nip: '2311523018', role: 'Mahasiswa', status: 'Nonaktif' },
+    { id: 105, nama: 'Aisyah Insani Aulia', nim_nip: '2311523024', role: 'Mahasiswa', status: 'Aktif' },
+    { id: 106, nama: 'Admin Utama', nim_nip: '199001012020121001', role: 'Admin', status: 'Aktif' }
+];
+// --- DATA BARU UNTUK PUSAT VOLUNTEER ---
+let pusatVolunteerData = [
+    { id: 1, nama: 'Migas Center' },
+    { id: 2, nama: 'American Corner' },
+    { id: 3, nama: 'GID BEI Unand' },
+    { id: 4, nama: 'Pusat Pengabdian Masyarakat' },
+    { id: 5, nama: 'Fakultas Pertanian' },
+    { id: 6, nama: 'Perpustakaan Pusat' }
+];
+
+const registrationsData = [
+    { userId: 101, programId: 1 }, // Naufal mendaftar ke Migas Center
+    { userId: 103, programId: 1 }, // Rizka mendaftar ke Migas Center
+    { userId: 105, programId: 2 }, // Aisyah mendaftar ke American Corner
+    { userId: 101, programId: 4 }, // Naufal mendaftar ke Edukasi Anak Nagari
+    { userId: 104, programId: 4 }, // Ahmad mendaftar ke Edukasi Anak Nagari
+    { userId: 103, programId: 4 }, // Rizka mendaftar ke Edukasi Anak Nagari
+];
+
+// State untuk bookmark kita letakkan di sini agar menjadi pusat
+let bookmarkedPrograms = [];
+
+// Ekspor semua data agar bisa digunakan file lain
+module.exports = {
+    pengumumanData,
+    programData,
+    userData,
+    bookmarkedPrograms,
+    allUsersData,
+    pusatVolunteerData,
+    registrationsData
+};

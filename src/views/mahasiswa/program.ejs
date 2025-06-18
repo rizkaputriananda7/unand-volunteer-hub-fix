@@ -19,9 +19,7 @@
             <h1 class="text-3xl font-bold text-gray-800 mb-8">Program Volunteer Tersedia</h1>
 
             <div class="mb-8">
-                <input type="text" placeholder="Cari Program Volunteer" class="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
-                
-                <form action="/mahasiswa/program" method="GET" class="mt-4 bg-white p-4 rounded-lg shadow-sm border">
+                <form action="/mahasiswa/program" method="GET" class="bg-white p-4 rounded-lg shadow-sm border">
                     <h3 class="font-semibold text-lg mb-2">Filter Program</h3>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <select name="kategori" class="w-full p-2 border border-gray-300 rounded-md">
@@ -38,7 +36,7 @@
                         </select>
                         <select name="pusat" class="w-full p-2 border border-gray-300 rounded-md">
                             <option value="">Semua Pusat</option>
-                             <option value="Migas Center">Migas Center</option>
+                            <option value="Migas Center">Migas Center</option>
                             <option value="American Corner">American Corner</option>
                             <option value="GID BEI Unand">GID BEI Unand</option>
                             <option value="Pusat Pengabdian Masyarakat">Pusat Pengabdian Masyarakat</option>
@@ -54,7 +52,6 @@
                         <div>
                             <div class="flex justify-between items-start mb-4">
                                 <h2 class="text-xl font-bold text-gray-800"><%= p.judul %></h2>
-                                
                                 <form action="/mahasiswa/program/<%= p.id %>/bookmark" method="POST">
                                     <button type="submit" class="focus:outline-none" title="<%= bookmarkedIds.includes(p.id) ? 'Hapus dari Favorit' : 'Simpan ke Favorit' %>">
                                         <% if (bookmarkedIds.includes(p.id)) { %>
@@ -64,18 +61,16 @@
                                         <% } %>
                                     </button>
                                 </form>
-
                             </div>
                             <p class="text-sm text-gray-600">Pusat: <%= p.pusat %></p>
                             <p class="text-sm text-gray-600">Kuota: <%= p.kuota %></p>
                             <p class="text-sm text-gray-600">Durasi: <%= p.durasi %></p>
                             <p class="text-sm font-medium <%= p.status === 'Terbuka' ? 'text-green-600' : 'text-red-600' %>">Status: <%= p.status %></p>
                         </div>
-                        <a href="#" class="mt-6 w-full bg-teal-50 text-teal-600 text-center font-bold py-2 px-4 rounded-md hover:bg-teal-100">Detail Program</a>
+                        <a href="/mahasiswa/program/<%= p.id %>" class="mt-6 w-full bg-teal-50 text-teal-600 text-center font-bold py-2 px-4 rounded-md hover:bg-teal-100">Lihat & Daftar</a>
                     </div>
                 <% }) %>
             </div>
-
         </main>
     </div>
 </body>
