@@ -38,11 +38,24 @@ exports.showDeadline = (req, res) => {
 
 // 5. Status Pendaftaran
 exports.showStatusPendaftaran = (req, res) => {
+  // Contoh data pendaftaran (bisa diganti dari database nanti)
+  const pendaftaran = [
+    { namaProgram: 'Volunteer Edukasi Anak', status: 'terkirim' },
+    { namaProgram: 'Pembersihan Sungai', status: 'ditinjau' },
+    { namaProgram: 'Kegiatan Sosial Ramadhan', status: 'diterima' },
+    { namaProgram: 'Bakti Sosial Pegadaian', status: 'ditolak' }
+  ];
+
+  // Jika user belum mendaftar, kosongkan array:
+  // const pendaftaran = [];
+
   res.render('mahasiswa/status', {
     user: userData.mahasiswa,
-    title: 'Status Pendaftaran'
+    title: 'Status Pendaftaran',
+    pendaftaran
   });
 };
+
 
 // 6. Pengumuman
 exports.showPengumumanPage = (req, res) => {
