@@ -8,21 +8,21 @@ const app = express();
 const db = require('./db'); // pastikan path benar jika kamu taruh di folder 'config'
 // ========================================
 
-// Import rute-rute
 const authRoutes = require('./routes/authRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
+const programRoutes = require('./routes/programRoutes.js');
+const pengurusRoutes = require('./routes/pengurusRoutes.js');
 
-// View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
-// Static files
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }));
 
-// Gunakan rute
 app.use('/', authRoutes);
 app.use('/mahasiswa', userRoutes);
-
+app.use('/', programRoutes);
+app.use('/pengurus', pengurusRoutes);
 // Kirim koneksi database ke middleware lain jika dibutuhkan
 app.set('db', db); // jika kamu butuh akses db dari req.app.get('db')
 
