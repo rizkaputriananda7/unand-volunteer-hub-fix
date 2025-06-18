@@ -1,7 +1,7 @@
 // routes/adminRoutes.js
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/adminController');
+const adminController = require('../controllers/adminController');
 
 // Contoh route kosong
 router.get('/', (req, res) => {
