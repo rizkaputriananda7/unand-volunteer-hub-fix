@@ -22,6 +22,21 @@ exports.showDashboard = (req, res) => {
 };
 
 /**
+ * Fungsi untuk memproses login admin
+ */
+exports.loginAdmin = (req, res) => {
+    const { username, password } = req.body;
+    
+    // Verifikasi kredensial admin (gantilah dengan metode yang sesuai)
+    if (username === 'admin' && password === 'adminpass') {  // Sesuaikan dengan kredensial yang valid
+        req.session.isAdmin = true;  // Set session admin jika login berhasil
+        res.redirect('/admin/dashboard');  // Redirect ke dashboard admin
+    } else {
+        res.redirect('/admin/login');  // Jika login gagal, kembali ke halaman login
+    }
+};
+
+/**
  * Fungsi untuk menampilkan halaman Kelola Pengguna dengan fitur pencarian.
  */
 exports.showUserManagementPage = (req, res) => {
