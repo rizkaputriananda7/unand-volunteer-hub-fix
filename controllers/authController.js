@@ -29,3 +29,13 @@ exports.handlePengurusLogin = (req, res) => {
     // Arahkan ke dashboard pengurus setelah login
     res.redirect('/pengurus/dashboard');
 };
+
+// --- FUNGSI BARU UNTUK LOGIN ADMIN ---
+exports.showAdminLoginPage = (req, res) => {
+    res.render('admin/login', { title: 'Login Admin' });
+};
+
+exports.handleAdminLogin = (req, res) => {
+    // Arahkan ke dashboard admin setelah login
+    res.redirect('/admin/dashboard');
+};
