@@ -20,3 +20,12 @@ exports.handleMahasiswaLogin = (req, res) => {
   // Langsung arahkan ke dashboard.
   res.redirect('/mahasiswa/dashboard');
 };
+// --- FUNGSI BARU UNTUK LOGIN PENGURUS ---
+exports.showPengurusLoginPage = (req, res) => {
+    res.render('pengurus/login', { title: 'Login Pengurus' });
+};
+
+exports.handlePengurusLogin = (req, res) => {
+    // Arahkan ke dashboard pengurus setelah login
+    res.redirect('/pengurus/dashboard');
+};
