@@ -27,6 +27,7 @@ app.use('/', programRoutes);
 app.use('/pengurus', pengurusRoutes);
 app.use('/admin', adminRoutes);
 app.use('/', registerRoutes);
+
 // Kirim koneksi database ke middleware lain jika dibutuhkan
 app.set('db', db); // jika kamu butuh akses db dari req.app.get('db')
 
