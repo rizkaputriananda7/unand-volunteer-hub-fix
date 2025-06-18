@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <title><%= title %></title>
+    <link href="/css/tailwind.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <%- include('../partials/sidebar_pengurus', { user: user, title: title }) %>
+        <div class="flex-1 flex flex-col">
+            <main class="flex-1 p-8">
+                <h1 class="text-2xl font-bold">Selamat Datang, Pengurus!</h1>
+                <p class="text-gray-500">Berikut informasi terkait volunteer terkini</p>
+
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <% programs.forEach(p => { %>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h3 class="font-bold"><%= p.judul %></h3>
+                            <p class="text-sm text-gray-500">Pusat: <%= p.pusat %></p>
+                            </div>
+                    <% }) %>
+                    <a href="/pengurus/program/baru" class="bg-white p-4 rounded-lg shadow flex items-center justify-center border-2 border-dashed hover:border-teal-500 hover:bg-teal-50 transition-colors">
+                        <span class="text-teal-600 font-bold">+ Tambah Program</span>
+                    </a>
+                </div>
+            </main>
+            <footer class="p-8 grid grid-cols-3 gap-8">
+                </footer>
+        </div>
+    </div>
+</body>
+</html>
