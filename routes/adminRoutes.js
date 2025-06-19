@@ -3,9 +3,16 @@ const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
 
-// Contoh route kosong
-router.get('/', (req, res) => {
-  res.send('Halaman admin');
-});
+// Rute untuk dashboard admin
+router.get('/dashboard', adminController.showDashboard);
 
-module.exports = router;
+// Rute untuk kelola pengguna
+router.get('/users', adminController.showUserManagementPage);
+
+// --- RUTE BARU UNTUK KELOLA PUSAT VOLUNTEER ---
+router.get('/centers', adminController.showCenterManagementPage);
+router.post('/centers/:id/delete', adminController.handleDeleteCenter);
+
+router.get('/analytics', adminController.showAnalyticsPage);
+
+module.exports = router;
