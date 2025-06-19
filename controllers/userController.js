@@ -1,7 +1,7 @@
 // controllers/userController.js
 
 const { pengumumanData, programData, userData, bookmarkedPrograms } = require('../models/staticData');
-
+//test
 // 1. Dashboard
 exports.showMahasiswaDashboard = (req, res) => {
   res.render('mahasiswa/dashboard', {
