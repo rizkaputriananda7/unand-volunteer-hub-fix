@@ -21,4 +21,16 @@
   //console.log('Tersambung ke database MySQL (menggunakan single connection)');
 //});
 
+
 //module.exports = connection.promise();
+
+=======
+connection.connect((err) => {
+  if (err) {
+  console.error('Koneksi MySQL gagal:', err.message);
+  return;
+  }
+  console.log('Tersambung ke database MySQL');
+});
+
+module.exports = connection;
