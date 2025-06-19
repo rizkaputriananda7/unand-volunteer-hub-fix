@@ -10,8 +10,8 @@ const connection = mysql.createConnection({
 
 connection.connect((err) => {
   if (err) {
-    console.error('Koneksi MySQL gagal:', err.message);
-    return;
+  console.error('Koneksi MySQL gagal:', err.message);
+  return;
   }
   console.log('Tersambung ke database MySQL');
 });
