@@ -1,4 +1,7 @@
 // controllers/userController.js
+const Pendaftaran = require('../models/Pendaftaran');
+const Program = require('../models/Program');
+const Mahasiswa = require('../models/Mahasiswa');
 
 const { pengumumanData, programData, userData, bookmarkedPrograms } = require('../models/staticData');
 //test
@@ -40,31 +43,47 @@ exports.showDeadline = (req, res) => {
 const { Mahasiswa } = require('../models/Mahasiswa');
 
 // 5. Status Pendaftaran
-exports.showStatusPendaftaran = async (req, res) => {
+// Fungsi untuk menampilkan halaman status pendaftaran
+exports.getStatusPendaftaran = async (req, res) => {
   try {
-    // Assuming we get the user's ID from the session or token
-    const userId = req.session.userId; // Adjust based on your authentication method
+    // PENTING: ID mahasiswa harusnya didapat dari sesi login (req.session.mahasiswaId).
+    // Untuk tujuan pengembangan, kita gunakan ID statis '1' untuk sementara.
+    const mahasiswaId = 1;
 
-    // Query the database for the user's registration status
-    const [rows] = await Mahasiswa.getStatusByUserId(userId); // Modify based on your model method
+    // Cari semua pendaftaran yang dilakukan oleh mahasiswa dengan ID tersebut
+    const daftarAplikasi = await Pendaftaran.findAll({
+      where: { mahasiswa_id: mahasiswaId },
+      // Sertakan model Program untuk mendapatkan detail program yang didaftar
+      include: [{
+        model: Program,
+        as: 'program', // Gunakan alias yang didefinisikan di model
+        attributes: ['nama_program', 'penyelenggara'] // Ambil kolom yang diperlukan saja
+      }],
+      // Urutkan berdasarkan tanggal pendaftaran terbaru
+      order: [['tanggal_pendaftaran', 'DESC']]
+    });
 
-    // If the user is not found or no status is available
-    if (rows.length === 0) {
-      return res.status(404).render('mahasiswa/status-pendaftaran', {
-        message: 'Data pendaftaran tidak ditemukan.',
-        title: 'Status Pendaftaran'
-      });
-    }
-
-    // Pass the registration status to the view
+    // Render halaman EJS dan kirimkan data pendaftaran
     res.render('mahasiswa/status-pendaftaran', {
-      status: rows[0].status, // Assuming the database returns a 'status' field
-      title: 'Status Pendaftaran'
+      title: 'Status Pendaftaran',
+      layout: 'layouts/main-layout',
+      pendaftaran: daftarAplikasi, // Kirim data ke view
+      currentRoute: '/mahasiswa/status-pendaftaran' // Untuk menandai menu aktif di sidebar
     });
   } catch (error) {
-    console.error('Error fetching registration status:', error.message);
-    res.status(500).send('Terjadi kesalahan pada server.');
+    // Tangani jika terjadi error
+    console.error("Error saat mengambil status pendaftaran:", error);
+    res.status(500).send('Terjadi kesalahan pada server');
   }
+};
+
+// --- Fungsi-fungsi lain yang sudah ada ---
+exports.getProfile = (req, res) => {
+    res.render('mahasiswa/profile', {
+      title: 'Profile',
+      layout: 'layouts/main-layout',
+      currentRoute: '/mahasiswa/profile'
+    });
 };
 
 // 6. Pengumuman

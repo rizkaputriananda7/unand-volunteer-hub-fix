@@ -1,20 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/public/css/style.css"> <!-- Link to your CSS file -->
-</head>
-<body>
-  <div class="container">
-    <h1>Status Pendaftaran</h1>
-    
-    <% if (status) { %>
-      <p>Status Anda: <%= status %></p>
-    <% } else { %>
-      <p><%= message %></p>
-    <% } %>
-  </div>
-</body>
-</html>
+<!-- 
+  views/mahasiswa/status-pendaftaran.ejs
+  Halaman ini menampilkan tabel riwayat pendaftaran mahasiswa.
+-->
+<div class="container mx-auto px-6 py-8">
+  <h1 class="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-200">Status Pendaftaran Saya</h1>
+
+  <!-- Cek apakah ada data pendaftaran -->
+  <% if (pendaftaran && pendaftaran.length > 0) { %>
+    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-x-auto">
+      <table class="min-w-full leading-normal">
+        <thead>
+          <tr>
+            <th class="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+              Nama Program
+            </th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+              Penyelenggara
+            </th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+              Tanggal Daftar
+            </th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-700 dark:text-gray-200">
+          <!-- Looping untuk setiap item pendaftaran -->
+          <% pendaftaran.forEach(item => { %>
+            <tr>
+              <td class="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
+                <p class="text-gray-900 dark:text-white whitespace-no-wrap"><%= item.program.nama_program %></p>
+              </td>
+              <td class="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
+                <p class="text-gray-900 dark:text-white whitespace-no-wrap"><%= item.program.penyelenggara %></p>
+              </td>
+              <td class="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
+                <p class="text-gray-900 dark:text-white whitespace-no-wrap"><%= new Date(item.tanggal_pendaftaran).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+              </td>
+              <td class="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-center">
+                <% 
+                  // Logika untuk menentukan warna badge berdasarkan status
+                  let colorClass = '';
+                  if (item.status === 'Diterima') colorClass = 'bg-green-200 text-green-900';
+                  else if (item.status === 'Ditolak') colorClass = 'bg-red-200 text-red-900';
+                  else if (item.status === 'Sedang Ditinjau') colorClass = 'bg-yellow-200 text-yellow-900';
+                  else colorClass = 'bg-blue-200 text-blue-900';
+                %>
+                <span class="relative inline-block px-3 py-1 font-semibold leading-tight rounded-full <%= colorClass %>">
+                  <span class="relative"><%= item.status %></span>
+                </span>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <!-- Tampilan jika tidak ada data pendaftaran -->
+    <div class="text-center py-20 px-6 bg-white dark:bg-gray-800 shadow-md rounded-lg">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">Belum Ada Pendaftaran</h3>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Anda belum pernah mendaftar program volunteer apapun.</p>
+      <div class="mt-6">
+        <a href="/mahasiswa/dashboard" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          Cari Program
+        </a>
+      </div>
+    </div>
+  <% } %>
+</div>

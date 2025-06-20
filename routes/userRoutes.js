@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const programController = require('../controllers/programController');
 
 // 1. Dashboard
 router.get('/dashboard', userController.showMahasiswaDashboard);
@@ -29,6 +30,7 @@ router.get('/riwayat', userController.showRiwayatPendaftaran);
 
 // 9. FAQ
 router.get('/faq', userController.showFaqPage);
+router.get('/mahasiswa/status-pendaftaran', userController.getStatusPendaftaran);
 
 // Bookmark Program
 router.get('/bookmark', userController.showBookmarkPage);
