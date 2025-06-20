@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 
 // ======= Tambahan koneksi MySQL ==========
-//const db = require('./config/database'); // pastikan path benar jika kamu taruh di folder 'config'
+const db = require('./config/database'); // pastikan path benar jika kamu taruh di folder 'config'
 // ========================================
 
 const authRoutes = require('./routes/authRoutes.js');
@@ -29,6 +29,6 @@ app.use('/admin', adminRoutes);
 app.use('/', registerRoutes);
 
 // Kirim koneksi database ke middleware lain jika dibutuhkan
-//app.set('db', db); // jika kamu butuh akses db dari req.app.get('db')
+app.set('db', db); // jika kamu butuh akses db dari req.app.get('db')
 
 module.exports = app;
