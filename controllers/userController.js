@@ -56,7 +56,7 @@ exports.getNotifikasi = (req, res) => {
 exports.getBookmark = (req, res) => {
     res.render('mahasiswa/bookmark', { 
         title: 'Bookmark', 
-       
+        user: { name: 'Iqbal H.', role: 'Mahasiswa' },
         programs: bookmarkedPrograms, // Mengirim data program yang di-bookmark
         currentRoute: '/mahasiswa/bookmark' 
     });
@@ -129,4 +129,26 @@ exports.showMahasiswaDashboard = (req, res) => {
         jadwalMendatang,
         currentRoute: '/mahasiswa/dashboard'
     });
+};
+
+// Menambah program ke bookmark
+exports.addBookmark = (req, res) => {
+    const { programData, bookmarkedPrograms } = require('../models/staticData');
+    const programId = parseInt(req.params.id);
+    const program = programData.find(p => p.id === programId);
+    if (program && !bookmarkedPrograms.some(p => p.id === programId)) {
+        bookmarkedPrograms.push(program);
+    }
+    res.redirect('/mahasiswa/program');
+};
+
+// Menghapus program dari bookmark
+exports.deleteBookmark = (req, res) => {
+    const { bookmarkedPrograms } = require('../models/staticData');
+    const programId = parseInt(req.params.id);
+    const idx = bookmarkedPrograms.findIndex(p => p.id === programId);
+    if (idx !== -1) {
+        bookmarkedPrograms.splice(idx, 1);
+    }
+    res.redirect('/bookmark');
 };

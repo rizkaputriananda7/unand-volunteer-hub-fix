@@ -32,7 +32,10 @@ router.get('/riwayat', userController.getRiwayat);
 
 // Bookmark Program
 router.get('/bookmark', userController.getBookmark);
-// (Belum ada fungsi addBookmark dan deleteBookmark di userController, bisa tambahkan jika perlu)
+router.post('/program/:id/bookmark', userController.addBookmark);
+router.post('/bookmark/:id/delete', userController.deleteBookmark);
+router.get('/mahasiswa/bookmark', userController.getBookmark);
+router.post('/mahasiswa/program/:id/bookmark', userController.addBookmark);
 
 router.get('/mahasiswa/status-pendaftaran', userController.getStatusPendaftaran);
 

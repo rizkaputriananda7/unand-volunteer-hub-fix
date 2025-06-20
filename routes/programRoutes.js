@@ -34,4 +34,7 @@ router.post('/pengurus/program/publish/:id', programController.publishProgram);
 // Rute ini bisa diakses oleh mahasiswa atau siapa saja
 router.get('/program/:id', programController.getProgramDetail);
 
+// RUTE PENCARIAN & LIST PROGRAM UNTUK MAHASISWA
+router.get('/mahasiswa/program', require('../controllers/programController').searchProgramsForUser);
+
 module.exports = router;
