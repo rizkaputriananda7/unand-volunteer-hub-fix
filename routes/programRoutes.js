@@ -1,19 +1,37 @@
-// routes/programRoutes.js
+/**
+ * routes/programRoutes.js (Diperbaiki)
+ * * Menyesuaikan nama fungsi controller dengan versi yang sudah tidak menggunakan Sequelize.
+ * * Merapikan struktur rute agar lebih konsisten.
+ */
 const express = require('express');
 const router = express.Router();
 const programController = require('../controllers/programController');
 
-// Rute untuk Mahasiswa melihat program yang sudah terbit
-router.get('/mahasiswa/program', programController.showProgramPageForMahasiswa);
+// ===================================
+// RUTE UNTUK PENGURUS
+// ===================================
 
-// Rute untuk Pengurus menampilkan form buat program
-router.get('/pengurus/program/baru', programController.showCreateProgramPage);
+// Menampilkan halaman dashboard/manajemen program untuk pengurus
+// (Mengasumsikan ini adalah halaman utama untuk program bagi pengurus)
+router.get('/pengurus/program', programController.getAllProgramsForPengurus);
 
-// Rute untuk Pengurus mengirim data dari form buat program
-router.post('/pengurus/program/baru', programController.handleCreateProgram);
+// Menampilkan halaman form untuk membuat program baru
+router.get('/pengurus/program/create', programController.showCreateProgramPage);
 
-// Rute untuk Pengurus mempublikasikan program (jika masih digunakan)
-router.post('/pengurus/program/:id/publish', programController.publishProgram);
+// Meng-handle data yang dikirim dari form pembuatan program
+router.post('/pengurus/program/create', programController.handleCreateProgram);
+
+// Meng-handle permintaan untuk mempublikasikan program
+// Menggunakan metode POST atau PUT lebih cocok untuk aksi yang mengubah data
+router.post('/pengurus/program/publish/:id', programController.publishProgram);
 
 
-module.exports = router; // <-- PASTIKAN BARIS INI ADA
+// ===================================
+// RUTE UNTUK MAHASISWA & UMUM
+// ===================================
+
+// Rute untuk melihat detail sebuah program
+// Rute ini bisa diakses oleh mahasiswa atau siapa saja
+router.get('/program/:id', programController.getProgramDetail);
+
+module.exports = router;
