@@ -1,46 +1,61 @@
-// controllers/authController.js
+/**
+ * controllers/authController.js (Versi dengan Data Statis)
+ * * Menggunakan data statis untuk simulasi login sesuai permintaan.
+ */
 
-// Ambil semua data dari file pusat, termasuk array bookmark
-// const { pengumumanData, programData, userData, bookmarkedPrograms } = require('../models/staticData'); // Ini di userController, bukan authController
+// const { userData } = require('../models/staticData'); // Baris ini bisa diaktifkan jika Anda memiliki file staticData.js
 
 // 1. Fungsi untuk menampilkan halaman pemilihan peran
 exports.showRoleSelection = (req, res) => {
-  res.render('role_pengguna', {
-    title: 'Selamat Datang'
-  });
+    res.render('role_pengguna', { // Pastikan view 'role_pengguna.ejs' ada
+        title: 'Selamat Datang'
+    });
 };
 
 // 2. Fungsi untuk menampilkan halaman login mahasiswa
 exports.showMahasiswaLoginPage = (req, res) => {
-  // PERBAIKAN DI SINI: Lewatkan variabel 'error' dengan nilai default null
-  res.render('mahasiswa/login', { error: null }); // 
+    res.render('mahasiswa/login', { 
+        title: 'Login Mahasiswa',
+        error: null 
+    });
 };
 
 // 3. Fungsi untuk menangani submit form login mahasiswa
 exports.handleMahasiswaLogin = (req, res) => {
-  // Untuk saat ini, kita tidak memeriksa password.
-  // Langsung arahkan ke dashboard.
-  res.redirect('/mahasiswa/dashboard');
+    // Untuk saat ini, langsung arahkan ke dashboard.
+    res.redirect('/mahasiswa/dashboard');
 };
 
-// --- FUNGSI BARU UNTUK LOGIN PENGURUS ---
+// 4. Fungsi untuk menampilkan halaman login pengurus
 exports.showPengurusLoginPage = (req, res) => {
-    // Tambahkan 'error: null' untuk konsistensi
-    res.render('pengurus/login', { title: 'Login Pengurus', error: null }); // 
+    res.render('pengurus/login', { 
+        title: 'Login Pengurus', 
+        error: null 
+    });
 };
 
+// 5. Fungsi untuk menangani login pengurus
 exports.handlePengurusLogin = (req, res) => {
     // Arahkan ke dashboard pengurus setelah login
     res.redirect('/pengurus/dashboard');
 };
 
-// --- FUNGSI BARU UNTUK LOGIN ADMIN ---
+// 6. Fungsi untuk menampilkan halaman login admin
 exports.showAdminLoginPage = (req, res) => {
-    // Tambahkan 'error: null' untuk konsistensi
-    res.render('admin/login', { title: 'Login Admin', error: null }); // 
+    res.render('admin/login', { 
+        title: 'Login Admin', 
+        error: null 
+    });
 };
 
+// 7. Fungsi untuk menangani login admin
 exports.handleAdminLogin = (req, res) => {
     // Arahkan ke dashboard admin setelah login
     res.redirect('/admin/dashboard');
+};
+
+// 8. Fungsi untuk menangani logout (jika diperlukan)
+exports.logout = (req, res) => {
+    // TODO: Implementasikan logika untuk menghancurkan session
+    res.redirect('/'); // Redirect ke halaman utama atau pemilihan peran
 };
