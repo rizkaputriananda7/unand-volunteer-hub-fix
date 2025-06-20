@@ -21,7 +21,7 @@ exports.getAllProgramsForUser = async (req, res) => {
 
         res.render('mahasiswa/dashboard', { // Atau view lain yang sesuai
             title: 'Dashboard',
-            layout: 'layouts/main-layout',
+           
             programs: programs,
             currentRoute: '/mahasiswa/dashboard'
         });
@@ -50,7 +50,7 @@ exports.getProgramDetail = async (req, res) => {
 
         res.render('mahasiswa/detail-program', { // Atau view lain yang sesuai
             title: 'Detail Program',
-            layout: 'layouts/main-layout',
+          
             program: program,
             currentRoute: ''
         });
@@ -73,7 +73,7 @@ exports.getAllProgramsForPengurus = async (req, res) => {
 
         res.render('pengurus/dashboard', { // Atau view 'pengurus/program-management'
             title: 'Manajemen Program',
-            layout: 'layouts/main-layout-pengurus',
+           
             programs: programs
         });
     } catch (error) {
@@ -86,7 +86,7 @@ exports.getAllProgramsForPengurus = async (req, res) => {
 exports.showCreateProgramPage = (req, res) => {
     res.render('pengurus/create-program', {
         title: 'Buat Program Baru',
-        layout: 'layouts/main-layout-pengurus'
+       
     });
 };
 

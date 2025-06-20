@@ -24,7 +24,6 @@ exports.getStatusPendaftaran = async (req, res) => {
 
         res.render('mahasiswa/status-pendaftaran', {
             title: 'Status Pendaftaran',
-            layout: 'layouts/main-layout',
             pendaftaran: pendaftaranLengkap,
             currentRoute: '/mahasiswa/status-pendaftaran'
         });
@@ -38,7 +37,7 @@ exports.getStatusPendaftaran = async (req, res) => {
 exports.getProfile = (req, res) => {
     res.render('mahasiswa/profile', {
         title: 'Profile',
-        layout: 'layouts/main-layout',
+       
         user: userData.mahasiswa, // Mengirim data user statis
         currentRoute: '/mahasiswa/profile'
     });
@@ -48,7 +47,7 @@ exports.getProfile = (req, res) => {
 exports.getNotifikasi = (req, res) => {
     res.render('mahasiswa/notifikasi', { 
         title: 'Notifikasi', 
-        layout: 'layouts/main-layout', 
+        
         currentRoute: '/mahasiswa/notifikasi' 
     });
 };
@@ -57,7 +56,7 @@ exports.getNotifikasi = (req, res) => {
 exports.getBookmark = (req, res) => {
     res.render('mahasiswa/bookmark', { 
         title: 'Bookmark', 
-        layout: 'layouts/main-layout', 
+       
         programs: bookmarkedPrograms, // Mengirim data program yang di-bookmark
         currentRoute: '/mahasiswa/bookmark' 
     });
@@ -67,7 +66,7 @@ exports.getBookmark = (req, res) => {
 exports.getRiwayat = (req, res) => {
     res.render('mahasiswa/riwayat', { 
         title: 'Riwayat', 
-        layout: 'layouts/main-layout', 
+       
         currentRoute: '/mahasiswa/riwayat' 
     });
 };
@@ -76,7 +75,7 @@ exports.getRiwayat = (req, res) => {
 exports.getKalender = (req, res) => {
     res.render('mahasiswa/kalender', { 
         title: 'Kalender', 
-        layout: 'layouts/main-layout', 
+       
         currentRoute: '/mahasiswa/kalender' 
     });
 };
@@ -85,7 +84,7 @@ exports.getKalender = (req, res) => {
 exports.getDeadline = (req, res) => {
     res.render('mahasiswa/deadline', { 
         title: 'Deadline', 
-        layout: 'layouts/main-layout', 
+       
         currentRoute: '/mahasiswa/deadline' 
     });
 };
@@ -94,7 +93,7 @@ exports.getDeadline = (req, res) => {
 exports.getPengaturan = (req, res) => {
     res.render('mahasiswa/pengaturan', { 
         title: 'Pengaturan', 
-        layout: 'layouts/main-layout', 
+      
         currentRoute: '/mahasiswa/pengaturan' 
     });
 };

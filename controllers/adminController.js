@@ -27,7 +27,7 @@ exports.showDashboard = async (req, res) => {
 
         res.render('admin/dashboard', {
             title: 'Dashboard Admin',
-            layout: 'layouts/main-layout-admin', // Pastikan nama layout ini benar
+           
             stats: stats
         });
     } catch (error) {
@@ -56,7 +56,7 @@ exports.showUserManagement = async (req, res) => {
         
         res.render('admin/user-management', { // Ganti nama view jika perlu, misal 'admin/manage-users'
             title: 'Kelola Pengguna',
-            layout: 'layouts/main-layout-admin',
+           
             users: users,
             searchQuery: searchQuery
         });
@@ -95,7 +95,7 @@ exports.showVCManagement = async (req, res) => {
 
         res.render('admin/vc-management', { // Ganti nama view jika perlu, misal 'admin/manage-centers'
             title: 'Kelola Pusat Volunteer',
-            layout: 'layouts/main-layout-admin',
+          
             volunteerCenters: volunteerCenters
         });
     } catch (error) {
@@ -145,7 +145,7 @@ exports.showAnalyticsPage = async (req, res) => {
 
         res.render('admin/analytics', {
             title: 'Analitik',
-            layout: 'layouts/main-layout-admin',
+          
             distribution: distribution
         });
     } catch(error) {
