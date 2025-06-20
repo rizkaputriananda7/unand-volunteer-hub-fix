@@ -102,14 +102,10 @@ exports.getPengaturan = (req, res) => {
 exports.showMahasiswaDashboard = (req, res) => {
     // Simulasi user login (bisa diganti dengan session/user login sebenarnya)
     const user = { name: 'Iqbal H.', role: 'Mahasiswa' };
-
-    // Hitung program aktif, pendaftaran diproses, pengumuman baru
     const userId = 101; // id user dummy
     const aktif = registrationsData.filter(r => r.userId === userId && [1,2].includes(r.programId)).length; // contoh logika
     const diproses = 1; // dummy
     const pengumumanBaru = 2; // dummy
-
-    // Jadwal mendatang dummy
     const jadwalMendatang = [
         {
             judul: 'Technical Meeting: Volunteer Mengajar',
@@ -124,13 +120,13 @@ exports.showMahasiswaDashboard = (req, res) => {
             link: '#'
         }
     ];
-
     res.render('mahasiswa/dashboard', {
         title: 'Dashboard',
         user,
         aktif,
         diproses,
         pengumumanBaru,
-        jadwalMendatang
+        jadwalMendatang,
+        currentRoute: '/mahasiswa/dashboard'
     });
 };

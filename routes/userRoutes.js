@@ -4,6 +4,7 @@ const userController = require('../controllers/userController');
 
 // 1. Dashboard
 router.get('/dashboard', userController.showMahasiswaDashboard);
+router.get('/mahasiswa/dashboard', userController.showMahasiswaDashboard);
 
 // 2. Program Volunteer
 // (Belum ada fungsi program volunteer di userController, bisa tambahkan jika perlu)
