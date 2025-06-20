@@ -36,26 +36,36 @@ exports.showDeadline = (req, res) => {
   });
 };
 
+// Assuming necessary models and data are imported
+const { Mahasiswa } = require('../models/Mahasiswa');
+
 // 5. Status Pendaftaran
-exports.showStatusPendaftaran = (req, res) => {
-  // Contoh data pendaftaran (bisa diganti dari database nanti)
-  const pendaftaran = [
-    { namaProgram: 'Volunteer Edukasi Anak', status: 'terkirim' },
-    { namaProgram: 'Pembersihan Sungai', status: 'ditinjau' },
-    { namaProgram: 'Kegiatan Sosial Ramadhan', status: 'diterima' },
-    { namaProgram: 'Bakti Sosial Pegadaian', status: 'ditolak' }
-  ];
+exports.showStatusPendaftaran = async (req, res) => {
+  try {
+    // Assuming we get the user's ID from the session or token
+    const userId = req.session.userId; // Adjust based on your authentication method
 
-  // Jika user belum mendaftar, kosongkan array:
-  // const pendaftaran = [];
+    // Query the database for the user's registration status
+    const [rows] = await Mahasiswa.getStatusByUserId(userId); // Modify based on your model method
 
-  res.render('mahasiswa/status', {
-    user: userData.mahasiswa,
-    title: 'Status Pendaftaran',
-    pendaftaran
-  });
+    // If the user is not found or no status is available
+    if (rows.length === 0) {
+      return res.status(404).render('mahasiswa/status-pendaftaran', {
+        message: 'Data pendaftaran tidak ditemukan.',
+        title: 'Status Pendaftaran'
+      });
+    }
+
+    // Pass the registration status to the view
+    res.render('mahasiswa/status-pendaftaran', {
+      status: rows[0].status, // Assuming the database returns a 'status' field
+      title: 'Status Pendaftaran'
+    });
+  } catch (error) {
+    console.error('Error fetching registration status:', error.message);
+    res.status(500).send('Terjadi kesalahan pada server.');
+  }
 };
-
 
 // 6. Pengumuman
 exports.showPengumumanPage = (req, res) => {
