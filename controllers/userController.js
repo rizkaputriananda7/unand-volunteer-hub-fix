@@ -97,3 +97,40 @@ exports.getPengaturan = (req, res) => {
         currentRoute: '/mahasiswa/pengaturan' 
     });
 };
+
+// Fungsi untuk menampilkan dashboard volunteer (mahasiswa)
+exports.showMahasiswaDashboard = (req, res) => {
+    // Simulasi user login (bisa diganti dengan session/user login sebenarnya)
+    const user = { name: 'Iqbal H.', role: 'Mahasiswa' };
+
+    // Hitung program aktif, pendaftaran diproses, pengumuman baru
+    const userId = 101; // id user dummy
+    const aktif = registrationsData.filter(r => r.userId === userId && [1,2].includes(r.programId)).length; // contoh logika
+    const diproses = 1; // dummy
+    const pengumumanBaru = 2; // dummy
+
+    // Jadwal mendatang dummy
+    const jadwalMendatang = [
+        {
+            judul: 'Technical Meeting: Volunteer Mengajar',
+            waktu: '18 Juni 2025, 10:00 WIB',
+            tempat: 'via Zoom',
+            link: '#'
+        },
+        {
+            judul: 'Hari Pertama, Aksi Bersih Pantai',
+            waktu: '22 Juni 2025, 08:00 WIB',
+            tempat: 'Pantai Padang',
+            link: '#'
+        }
+    ];
+
+    res.render('mahasiswa/dashboard', {
+        title: 'Dashboard',
+        user,
+        aktif,
+        diproses,
+        pengumumanBaru,
+        jadwalMendatang
+    });
+};

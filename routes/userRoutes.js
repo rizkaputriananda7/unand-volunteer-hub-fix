@@ -3,7 +3,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 
 // 1. Dashboard
-// (Belum ada fungsi dashboard di userController, bisa tambahkan jika perlu)
+router.get('/dashboard', userController.showMahasiswaDashboard);
 
 // 2. Program Volunteer
 // (Belum ada fungsi program volunteer di userController, bisa tambahkan jika perlu)
