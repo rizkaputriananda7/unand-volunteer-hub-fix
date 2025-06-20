@@ -1,12 +1,10 @@
 const express = require('express');
-
 const path = require('path');
 const db = require('./config/database'); // Anda akan memerlukan ini nanti saat beralih ke mysql2
 const app = express();
-const port = 3000;
 
 app.set('view engine', 'ejs');
-
+app.set('views', path.join(__dirname, 'src/views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
@@ -26,7 +24,4 @@ app.use(programRoutes);
 app.use(registerRoutes);
 app.use(userRoutes);
 
-// Menjalankan server secara langsung tanpa sinkronisasi database
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+module.exports = app;
