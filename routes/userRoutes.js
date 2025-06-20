@@ -1,40 +1,39 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const programController = require('../controllers/programController');
 
 // 1. Dashboard
 router.get('/dashboard', userController.showMahasiswaDashboard);
+router.get('/mahasiswa/dashboard', userController.showMahasiswaDashboard);
 
 // 2. Program Volunteer
-router.get('/program', userController.showProgramVolunteer);
+// (Belum ada fungsi program volunteer di userController, bisa tambahkan jika perlu)
 
 // 3. Pendaftaran
-router.get('/pendaftaran', userController.showPendaftaran);
+// (Belum ada fungsi pendaftaran di userController, bisa tambahkan jika perlu)
 
 // 4. Deadline
-router.get('/deadline', userController.showDeadline);
+router.get('/deadline', userController.getDeadline);
 
 // 5. Status Pendaftaran
-router.get('/status', userController.showStatusPendaftaran);
+router.get('/status', userController.getStatusPendaftaran);
 
 // 6. Pengumuman
-router.get('/pengumuman', userController.showPengumumanPage);
-router.get('/pengumuman/:id', userController.showPengumumanDetailPage);
+// (Belum ada fungsi pengumuman di userController, bisa tambahkan jika perlu)
 
 // 7. Kalender Pendaftaran
-router.get('/kalender', userController.showKalenderPendaftaran);
+router.get('/kalender', userController.getKalender);
 
 // 8. Riwayat Pendaftaran
-router.get('/riwayat', userController.showRiwayatPendaftaran);
+router.get('/riwayat', userController.getRiwayat);
 
 // 9. FAQ
-router.get('/faq', userController.showFaqPage);
-router.get('/mahasiswa/status-pendaftaran', userController.getStatusPendaftaran);
+// (Belum ada fungsi FAQ di userController, bisa tambahkan jika perlu)
 
 // Bookmark Program
-router.get('/bookmark', userController.showBookmarkPage);
-router.post('/program/:id/bookmark', userController.addBookmark);
-router.post('/bookmark/:id/delete', userController.deleteBookmark);
+router.get('/bookmark', userController.getBookmark);
+// (Belum ada fungsi addBookmark dan deleteBookmark di userController, bisa tambahkan jika perlu)
+
+router.get('/mahasiswa/status-pendaftaran', userController.getStatusPendaftaran);
 
 module.exports = router;
