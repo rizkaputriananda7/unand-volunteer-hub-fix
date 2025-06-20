@@ -19,6 +19,13 @@
       <h1 class="text-3xl font-bold text-gray-800 mb-8">Program Volunteer Tersedia</h1>
 
       <div class="mb-8">
+        <form action="/mahasiswa/program" method="GET" class="bg-white p-4 rounded-lg shadow-sm border flex flex-row items-center gap-2 w-full max-w-md">
+          <input type="text" name="q" value="<%= q || '' %>" placeholder="Cari program volunteer..." class="flex-1 p-2 border border-gray-300 rounded-md text-sm" />
+          <button type="submit" class="bg-teal-500 text-white font-bold py-2 px-3 rounded-md hover:bg-teal-600 text-sm">Cari</button>
+        </form>
+      </div>
+
+      <div class="mb-8">
         <form action="/mahasiswa/program" method="GET" class="bg-white p-4 rounded-lg shadow-sm border space-y-4">
           <h3 class="font-semibold text-lg mb-2">Filter Program</h3>
           
@@ -67,12 +74,12 @@
               <div>
                 <div class="flex justify-between items-start mb-4">
                   <h2 class="text-xl font-bold text-gray-800"><%= p.judul %></h2>
-                  <form action="/mahasiswa/program/<%= p.id %>/bookmark" method="POST">
-                    <button type="submit" class="focus:outline-none" title="<%= bookmarkedIds.includes(p.id) ? 'Hapus dari Favorit' : 'Simpan ke Favorit' %>">
+                  <form action="<%= bookmarkedIds.includes(p.id) ? ('/bookmark/' + p.id + '/delete') : ('/mahasiswa/program/' + p.id + '/bookmark') %>" method="POST">
+                    <button type="submit" class="bg-white rounded-full shadow p-1 border border-gray-200 hover:bg-red-50 focus:outline-none" title="<%= bookmarkedIds.includes(p.id) ? 'Hapus dari Favorit' : 'Simpan ke Favorit' %>">
                       <% if (bookmarkedIds.includes(p.id)) { %>
-                        <svg class="w-6 h-6 text-teal-500" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                          <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
                       <% } else { %>
-                        <svg class="w-6 h-6 text-gray-400 hover:text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                          <svg class="w-6 h-6 text-gray-400 hover:text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
                       <% } %>
                     </button>
                   </form>

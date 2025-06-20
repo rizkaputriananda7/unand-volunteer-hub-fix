@@ -60,6 +60,30 @@ exports.getProgramDetail = async (req, res) => {
     }
 };
 
+// Pencarian & list program volunteer untuk mahasiswa
+exports.searchProgramsForUser = (req, res) => {
+    const { q } = req.query;
+    // Ambil data program dari staticData
+    const { programData, bookmarkedPrograms } = require('../models/staticData');
+    let programs = programData.filter(p => p.isPublished);
+    // Filter berdasarkan kata kunci (judul/deskripsi)
+    if (q && q.trim() !== '') {
+        const keyword = q.trim().toLowerCase();
+        programs = programs.filter(p =>
+            p.judul.toLowerCase().includes(keyword) ||
+            (p.deskripsi && p.deskripsi.toLowerCase().includes(keyword))
+        );
+    }
+    // Dummy: semua program belum ada field deskripsi, bisa ditambah nanti
+    res.render('mahasiswa/program', {
+        title: 'Program Volunteer',
+        user: { name: 'Iqbal H.', role: 'Mahasiswa' },
+        programs,
+        bookmarkedIds: bookmarkedPrograms.map(p => p.id),
+        currentRoute: '/mahasiswa/program',
+        q: q || ''
+    });
+};
 
 // --- FUNGSI UNTUK PENGURUS ---
 
