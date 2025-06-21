@@ -19,7 +19,7 @@ const userRoutes = require('./routes/userRoutes');
 // Gunakan rute
 app.use(adminRoutes);
 app.use(authRoutes);
-app.use(pengurusRoutes);
+app.use('/pengurus', pengurusRoutes);
 app.use(programRoutes);
 app.use(registerRoutes);
 app.use('/mahasiswa', userRoutes);

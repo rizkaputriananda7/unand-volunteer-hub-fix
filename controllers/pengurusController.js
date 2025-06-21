@@ -1,193 +1,133 @@
+// controllers/pengurusController.js
+
+const Program = require('../models/Program');
+// Kita akan menggunakan model lain nanti, untuk sekarang fokus ke Program
+// const Jadwal = require('../models/Jadwal');
+
 /**
- * controllers/pengurusController.js (Diperbaiki)
- * * Duplikasi fungsi telah dihapus.
- * * Kode diorganisir ulang untuk kejelasan.
- * * Fungsionalitas berbasis model dipertahankan sesuai kode yang diberikan.
+ * Menampilkan dashboard pengurus.
  */
-
-const Program = require("../models/Program");
-const Aplikasi = require("../models/Aplikasi");
-const Jadwal = require("../models/Jadwal");
-const Pengumuman = require("../models/Pengumuman");
-
-// Menampilkan Dashboard
 exports.showDashboard = async (req, res) => {
     try {
-        // Asumsi: req.user berisi data pengurus yang login, termasuk volunteer_center_id
-        const centerId = req.user.volunteer_center_id;
-        const programs = await Program.findByCenter(centerId);
-        res.render("pengurus/dashboard", {
-            title: "Dashboard Pengurus",
-            active: "dashboard",
+        // OPSI A: Membuat user dummy untuk simulasi login
+        const dummyUser = {
+            id: 1, // contoh id pengurus
+            name: 'Pengurus Dummy',
+            volunteer_center_id: 1 // asumsikan dia mengelola pusat volunteer dengan ID 1
+        };
+
+        // Menggunakan fungsi model yang baru untuk mengambil program
+        const programs = await Program.findAllByCenter(dummyUser.volunteer_center_id);
+
+        res.render('pengurus/dashboard', {
+            title: 'Dashboard Pengurus',
+            user: dummyUser, // Mengirim user dummy ke view
             programs: programs,
+            // Statistik bisa dibuat dummy atau dihitung dari 'programs'
+            stats: {
+                totalPrograms: programs.length,
+                totalApplicants: 0, // Placeholder
+                pendingReviews: 0 // Placeholder
+            }
         });
     } catch (error) {
-        console.error("Error memuat dashboard:", error);
-        res.status(500).send("Error memuat dashboard.");
+        console.error("Error di showDashboard pengurus:", error);
+        res.status(500).send("Terjadi kesalahan pada server");
     }
 };
 
-// --- Manajemen Program ---
+/**
+ * Menampilkan form untuk membuat program baru.
+ */
 exports.showCreateProgramForm = (req, res) => {
-    res.render("pengurus/buat-program", {
-        title: "Buat Program Baru",
-        active: "buat-program",
-        error: null,
+    res.render('pengurus/create-program', {
+        title: 'Buat Program Baru',
+        user: { name: 'Pengurus Dummy' } // Kirim user dummy jika view butuh
     });
 };
 
+/**
+ * Menangani pembuatan program baru.
+ */
 exports.handleCreateProgram = async (req, res) => {
     try {
-        const coordinatorId = req.user.id;
-        const centerId = req.user.volunteer_center_id;
+        await Program.create(req.body);
+        res.redirect('/pengurus/dashboard');
+    } catch (error) {
+        res.status(500).send("Gagal membuat program");
+    }
+};
 
-        if (!coordinatorId || !centerId) {
-            throw new Error("Informasi pengurus tidak lengkap. Silakan login ulang.");
+/**
+ * Menampilkan form untuk mengedit program.
+ */
+exports.showEditProgramForm = async (req, res) => {
+    try {
+        const program = await Program.findById(req.params.id);
+        if (!program) {
+            return res.status(404).send('Program tidak ditemukan');
         }
-        await Program.create(req.body, coordinatorId, centerId);
-        res.redirect("/pengurus/dashboard");
-    } catch (error) {
-        console.error("Error saat membuat program:", error);
-        res.status(500).render("pengurus/buat-program", {
-            title: "Gagal Membuat Program",
-            active: "buat-program",
-            error: "Terjadi kesalahan saat menyimpan program. Mohon periksa kembali semua data yang Anda masukkan.",
-        });
-    }
-};
-
-// --- Manajemen Seleksi ---
-exports.showSelectionManagement = async (req, res) => {
-    try {
-        const centerId = req.user.volunteer_center_id;
-        const programs = await Program.findByCenter(centerId);
-        const aplikasi = await Aplikasi.findByCenter(centerId);
-
-        res.render("pengurus/manajemen-seleksi", {
-            title: "Manajemen Seleksi",
-            active: "seleksi",
-            programs: programs,
-            aplikasi: aplikasi,
-            error: null,
+        res.render('pengurus/edit-program', {
+            title: 'Edit Program',
+            program: program,
+            user: { name: 'Pengurus Dummy' } // Kirim user dummy
         });
     } catch (error) {
-        console.error("Error memuat halaman manajemen seleksi:", error);
-        res.status(500).send("Gagal memuat halaman.");
+        res.status(500).send("Gagal memuat halaman edit");
     }
 };
 
-exports.updateSelectionStatus = async (req, res) => {
+/**
+ * Menangani pembaruan data program.
+ */
+exports.handleUpdateProgram = async (req, res) => {
     try {
-        const { applicationId } = req.params;
-        const { status } = req.body;
-        await Aplikasi.updateStatus(applicationId, { status: status });
-        res.redirect("/pengurus/seleksi");
+        const success = await Program.update(req.params.id, req.body);
+        if (success) {
+            res.redirect('/mahasiswa/program/' + req.params.id);
+        } else {
+            res.status(404).send('Gagal memperbarui, program tidak ditemukan.');
+        }
     } catch (error) {
-        console.error("Gagal memperbarui status:", error);
-        res.redirect("/pengurus/seleksi?error=update_failed");
+        res.status(500).send("Gagal memperbarui program");
     }
 };
 
-// --- Manajemen Jadwal ---
-exports.showJadwalPage = async (req, res) => {
+/**
+ * Menangani penghapusan program.
+ */
+exports.handleDeleteProgram = async (req, res) => {
     try {
-        const centerId = req.user.volunteer_center_id;
-        const programs = await Program.findByCenter(centerId);
-        const jadwal = await Jadwal.findByCenter(centerId);
-
-        res.render("pengurus/jadwal", {
-            title: "Manajemen Jadwal",
-            active: "jadwal",
-            programs: programs,
-            jadwal: jadwal,
-            error: null,
-        });
+        const success = await Program.deleteById(req.params.id);
+        if (success) {
+            res.redirect('/pengurus/dashboard');
+        } else {
+            res.status(404).send('Gagal menghapus, program tidak ditemukan.');
+        }
     } catch (error) {
-        console.error("Error memuat halaman jadwal:", error);
-        res.status(500).send("Gagal memuat halaman jadwal.");
+        res.status(500).send("Gagal menghapus program");
     }
 };
 
-exports.handleCreateJadwal = async (req, res) => {
-    try {
-        await Jadwal.create(req.body);
-        res.redirect("/pengurus/jadwal");
-    } catch (error) {
-        console.error("Gagal membuat jadwal:", error);
-        const centerId = req.user.volunteer_center_id;
-        const programs = await Program.findByCenter(centerId);
-        const jadwal = await Jadwal.findByCenter(centerId);
-        res.status(500).render("pengurus/jadwal", {
-            title: "Gagal Membuat Jadwal",
-            active: "jadwal",
-            programs: programs,
-            jadwal: jadwal,
-            error: "Terjadi kesalahan saat menyimpan jadwal. Mohon periksa kembali data Anda.",
-        });
-    }
+
+// --- Fungsionalitas lain yang belum diimplementasikan sepenuhnya ---
+
+exports.showSelectionManagement = (req, res) => {
+    res.render('pengurus/seleksi', { title: 'Manajemen Seleksi', user: { name: 'Pengurus Dummy' } });
 };
 
-// --- Komunikasi / Pengumuman ---
-exports.showKomunikasiPage = async (req, res) => {
-    try {
-        const centerId = req.user.volunteer_center_id;
-        const programs = await Program.findByCenter(centerId);
-        const pengumuman = await Pengumuman.findByCenter(centerId);
-
-        res.render("pengurus/komunikasi", {
-            title: "Alat Komunikasi",
-            active: "komunikasi",
-            programs: programs,
-            pengumuman: pengumuman,
-            error: null,
-        });
-    } catch (error) {
-        console.error("Error memuat halaman komunikasi:", error);
-        res.status(500).send("Gagal memuat halaman.");
-    }
+exports.showJadwalPage = (req, res) => {
+    res.render('pengurus/jadwal', { title: 'Jadwal', user: { name: 'Pengurus Dummy' } });
 };
 
-exports.handleKirimPengumuman = async (req, res) => {
-    try {
-        const pengurusId = req.user.id;
-        await Pengumuman.create(req.body, pengurusId);
-        res.redirect("/pengurus/komunikasi");
-    } catch (error) {
-        console.error("Gagal mengirim pengumuman:", error);
-        const centerId = req.user.volunteer_center_id;
-        const programs = await Program.findByCenter(centerId);
-        const pengumuman = await Pengumuman.findByCenter(centerId);
-        res.status(500).render("pengurus/komunikasi", {
-            title: "Gagal Mengirim",
-            active: "komunikasi",
-            programs,
-            pengumuman,
-            error: "Terjadi kesalahan saat mengirim pengumuman.",
-        });
-    }
+exports.handleCreateJadwal = (req, res) => {
+    res.redirect('/pengurus/jadwal');
 };
 
-// --- Halaman Lainnya ---
-exports.showDocumentValidation = (req, res) => {
-    res.render("pengurus/validasi-dokumen", {
-        title: "Validasi Dokumen",
-        active: "validasi",
-    });
+exports.showKomunikasiPage = (req, res) => {
+    res.render('pengurus/komunikasi', { title: 'Komunikasi', user: { name: 'Pengurus Dummy' } });
 };
 
-exports.showAnalytics = async (req, res) => {
-    try {
-        const centerId = req.user.volunteer_center_id;
-        const stats = await Aplikasi.getStatisticsForCenter(centerId);
-
-        res.render("pengurus/statistik", {
-            title: "Statistik & Analitik",
-            active: "analitik",
-            stats: stats,
-            error: null,
-        });
-    } catch (error) {
-        console.error("Error memuat halaman statistik:", error);
-        res.status(500).send("Gagal memuat halaman statistik.");
-    }
+exports.showStatistikPage = (req, res) => {
+    res.render('pengurus/statistik', { title: 'Statistik', user: { name: 'Pengurus Dummy' } });
 };
