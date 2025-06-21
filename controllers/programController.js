@@ -34,23 +34,40 @@ exports.getAllProgramsForUser = async (req, res) => {
 // Menampilkan detail satu program
 exports.getProgramDetail = async (req, res) => {
     try {
-        const programId = req.params.id;
-
-        // TODO: Ganti dengan query SQL manual untuk mengambil satu program berdasarkan ID
-        // Contoh:
-        // const [rows] = await db.promise().query("SELECT * FROM program WHERE id = ?", [programId]);
-        // const program = rows[0];
-
-        // Untuk sekarang, kirim objek kosong
-        const program = {};
-
-        if (!program) {
+        const programId = parseInt(req.params.id);
+        const { programData } = require('../models/staticData');
+        // Cari program berdasarkan id
+        const programRaw = programData.find(p => p.id === programId);
+        if (!programRaw) {
             return res.status(404).send("Program tidak ditemukan.");
         }
-
-        res.render('mahasiswa/detail-program', { // Atau view lain yang sesuai
+        // Dummy data detail (bisa diubah sesuai kebutuhan)
+        const program = {
+            _id: programRaw.id,
+            nama: programRaw.judul,
+            penyelenggara: programRaw.pusat,
+            gambar: null, // tambahkan path gambar jika ada
+            deskripsi: `Deskripsi lengkap untuk program ${programRaw.judul}.`,
+            persyaratan: [
+                'Mahasiswa aktif Unand',
+                'Bersedia mengikuti seluruh rangkaian program',
+                'Memiliki komitmen tinggi'
+            ],
+            manfaat: [
+                'Pengalaman organisasi',
+                'Sertifikat volunteer',
+                'Relasi dan networking'
+            ],
+            durasi: programRaw.durasi,
+            kontak: {
+                nama: 'Koordinator Pusat',
+                wa: '6281234567890',
+                email: 'koordinator@unand.ac.id'
+            }
+        };
+        res.render('mahasiswa/detail-program', {
             title: 'Detail Program',
-          
+            user: { name: 'Naufal H.', role: 'Mahasiswa' }, // Dummy user, ganti dengan session jika ada
             program: program,
             currentRoute: ''
         });
