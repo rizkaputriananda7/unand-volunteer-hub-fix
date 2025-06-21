@@ -10,10 +10,10 @@
     // (Belum ada fungsi program volunteer di userController, bisa tambahkan jika perlu)
 
     // 3. Pendaftaran
-    // (Belum ada fungsi pendaftaran di userController, bisa tambahkan jika perlu)
+    router.get('/pendaftaran', userController.getHalamanPendaftaran);
 
     // 4. Deadline
-    router.get('/deadline', userController.getDeadline);
+    //router.get('/deadline', userController.getDeadline);
 
     // 5. Status Pendaftaran
     router.get('/status-pendaftaran', userController.getStatusPendaftaran);

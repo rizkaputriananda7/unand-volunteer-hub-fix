@@ -6,7 +6,7 @@
  */
 
 // Impor semua data statis dari satu sumber di bagian paling atas
-const { userData, programData, registrationsData, bookmarkedPrograms, historyData } = require('../models/staticData');
+const { userData, programData, registrationsData, bookmarkedPrograms } = require('../models/staticData');
 
 // Fungsi untuk menampilkan dashboard volunteer (mahasiswa)
 exports.showMahasiswaDashboard = (req, res) => {
@@ -129,12 +129,69 @@ exports.getKalender = (req, res) => {
     });
 };
 
-// Fungsi untuk menampilkan halaman deadline
-exports.getDeadline = (req, res) => {
-    res.render('mahasiswa/deadline', {
-        title: 'Deadline',
-        layout: 'mahasiswa/layout', // Menambahkan layout konsisten
-        currentRoute: '/mahasiswa/deadline'
+// Fungsi untuk menampilkan halaman deadline pendaftaran
+exports.getHalamanPendaftaran = (req, res) => {
+    // Simulasi user login
+    const user = { name: 'Iqbal H.', nim: '2211522020', email: 'iqbalh@student.unand.ac.id', phone: '081234567890', role: 'Mahasiswa' };
+    const userId = 101;
+    const now = new Date();
+
+    // Data dummy untuk program yang akan didaftarkan
+    const programToRegister = {
+        id: 1,
+        name: 'Volunteer Mengajar di Panti Asuhan',
+        deadline: new Date(new Date().getTime() + (1.5 * 24 * 60 * 60 * 1000)),
+        description: 'Sebuah program untuk memberikan bimbingan belajar dan keceriaan kepada anak-anak di panti asuhan sekitar kampus Unand. Dicari volunteer yang sabar dan suka berinteraksi dengan anak-anak.'
+    };
+
+    let announcements = [];
+
+    // 1. Cek jika user punya pendaftaran yang belum di-submit (draft)
+    const draftRegistration = registrationsData.find(reg => reg.userId === userId && reg.status === 'draft');
+    if (draftRegistration) {
+        const program = allPrograms.find(p => p.id === draftRegistration.programId);
+        if(program){
+             announcements.push({
+                type: 'info',
+                message: `Anda memiliki pendaftaran yang belum selesai untuk program <b>"${program.name}"</b>. Segera selesaikan sebelum terlambat!`
+            });
+        }
+    }
+
+    // 2. Cek program yang di-bookmark yang mendekati deadline
+    bookmarkedPrograms.forEach(programId => {
+        const program = allPrograms.find(p => p.id === programId);
+        if (program && program.deadline) {
+            const timeLeft = program.deadline.getTime() - now.getTime();
+            const hoursLeft = timeLeft / (1000 * 60 * 60);
+
+            if (hoursLeft > 0 && hoursLeft <= 12) {
+                announcements.push({
+                    type: 'danger',
+                    message: `Perhatian! Pendaftaran untuk program favorit Anda, <b>"${program.name}"</b>, akan ditutup dalam <b>kurang dari 12 jam</b>.`
+                });
+            } else if (hoursLeft > 0 && hoursLeft <= 48) { // Mencakup 1 sampai 2 hari
+                announcements.push({
+                    type: 'warning',
+                    message: `Jangan sampai terlewat! Pendaftaran untuk program <b>"${program.name}"</b> akan ditutup dalam <b>2 hari</b>.`
+                });
+            }
+        }
+    });
+
+    // 3. Jika tidak ada notifikasi apa pun, tampilkan pesan default
+    if (announcements.length === 0) {
+        announcements.push({
+            type: 'success',
+            message: 'Anda tidak memiliki deadline pendaftaran program dalam waktu dekat. Waktu yang tepat untuk mencari program baru!'
+        });
+    }
+    
+    res.render('mahasiswa/pendaftaran', {
+        title: 'Formulir Pendaftaran',
+        user: user,
+        announcements: announcements,
+        program: programToRegister // Mengirim data program spesifik untuk formulir
     });
 };
 
