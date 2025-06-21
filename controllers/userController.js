@@ -100,11 +100,27 @@ exports.getBookmark = (req, res) => {
 };
 
 // Fungsi untuk menampilkan halaman riwayat
-exports.getRiwayat = (req, res) => {
-    res.render('mahasiswa/riwayat', {
-        title: 'Riwayat',
-        layout: 'mahasiswa/layout', // Menambahkan layout konsisten
-        currentRoute: '/mahasiswa/riwayat'
+exports.getRiwayatPendaftaran = (req, res) => {
+    // Simulasi user login
+    const user = { name: 'Iqbal H.', role: 'Mahasiswa' };
+    const userId = 101; // ID user dummy
+
+    // Ambil status dari query URL (cth: /riwayat-pendaftaran?status=Diterima)
+    const { status } = req.query;
+
+    // 1. Ambil semua data pendaftaran HANYA untuk user yang login
+    let history = registrationsData.filter(reg => reg.userId === userId);
+
+    // 2. Terapkan filter status JIKA ada
+    if (status && status !== 'semua') {
+        history = history.filter(reg => reg.status === status);
+    }
+
+    res.render('mahasiswa/riwayat-pendaftaran', {
+        // PERBAIKAN: Title disamakan dengan yang ada di sidebar
+        title: 'Riwayat Pendaftaran', 
+        registrations: history, // Kirim data riwayat yang sudah difilter
+        user: user
     });
 };
 

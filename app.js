@@ -22,6 +22,6 @@ app.use(authRoutes);
 app.use(pengurusRoutes);
 app.use(programRoutes);
 app.use(registerRoutes);
-app.use(userRoutes);
+app.use('/mahasiswa', userRoutes);
 
 module.exports = app;
