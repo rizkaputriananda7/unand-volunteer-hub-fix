@@ -14,6 +14,24 @@ class Mahasiswa {
         const [rows] = await db.execute(sql, [id]);
         return rows[0];
     }
+    
+    // --- AWAL TAMBAHAN ---
+    /**
+     * Mencari satu mahasiswa berdasarkan NIM-nya.
+     * @param {string} nim - NIM mahasiswa yang akan dicari.
+     * @returns {Promise<object|null>} Objek mahasiswa jika ditemukan, atau null.
+     */
+    static async findByNim(nim) {
+        const sql = 'SELECT * FROM mahasiswa WHERE nim = ?';
+        try {
+            const [rows] = await db.execute(sql, [nim]);
+            return rows[0] || null;
+        } catch (error) {
+            console.error("Error finding mahasiswa by NIM:", error);
+            throw error;
+        }
+    }
+    // --- AKHIR TAMBAHAN ---
 
     static async create(data) {
         const { nama_lengkap, nim, email, password } = data;

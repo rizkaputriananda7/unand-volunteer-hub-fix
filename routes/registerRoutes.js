@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+// --- AWAL TAMBAHAN ---
+const bcrypt = require('bcryptjs'); // Impor bcryptjs
+// --- AKHIR TAMBAHAN ---
 
 router.get('/register', (req, res) => {
   res.render('register', { error: null });
@@ -34,9 +37,17 @@ router.post('/register', async (req, res) => {
       return res.render('register', { error: 'NIM sudah terdaftar' });
     }
 
-    // Simpan user baru
-    await db.query('INSERT INTO mahasiswa (nim, nama, password) VALUES (?, ?, ?)', [nim, nama, password]);
-    res.send('Pendaftaran berhasil!');
+    // --- AWAL PERUBAHAN ---
+    // Enkripsi password sebelum disimpan
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Simpan user baru dengan password yang sudah di-hash
+    await db.query('INSERT INTO mahasiswa (nim, nama, password) VALUES (?, ?, ?)', [nim, nama, hashedPassword]);
+    
+    // Redirect ke halaman login setelah berhasil mendaftar
+    res.redirect('/auth/mahasiswa/login');
+    // --- AKHIR PERUBAHAN ---
+
   } catch (err) {
     console.error(err);
     res.render('register', { error: 'Terjadi kesalahan saat mendaftar' });

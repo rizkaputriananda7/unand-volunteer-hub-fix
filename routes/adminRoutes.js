@@ -3,6 +3,15 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
+// --- AWAL TAMBAHAN ---
+const authController = require('../controllers/authController'); // Impor authController
+
+// Rute untuk menampilkan halaman login admin
+router.get('/login', authController.showAdminLoginPage);
+
+// Rute untuk menangani submit form login admin
+router.post('/login', authController.handleAdminLogin);
+// --- AKHIR TAMBAHAN ---
 
 // Rute untuk dashboard admin
 router.get('/dashboard', adminController.showDashboard);

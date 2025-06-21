@@ -1,42 +1,52 @@
-    const express = require('express');
-    const router = express.Router();
-    const userController = require('../controllers/userController');
+const express = require('express');
+const router = express.Router();
+const userController = require('../controllers/userController');
+// --- AWAL TAMBAHAN ---
+const authController = require('../controllers/authController'); // Impor authController
 
-    // 1. Dashboard
-    router.get('/dashboard', userController.showMahasiswaDashboard);
-    router.get('/mahasiswa/dashboard', userController.showMahasiswaDashboard);
+// Rute untuk menampilkan halaman login mahasiswa
+router.get('/login', authController.showMahasiswaLoginPage);
 
-    // 2. Program Volunteer
-    // (Belum ada fungsi program volunteer di userController, bisa tambahkan jika perlu)
+// Rute untuk menangani submit form login mahasiswa
+router.post('/login', authController.handleMahasiswaLogin);
+// --- AKHIR TAMBAHAN ---
 
-    // 3. Pendaftaran
-    router.get('/pendaftaran', userController.getHalamanPendaftaran);
 
-    // 4. Deadline
-    //router.get('/deadline', userController.getDeadline);
+// 1. Dashboard
+// router.get('/dashboard', userController.showMahasiswaDashboard); // Duplikat
+router.get('/dashboard', userController.showMahasiswaDashboard);
 
-    // 5. Status Pendaftaran
-    router.get('/status-pendaftaran', userController.getStatusPendaftaran);
+// 2. Program Volunteer
+// (Belum ada fungsi program volunteer di userController, bisa tambahkan jika perlu)
 
-    // 6. Pengumuman
-    // (Belum ada fungsi pengumuman di userController, bisa tambahkan jika perlu)
+// 3. Pendaftaran
+router.get('/pendaftaran', userController.getHalamanPendaftaran);
 
-    // 7. Kalender Pendaftaran
-    router.get('/kalender', userController.getKalender);
+// 4. Deadline
+//router.get('/deadline', userController.getDeadline);
 
-    // 8. Riwayat Pendaftaran
-    router.get('/riwayat-pendaftaran', userController.getRiwayatPendaftaran);
+// 5. Status Pendaftaran
+router.get('/status-pendaftaran', userController.getStatusPendaftaran);
 
-    // 9. FAQ
-    // (Belum ada fungsi FAQ di userController, bisa tambahkan jika perlu)
+// 6. Pengumuman
+// (Belum ada fungsi pengumuman di userController, bisa tambahkan jika perlu)
 
-    // Bookmark Program
-    router.get('/bookmark', userController.getBookmark);
-    router.post('/program/:id/bookmark', userController.addBookmark);
-    router.post('/bookmark/:id/delete', userController.deleteBookmark);
-    router.get('/mahasiswa/bookmark', userController.getBookmark);
-    router.post('/mahasiswa/program/:id/bookmark', userController.addBookmark);
+// 7. Kalender Pendaftaran
+router.get('/kalender', userController.getKalender);
 
-    router.get('/mahasiswa/status-pendaftaran', userController.getStatusPendaftaran);
+// 8. Riwayat Pendaftaran
+router.get('/riwayat-pendaftaran', userController.getRiwayatPendaftaran);
 
-    module.exports = router;
+// 9. FAQ
+// (Belum ada fungsi FAQ di userController, bisa tambahkan jika perlu)
+
+// Bookmark Program
+router.get('/bookmark', userController.getBookmark);
+router.post('/program/:id/bookmark', userController.addBookmark);
+router.post('/bookmark/:id/delete', userController.deleteBookmark);
+// router.get('/mahasiswa/bookmark', userController.getBookmark); // Duplikat
+router.post('/mahasiswa/program/:id/bookmark', userController.addBookmark);
+
+// router.get('/mahasiswa/status-pendaftaran', userController.getStatusPendaftaran); // Duplikat
+
+module.exports = router;

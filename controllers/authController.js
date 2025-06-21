@@ -2,12 +2,12 @@
 
 const Admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
+const Mahasiswa = require('../models/Mahasiswa'); 
 
 /**
  * FUNGSI YANG DITAMBAHKAN KEMBALI: Menampilkan halaman pemilihan peran.
  */
 exports.showRoleSelection = (req, res) => {
-    // Pastikan Anda memiliki view bernama 'role_pengguna.ejs' di folder 'src/views/'
     res.render('role_pengguna', { 
         title: 'Selamat Datang'
     });
@@ -69,22 +69,53 @@ exports.handleAdminLogin = async (req, res) => {
     }
 };
 
-// --- Placeholder untuk fungsi login lainnya ---
 
-exports.handleMahasiswaLogin = (req, res) => {
-    res.redirect('/mahasiswa/dashboard');
+// --- AWAL PERUBAHAN ---
+/**
+ * Menangani proses login DUMMY untuk Mahasiswa.
+ * Tidak peduli apa yang diinput, akan selalu login sebagai pengguna "Mahasiswa Dummy".
+ */
+exports.handleMahasiswaLogin = async (req, res) => {
+    // Semua input dari form (nim, password, dll) akan diabaikan.
+
+    try {
+        // Langsung buat sesi untuk pengguna dummy.
+        req.session.isLoggedIn = true;
+        req.session.user = {
+            id: 999, // ID palsu
+            nim: '1234567890', // NIM palsu
+            nama: 'Mahasiswa Dummy', // Nama palsu
+            role: 'mahasiswa'
+        };
+
+        // Simpan sesi dan redirect ke dashboard mahasiswa.
+        return req.session.save(err => {
+            if (err) {
+                console.error('Gagal menyimpan sesi:', err);
+                return res.status(500).send('Terjadi kesalahan pada server.');
+            }
+            res.redirect('/mahasiswa/dashboard');
+        });
+
+    } catch (error) {
+        console.error("Error saat login mahasiswa dummy:", error);
+        res.status(500).send('Terjadi kesalahan pada server.');
+    }
 };
+// --- AKHIR PERUBAHAN ---
 
 exports.handlePengurusLogin = (req, res) => {
+    // (Logika untuk login pengurus bisa ditambahkan di sini dengan cara yang sama)
     res.redirect('/pengurus/dashboard');
 };
 
 exports.logout = (req, res) => {
     req.session.destroy(err => {
         if (err) {
+            // Jika ada error, tetap coba redirect
             return res.redirect('/');
         }
-        res.clearCookie('connect.sid');
-        res.redirect('/auth/admin/login');
+        res.clearCookie('connect.sid'); // Hapus cookie sesi
+        res.redirect('/auth'); // Redirect ke halaman pemilihan peran
     });
 };

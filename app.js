@@ -29,6 +29,14 @@ const programRoutes = require('./routes/programRoutes');
 const registerRoutes = require('./routes/registerRoutes');
 const userRoutes = require('./routes/userRoutes');
 
+// --- AWAL TAMBAHAN ---
+// Rute untuk root path (/)
+// Akan mengarahkan pengguna ke halaman pemilihan peran
+app.get('/', (req, res) => {
+    res.redirect('/auth');
+});
+// --- AKHIR TAMBAHAN ---
+
 // Gunakan rute
 app.use('/admin', adminRoutes);
 app.use('/auth', authRoutes);

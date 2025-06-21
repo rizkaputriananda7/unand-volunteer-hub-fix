@@ -1,8 +1,8 @@
 // controllers/pengurusController.js
 
 const Program = require('../models/Program');
-// Kita akan menggunakan model lain nanti, untuk sekarang fokus ke Program
-// const Jadwal = require('../models/Jadwal');
+const Jadwal = require('../models/Jadwal'); // Impor model Jadwal
+const Faq = require('../models/Faq');       // Impor model Faq
 
 /**
  * Menampilkan dashboard pengurus.
@@ -51,9 +51,12 @@ exports.showCreateProgramForm = (req, res) => {
  */
 exports.handleCreateProgram = async (req, res) => {
     try {
-        await Program.create(req.body);
+        // Anda mungkin perlu menambahkan volunteer_center_id dan coordinator_id dari sesi user
+        const programData = { ...req.body, volunteer_center_id: 1, coordinator_id: 1 }; // Contoh
+        await Program.create(programData);
         res.redirect('/pengurus/dashboard');
     } catch (error) {
+        console.error("Gagal membuat program:", error);
         res.status(500).send("Gagal membuat program");
     }
 };
@@ -84,11 +87,13 @@ exports.handleUpdateProgram = async (req, res) => {
     try {
         const success = await Program.update(req.params.id, req.body);
         if (success) {
-            res.redirect('/mahasiswa/program/' + req.params.id);
+            // Redirect ke detail program (jika ada) atau dashboard
+            res.redirect('/pengurus/dashboard');
         } else {
             res.status(404).send('Gagal memperbarui, program tidak ditemukan.');
         }
     } catch (error) {
+        console.error("Gagal memperbarui program:", error);
         res.status(500).send("Gagal memperbarui program");
     }
 };
@@ -105,7 +110,111 @@ exports.handleDeleteProgram = async (req, res) => {
             res.status(404).send('Gagal menghapus, program tidak ditemukan.');
         }
     } catch (error) {
+        console.error("Gagal menghapus program:", error);
         res.status(500).send("Gagal menghapus program");
+    }
+};
+
+/**
+ * FUNGSI BARU: Menampilkan halaman manajemen jadwal untuk suatu program.
+ */
+exports.showJadwalPage = async (req, res) => {
+    try {
+        const programId = req.params.programId;
+        const program = await Program.findById(programId);
+        const jadwal = await Jadwal.findByProgramId(programId);
+
+        if (!program) {
+            return res.status(404).send('Program tidak ditemukan.');
+        }
+
+        res.render('pengurus/jadwal', {
+            title: `Jadwal untuk ${program.title}`,
+            user: { name: 'Pengurus Dummy' },
+            program: program,
+            jadwal: jadwal
+        });
+    } catch (error) {
+        console.error("Error menampilkan halaman jadwal:", error);
+        res.status(500).send("Gagal memuat halaman jadwal.");
+    }
+};
+
+/**
+ * FUNGSI BARU: Menangani pembuatan jadwal baru.
+ */
+exports.handleCreateJadwal = async (req, res) => {
+    const programId = req.params.programId;
+    try {
+        const jadwalData = { ...req.body, program_id: programId };
+        await Jadwal.create(jadwalData);
+        res.redirect(`/pengurus/program/${programId}/jadwal`);
+    } catch (error) {
+        console.error("Gagal membuat jadwal:", error);
+        res.status(500).send("Gagal membuat jadwal baru.");
+    }
+};
+
+/**
+ * FUNGSI BARU: Menangani penghapusan jadwal.
+ */
+exports.handleDeleteJadwal = async (req, res) => {
+    const { programId, jadwalId } = req.params;
+    try {
+        const success = await Jadwal.deleteById(jadwalId);
+        if (!success) {
+            return res.status(404).send('Gagal menghapus, jadwal tidak ditemukan.');
+        }
+        res.redirect(`/pengurus/program/${programId}/jadwal`);
+    } catch (error) {
+        console.error("Gagal menghapus jadwal:", error);
+        res.status(500).send("Gagal menghapus jadwal.");
+    }
+};
+
+/**
+ * FUNGSI BARU: Menampilkan halaman manajemen FAQ.
+ */
+exports.showFaqManagementPage = async (req, res) => {
+    try {
+        const faqs = await Faq.findAll();
+        res.render('pengurus/manage-faq', { // Pastikan Anda punya view 'manage-faq.ejs'
+            title: 'Manajemen FAQ',
+            user: { name: 'Pengurus Dummy' },
+            faqs: faqs
+        });
+    } catch (error) {
+        console.error("Error menampilkan halaman FAQ:", error);
+        res.status(500).send("Gagal memuat halaman FAQ.");
+    }
+};
+
+/**
+ * FUNGSI BARU: Menangani pembuatan FAQ baru.
+ */
+exports.handleCreateFaq = async (req, res) => {
+    try {
+        await Faq.create(req.body);
+        res.redirect('/pengurus/faq');
+    } catch (error) {
+        console.error("Gagal membuat FAQ:", error);
+        res.status(500).send("Gagal membuat FAQ.");
+    }
+};
+
+/**
+ * FUNGSI BARU: Menangani penghapusan FAQ.
+ */
+exports.handleDeleteFaq = async (req, res) => {
+    try {
+        const success = await Faq.deleteById(req.params.id);
+        if (!success) {
+            return res.status(404).send('Gagal menghapus, FAQ tidak ditemukan.');
+        }
+        res.redirect('/pengurus/faq');
+    } catch (error) {
+        console.error("Gagal menghapus FAQ:", error);
+        res.status(500).send("Gagal menghapus FAQ.");
     }
 };
 
@@ -113,21 +222,16 @@ exports.handleDeleteProgram = async (req, res) => {
 // --- Fungsionalitas lain yang belum diimplementasikan sepenuhnya ---
 
 exports.showSelectionManagement = (req, res) => {
+    // Anda perlu membuat view 'pengurus/seleksi.ejs'
     res.render('pengurus/seleksi', { title: 'Manajemen Seleksi', user: { name: 'Pengurus Dummy' } });
 };
 
-exports.showJadwalPage = (req, res) => {
-    res.render('pengurus/jadwal', { title: 'Jadwal', user: { name: 'Pengurus Dummy' } });
-};
-
-exports.handleCreateJadwal = (req, res) => {
-    res.redirect('/pengurus/jadwal');
-};
-
 exports.showKomunikasiPage = (req, res) => {
+    // Anda perlu membuat view 'pengurus/komunikasi.ejs'
     res.render('pengurus/komunikasi', { title: 'Komunikasi', user: { name: 'Pengurus Dummy' } });
 };
 
 exports.showStatistikPage = (req, res) => {
+    // Anda perlu membuat view 'pengurus/statistik.ejs'
     res.render('pengurus/statistik', { title: 'Statistik', user: { name: 'Pengurus Dummy' } });
 };

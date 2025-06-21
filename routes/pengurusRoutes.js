@@ -3,6 +3,16 @@
 const express = require('express');
 const router = express.Router();
 const pengurusController = require('../controllers/pengurusController');
+// --- AWAL TAMBAHAN ---
+const authController = require('../controllers/authController'); // Impor authController
+
+// Rute untuk menampilkan halaman login pengurus
+router.get('/login', authController.showPengurusLoginPage);
+
+// Rute untuk menangani submit form login pengurus
+router.post('/login', authController.handlePengurusLogin);
+// --- AKHIR TAMBAHAN ---
+
 
 // Rute ini mengasumsikan semua logika program ada di pengurusController
 // Jika beberapa ada di programController, sesuaikan require di atas dan pemanggilan di bawah
@@ -30,8 +40,8 @@ router.post('/faq/:id/delete', pengurusController.handleDeleteFaq);
 
 // Fitur Pengurus Lainnya (yang belum diimplementasi penuh)
 router.get('/seleksi', pengurusController.showSelectionManagement);
-router.get('/jadwal', pengurusController.showJadwalPage);
-router.post('/jadwal/create', pengurusController.handleCreateJadwal);
+// router.get('/jadwal', pengurusController.showJadwalPage); // Duplikat, sudah ada di atas
+// router.post('/jadwal/create', pengurusController.handleCreateJadwal); // Duplikat, sudah ada di atas
 router.get('/komunikasi', pengurusController.showKomunikasiPage);
 router.get('/statistik', pengurusController.showStatistikPage);
 
