@@ -1,4 +1,5 @@
 // routes/adminRoutes.js
+
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
@@ -6,13 +7,21 @@ const adminController = require('../controllers/adminController');
 // Rute untuk dashboard admin
 router.get('/dashboard', adminController.showDashboard);
 
-// Rute untuk kelola pengguna
-router.get('/users', adminController.showUserManagement);
+// --- RUTE BARU UNTUK KELOLA PENGGUNA ---
+// Halaman utama untuk melihat semua pengguna
+router.get('/users', adminController.showUserManagementPage);
 
-// --- RUTE BARU UNTUK KELOLA PUSAT VOLUNTEER ---
-router.get('/centers', adminController.showVCManagement);
-router.post('/centers/:id/delete', adminController.deleteVC);
+// Rute untuk menghapus akun mahasiswa
+router.post('/users/mahasiswa/:id/delete', adminController.handleDeleteMahasiswa);
 
-router.get('/analytics', adminController.showAnalyticsPage);
+// Rute untuk menghapus akun pengurus
+router.post('/users/pengurus/:id/delete', adminController.handleDeletePengurus);
 
-module.exports = router;
+
+// Rute lain yang mungkin sudah ada atau akan ditambahkan nanti
+// router.get('/centers', adminController.showVCManagement);
+// router.post('/centers/:id/delete', adminController.deleteVC);
+// router.get('/analytics', adminController.showAnalyticsPage);
+
+
+module.exports = router;

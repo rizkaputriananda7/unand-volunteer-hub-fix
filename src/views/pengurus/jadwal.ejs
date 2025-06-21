@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/tailwind.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <a href="/pengurus/dashboard" class="text-blue-600 hover:underline mb-4 inline-block">&larr; Kembali ke Dashboard</a>
+        <h1 class="text-3xl font-bold text-gray-800"><%= program.title %></h1>
+        <p class="text-lg text-gray-600 mb-8">Manajemen Jadwal Pendaftaran & Seleksi</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4">Daftar Jadwal</h2>
+                <% if (jadwal.length > 0) { %>
+                    <ul class="space-y-4">
+                        <% jadwal.forEach(j => { %>
+                            <li class="p-4 border rounded-lg flex justify-between items-start">
+                                <div>
+                                    <p class="font-bold text-lg"><%= j.nama_acara %></p>
+                                    <p class="text-sm text-gray-500"><%= j.tanggal_formatted %></p>
+                                    <p class="mt-2 text-gray-700"><%= j.deskripsi_acara %></p>
+                                </div>
+                                <form action="/pengurus/program/<%= program.id %>/jadwal/<%= j.id %>/delete" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?');">
+                                    <button type="submit" class="text-red-500 hover:text-red-700 font-semibold">Hapus</button>
+                                </form>
+                            </li>
+                        <% }) %>
+                    </ul>
+                <% } else { %>
+                    <p class="text-gray-500">Belum ada jadwal yang ditambahkan untuk program ini.</p>
+                <% } %>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4">Tambah Jadwal Baru</h2>
+                <form action="/pengurus/program/<%= program.id %>/jadwal/create" method="POST">
+                    <div class="mb-4">
+                        <label for="nama_acara" class="block text-gray-700 font-semibold mb-2">Nama Acara</label>
+                        <input type="text" id="nama_acara" name="nama_acara" placeholder="Contoh: Wawancara Online" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="tanggal_acara" class="block text-gray-700 font-semibold mb-2">Tanggal & Waktu</label>
+                        <input type="datetime-local" id="tanggal_acara" name="tanggal_acara" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="deskripsi_acara" class="block text-gray-700 font-semibold mb-2">Deskripsi (Opsional)</label>
+                        <textarea id="deskripsi_acara" name="deskripsi_acara" rows="4" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700">
+                        Tambah Jadwal
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

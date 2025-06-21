@@ -1,61 +1,90 @@
+// controllers/authController.js
+
+const Admin = require('../models/Admin');
+const bcrypt = require('bcryptjs');
+
 /**
- * controllers/authController.js (Versi dengan Data Statis)
- * * Menggunakan data statis untuk simulasi login sesuai permintaan.
+ * FUNGSI YANG DITAMBAHKAN KEMBALI: Menampilkan halaman pemilihan peran.
  */
-
-// const { userData } = require('../models/staticData'); // Baris ini bisa diaktifkan jika Anda memiliki file staticData.js
-
-// 1. Fungsi untuk menampilkan halaman pemilihan peran
 exports.showRoleSelection = (req, res) => {
-    res.render('role_pengguna', { // Pastikan view 'role_pengguna.ejs' ada
+    // Pastikan Anda memiliki view bernama 'role_pengguna.ejs' di folder 'src/views/'
+    res.render('role_pengguna', { 
         title: 'Selamat Datang'
     });
 };
 
-// 2. Fungsi untuk menampilkan halaman login mahasiswa
-exports.showMahasiswaLoginPage = (req, res) => {
-    res.render('mahasiswa/login', { 
-        title: 'Login Mahasiswa',
-        error: null 
-    });
+
+// Fungsi untuk menampilkan halaman login
+exports.showAdminLoginPage = (req, res) => {
+    res.render('admin/login', { title: 'Login Admin', error: null });
 };
 
-// 3. Fungsi untuk menangani submit form login mahasiswa
+exports.showMahasiswaLoginPage = (req, res) => {
+    res.render('mahasiswa/login', { title: 'Login Mahasiswa', error: null });
+};
+
+exports.showPengurusLoginPage = (req, res) => {
+    res.render('pengurus/login', { title: 'Login Pengurus', error: null });
+};
+
+
+/**
+ * Menangani proses login untuk Admin dengan verifikasi database & session.
+ */
+exports.handleAdminLogin = async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const admin = await Admin.findByUsername(username);
+
+        if (!admin) {
+            return res.render('admin/login', { title: 'Login Admin', error: 'Username atau password salah.' });
+        }
+
+        const isMatch = await bcrypt.compare(password, admin.password);
+
+        if (!isMatch) {
+            return res.render('admin/login', { title: 'Login Admin', error: 'Username atau password salah.' });
+        }
+
+        req.session.isLoggedIn = true;
+        req.session.user = {
+            id: admin.id,
+            username: admin.username,
+            nama_lengkap: admin.nama_lengkap,
+            role: 'admin'
+        };
+
+        return req.session.save(err => {
+            if (err) {
+                console.log(err);
+                return res.status(500).send('Gagal menyimpan sesi.');
+            }
+            res.redirect('/admin/dashboard');
+        });
+
+    } catch (error) {
+        console.error("Error during admin login:", error);
+        res.status(500).send('Terjadi kesalahan pada server.');
+    }
+};
+
+// --- Placeholder untuk fungsi login lainnya ---
+
 exports.handleMahasiswaLogin = (req, res) => {
-    // Untuk saat ini, langsung arahkan ke dashboard.
     res.redirect('/mahasiswa/dashboard');
 };
 
-// 4. Fungsi untuk menampilkan halaman login pengurus
-exports.showPengurusLoginPage = (req, res) => {
-    res.render('pengurus/login', { 
-        title: 'Login Pengurus', 
-        error: null 
-    });
-};
-
-// 5. Fungsi untuk menangani login pengurus
 exports.handlePengurusLogin = (req, res) => {
-    // Arahkan ke dashboard pengurus setelah login
     res.redirect('/pengurus/dashboard');
 };
 
-// 6. Fungsi untuk menampilkan halaman login admin
-exports.showAdminLoginPage = (req, res) => {
-    res.render('admin/login', { 
-        title: 'Login Admin', 
-        error: null 
-    });
-};
-
-// 7. Fungsi untuk menangani login admin
-exports.handleAdminLogin = (req, res) => {
-    // Arahkan ke dashboard admin setelah login
-    res.redirect('/admin/dashboard');
-};
-
-// 8. Fungsi untuk menangani logout (jika diperlukan)
 exports.logout = (req, res) => {
-    // TODO: Implementasikan logika untuk menghancurkan session
-    res.redirect('/'); // Redirect ke halaman utama atau pemilihan peran
+    req.session.destroy(err => {
+        if (err) {
+            return res.redirect('/');
+        }
+        res.clearCookie('connect.sid');
+        res.redirect('/auth/admin/login');
+    });
 };

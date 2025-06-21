@@ -1,155 +1,71 @@
-/**
- * controllers/adminController.js (Diperbaiki)
- * * Semua logika Sequelize dan data statis telah dihapus.
- * * Placeholder untuk query SQL manual telah ditambahkan.
- * * Nama fungsi disesuaikan dengan file rute.
- */
+// controllers/adminController.js
+const Mahasiswa = require('../models/Mahasiswa');
+const Pengurus = require('../models/Pengurus');
 
-// const db = require('../config/database'); // Akan digunakan nanti
-
-/**
- * Fungsi untuk menampilkan dashboard admin beserta statistik ringkasan.
- */
-exports.showDashboard = async (req, res) => {
-    try {
-        // TODO: Ganti dengan query SQL untuk mendapatkan statistik
-        // Contoh:
-        // const [userRows] = await db.query("SELECT COUNT(*) as totalUsers FROM users");
-        // const [programRows] = await db.query("SELECT COUNT(*) as totalPrograms FROM program");
-        // const stats = { totalUsers: userRows[0].totalUsers, totalPrograms: programRows[0].totalPrograms };
-        
-        const stats = {
-            totalUsers: 0,
-            totalPusat: 0,
-            totalProgram: 0,
-            totalPengumuman: 0
-        };
-
-        res.render('admin/dashboard', {
-            title: 'Dashboard Admin',
-           
-            stats: stats
-        });
-    } catch (error) {
-        console.error("Error di showDashboard:", error);
-        res.status(500).send("Terjadi kesalahan pada server.");
-    }
+// ... (fungsi showDashboard tetap sama)
+exports.showDashboard = (req, res) => {
+    const user = req.session.user || { nama_lengkap: 'Admin' };
+    const stats = { totalUsers: 0, totalPusat: 0 };
+    res.render('admin/dashboard', { title: 'Dashboard', user: user, stats: stats });
 };
 
 /**
- * Fungsi untuk menampilkan halaman Kelola Pengguna dengan fitur pencarian.
+ * FUNGSI YANG DIPERBARUI: Menyiapkan data gabungan untuk halaman manajemen pengguna.
  */
-exports.showUserManagement = async (req, res) => {
+exports.showUserManagementPage = async (req, res) => {
     try {
-        const searchQuery = req.query.q || '';
-        let users = [];
+        const allMahasiswa = await Mahasiswa.findAll();
+        const allPengurus = await Pengurus.findAll();
 
-        // TODO: Ganti dengan query SQL manual untuk mencari pengguna
-        // Contoh:
-        // let query = "SELECT * FROM users";
-        // const params = [];
-        // if (searchQuery) {
-        //     query += " WHERE nama LIKE ? OR nim_nip LIKE ?";
-        //     params.push(`%${searchQuery}%`, `%${searchQuery}%`);
-        // }
-        // const [users] = await db.query(query, params);
+        // 1. Gabungkan data mahasiswa ke dalam format yang diinginkan view
+        const users = allMahasiswa.map(mhs => ({
+            id: mhs.id,
+            nama: mhs.nama_lengkap,
+            nim_nip: mhs.nim,
+            role: 'Mahasiswa',
+            status: 'Aktif' // Status bisa dibuat dinamis nanti
+        }));
+
+        // 2. Gabungkan data pengurus ke dalam format yang sama
+        allPengurus.forEach(p => {
+            users.push({
+                id: p.id,
+                nama: p.nama_lengkap,
+                nim_nip: p.username, // Menggunakan username sebagai pengganti NIP
+                role: 'Pengurus',
+                status: 'Aktif'
+            });
+        });
         
-        res.render('admin/user-management', { // Ganti nama view jika perlu, misal 'admin/manage-users'
+        // 3. Render view dengan satu array 'users'
+        res.render('admin/manage-users', {
             title: 'Kelola Pengguna',
-           
-            users: users,
-            searchQuery: searchQuery
+            user: req.session.user,
+            users: users, // Mengirim satu array gabungan
+            searchQuery: '' // Mengirim query pencarian kosong
         });
     } catch (error) {
-        console.error("Error di showUserManagement:", error);
-        res.status(500).send("Terjadi kesalahan pada server.");
+        console.error("Error fetching users for admin:", error);
+        res.status(500).send('Gagal memuat data pengguna.');
     }
 };
 
-/**
- * Fungsi untuk memproses aksi hapus pengguna.
- */
-exports.deleteUser = async (req, res) => {
+// ... (fungsi handleDeleteMahasiswa dan handleDeletePengurus tetap sama)
+exports.handleDeleteMahasiswa = async (req, res) => {
     try {
-        const userId = req.params.id;
-        // TODO: Tambahkan logika hapus user dengan SQL manual
-        // Contoh:
-        // await db.query("DELETE FROM users WHERE id = ?", [userId]);
+        await Mahasiswa.deleteById(req.params.id);
         res.redirect('/admin/users');
     } catch (error) {
-        console.error("Error di deleteUser:", error);
-        res.status(500).send("Gagal menghapus pengguna.");
+        console.error("Error deleting mahasiswa:", error);
+        res.status(500).send('Gagal menghapus akun mahasiswa.');
     }
 };
-
-
-/**
- * Fungsi untuk menampilkan halaman Kelola Pusat Volunteer.
- */
-exports.showVCManagement = async (req, res) => {
+exports.handleDeletePengurus = async (req, res) => {
     try {
-        // TODO: Tambahkan logika untuk mengambil data pusat volunteer dari database
-        // Contoh:
-        // const [centers] = await db.query("SELECT * FROM volunteer_center");
-        const volunteerCenters = [];
-
-        res.render('admin/vc-management', { // Ganti nama view jika perlu, misal 'admin/manage-centers'
-            title: 'Kelola Pusat Volunteer',
-          
-            volunteerCenters: volunteerCenters
-        });
+        await Pengurus.deleteById(req.params.id);
+        res.redirect('/admin/users');
     } catch (error) {
-        console.error("Error di showVCManagement:", error);
-        res.status(500).send("Terjadi kesalahan pada server.");
-    }
-};
-
-/**
- * Fungsi untuk memproses aksi hapus pusat volunteer.
- */
-exports.deleteVC = async (req, res) => {
-    try {
-        const centerId = req.params.id;
-        // TODO: Tambahkan logika hapus VC dengan SQL manual
-        // Contoh:
-        // await db.query("DELETE FROM volunteer_center WHERE id = ?", [centerId]);
-        res.redirect('/admin/vc');
-    } catch (error) {
-        console.error("Error di deleteVC:", error);
-        res.status(500).send("Gagal menghapus pusat volunteer.");
-    }
-};
-
-/**
- * Fungsi untuk menampilkan halaman analitik.
- * CATATAN: Rute untuk ini perlu ditambahkan di `routes/adminRoutes.js`
- */
-exports.showAnalyticsPage = async (req, res) => {
-    try {
-        // TODO: Tambahkan logika untuk mengambil data distribusi pendaftar per pusat
-        // Contoh query bisa lebih kompleks, mungkin memerlukan JOIN
-        // const query = `
-        //     SELECT vc.nama, COUNT(p.id) as count
-        //     FROM volunteer_center vc
-        //     LEFT JOIN program pr ON vc.id = pr.pusat_id
-        //     LEFT JOIN pendaftaran p ON pr.id = p.program_id
-        //     GROUP BY vc.nama;
-        // `;
-        // const [results] = await db.query(query);
-        // const distribution = results.reduce((acc, item) => {
-        //     acc[item.nama] = item.count;
-        //     return acc;
-        // }, {});
-
-        const distribution = {};
-
-        res.render('admin/analytics', {
-            title: 'Analitik',
-          
-            distribution: distribution
-        });
-    } catch(error) {
-        console.error("Error di showAnalyticsPage:", error);
-        res.status(500).send("Terjadi kesalahan pada server.");
+        console.error("Error deleting pengurus:", error);
+        res.status(500).send('Gagal menghapus akun pengurus.');
     }
 };

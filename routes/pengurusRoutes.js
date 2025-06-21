@@ -17,7 +17,18 @@ router.get('/program/:id/edit', pengurusController.showEditProgramForm);
 router.post('/program/:id/update', pengurusController.handleUpdateProgram);
 router.post('/program/:id/delete', pengurusController.handleDeleteProgram);
 
-// Fitur Pengurus Lainnya
+// Manajemen Jadwal
+router.get('/program/:programId/jadwal', pengurusController.showJadwalPage);
+router.post('/program/:programId/jadwal/create', pengurusController.handleCreateJadwal);
+router.post('/program/:programId/jadwal/:jadwalId/delete', pengurusController.handleDeleteJadwal);
+
+// --- RUTE BARU UNTUK MANAJEMEN FAQ ---
+router.get('/faq', pengurusController.showFaqManagementPage);
+router.post('/faq/create', pengurusController.handleCreateFaq);
+router.post('/faq/:id/delete', pengurusController.handleDeleteFaq);
+// Rute untuk update FAQ bisa ditambahkan di sini nanti
+
+// Fitur Pengurus Lainnya (yang belum diimplementasi penuh)
 router.get('/seleksi', pengurusController.showSelectionManagement);
 router.get('/jadwal', pengurusController.showJadwalPage);
 router.post('/jadwal/create', pengurusController.handleCreateJadwal);

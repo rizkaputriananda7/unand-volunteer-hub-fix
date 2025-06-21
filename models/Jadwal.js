@@ -39,7 +39,21 @@ class Jadwal {
         }
     }
 
-    // Fungsi untuk update dan delete bisa ditambahkan di sini nanti
+    /**
+     * Menghapus jadwal seleksi berdasarkan ID-nya.
+     * @param {number} jadwalId - ID dari jadwal yang akan dihapus.
+     * @returns {Promise<boolean>} True jika berhasil, false jika gagal.
+     */
+    static async deleteById(jadwalId) {
+        const sql = 'DELETE FROM jadwal_seleksi WHERE id = ?';
+        try {
+            const [result] = await db.execute(sql, [jadwalId]);
+            return result.affectedRows > 0;
+        } catch (error) {
+            console.error("Error deleting schedule by ID:", error);
+            throw error;
+        }
+    }
 }
 
 module.exports = Jadwal;
