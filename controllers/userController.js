@@ -6,7 +6,7 @@
  */
 
 // Impor semua data statis dari satu sumber di bagian paling atas
-const { userData, programData, registrationsData, bookmarkedPrograms } = require('../models/staticData');
+const { userData, programData, registrationsData, bookmarkedPrograms, historyData } = require('../models/staticData');
 
 // Fungsi untuk menampilkan dashboard volunteer (mahasiswa)
 exports.showMahasiswaDashboard = (req, res) => {
@@ -103,23 +103,19 @@ exports.getBookmark = (req, res) => {
 exports.getRiwayatPendaftaran = (req, res) => {
     // Simulasi user login
     const user = { name: 'Iqbal H.', role: 'Mahasiswa' };
-    const userId = 101; // ID user dummy
-
-    // Ambil status dari query URL (cth: /riwayat-pendaftaran?status=Diterima)
+    const userId = 101;
     const { status } = req.query;
 
-    // 1. Ambil semua data pendaftaran HANYA untuk user yang login
+    // Kode di bawah ini sekarang akan berjalan tanpa error karena 'registrationsData' sudah ada.
     let history = registrationsData.filter(reg => reg.userId === userId);
 
-    // 2. Terapkan filter status JIKA ada
     if (status && status !== 'semua') {
         history = history.filter(reg => reg.status === status);
     }
 
     res.render('mahasiswa/riwayat-pendaftaran', {
-        // PERBAIKAN: Title disamakan dengan yang ada di sidebar
-        title: 'Riwayat Pendaftaran', 
-        registrations: history, // Kirim data riwayat yang sudah difilter
+        title: 'Riwayat Pendaftaran',
+        registrations: history,
         user: user
     });
 };
