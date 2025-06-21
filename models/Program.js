@@ -9,13 +9,15 @@ class Program {
      * @returns {Promise<object>} Hasil dari operasi insert.
      */
     static async create(programData) {
-        const { nama_program, deskripsi, persyaratan, durasi, manfaat, kontak, id_pusat_volunteer } = programData;
+        // Menggunakan nama kolom yang sesuai dengan database
+        const { title, description, persyaratan, durasi, manfaat, kontak_narahubung, volunteer_center_id, coordinator_id, tanggal_pelaksanaan, location, quota, pendaftaran_mulai, pendaftaran_akhir } = programData;
+        
         const sql = `
-            INSERT INTO program (nama_program, deskripsi, persyaratan, durasi, manfaat, kontak, id_pusat_volunteer)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO programs (title, description, persyaratan, durasi, manfaat, kontak_narahubung, volunteer_center_id, coordinator_id, tanggal_pelaksanaan, location, quota, pendaftaran_mulai, pendaftaran_akhir)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         try {
-            const [result] = await db.execute(sql, [nama_program, deskripsi, persyaratan, durasi, manfaat, kontak, id_pusat_volunteer]);
+            const [result] = await db.execute(sql, [title, description, persyaratan, durasi, manfaat, kontak_narahubung, volunteer_center_id, coordinator_id, tanggal_pelaksanaan, location, quota, pendaftaran_mulai, pendaftaran_akhir]);
             return result;
         } catch (error) {
             console.error("Error creating program:", error);
@@ -29,7 +31,7 @@ class Program {
      * @returns {Promise<Array>} Array berisi program.
      */
     static async findAllByCenter(centerId) {
-        const sql = 'SELECT * FROM program WHERE id_pusat_volunteer = ? ORDER BY id_program DESC';
+        const sql = 'SELECT * FROM programs WHERE volunteer_center_id = ? ORDER BY id DESC';
         try {
             const [rows] = await db.execute(sql, [centerId]);
             return rows;
@@ -41,13 +43,13 @@ class Program {
 
     /**
      * Mengambil satu data program dari database berdasarkan ID-nya.
-     * @param {number} id - ID dari program yang akan diambil.
+     * @param {number} programId - ID dari program yang akan diambil.
      * @returns {Promise<object|null>} Objek program jika ditemukan, atau null jika tidak.
      */
-    static async findById(id) {
-        const sql = 'SELECT * FROM program WHERE id_program = ?';
+    static async findById(programId) {
+        const sql = 'SELECT * FROM programs WHERE id = ?';
         try {
-            const [rows] = await db.execute(sql, [id]);
+            const [rows] = await db.execute(sql, [programId]);
             return rows[0] || null;
         } catch (error) {
             console.error('Error finding program by ID:', error);
@@ -57,18 +59,18 @@ class Program {
 
     /**
      * Memperbarui data program di database.
-     * @param {number} id - ID dari program yang akan diperbarui.
+     * @param {number} programId - ID dari program yang akan diperbarui.
      * @param {object} programData - Objek berisi data baru untuk program.
      * @returns {Promise<boolean>} True jika berhasil, false jika gagal.
      */
-    static async update(id, programData) {
-        const { nama_program, deskripsi, persyaratan, durasi, manfaat, kontak, id_pusat_volunteer } = programData;
+    static async update(programId, programData) {
+        const { title, description, persyaratan, durasi, manfaat, kontak_narahubung, volunteer_center_id, coordinator_id, tanggal_pelaksanaan, location, quota, pendaftaran_mulai, pendaftaran_akhir } = programData;
         const sql = `
-            UPDATE program SET nama_program = ?, deskripsi = ?, persyaratan = ?, durasi = ?, manfaat = ?, kontak = ?, id_pusat_volunteer = ?
-            WHERE id_program = ?
+            UPDATE programs SET title = ?, description = ?, persyaratan = ?, durasi = ?, manfaat = ?, kontak_narahubung = ?, volunteer_center_id = ?, coordinator_id = ?, tanggal_pelaksanaan = ?, location = ?, quota = ?, pendaftaran_mulai = ?, pendaftaran_akhir = ?
+            WHERE id = ?
         `;
         try {
-            const [result] = await db.execute(sql, [nama_program, deskripsi, persyaratan, durasi, manfaat, kontak, id_pusat_volunteer, id]);
+            const [result] = await db.execute(sql, [title, description, persyaratan, durasi, manfaat, kontak_narahubung, volunteer_center_id, coordinator_id, tanggal_pelaksanaan, location, quota, pendaftaran_mulai, pendaftaran_akhir, programId]);
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Error updating program:', error);
@@ -78,13 +80,13 @@ class Program {
 
     /**
      * Menghapus program dari database berdasarkan ID.
-     * @param {number} id - ID dari program yang akan dihapus.
+     * @param {number} programId - ID dari program yang akan dihapus.
      * @returns {Promise<boolean>} True jika berhasil, false jika gagal.
      */
-    static async deleteById(id) {
-        const sql = 'DELETE FROM program WHERE id_program = ?';
+    static async deleteById(programId) {
+        const sql = 'DELETE FROM programs WHERE id = ?';
         try {
-            const [result] = await db.execute(sql, [id]);
+            const [result] = await db.execute(sql, [programId]);
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Error deleting program by ID:', error);
