@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= typeof title !== 'undefined' ? title : 'Halaman' %> | Unand Volunteer Hub</title>
+    
+    <!-- Link Font dari Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Link Ikon dari Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Link ke file CSS yang sudah dikompilasi oleh Tailwind -->
+    <link href="/css/style.css" rel="stylesheet" />
+</head>
+<body class="flex">
+
+    <!-- Wrapper untuk Konten Utama -->
+    <div class="flex-1 flex flex-col">
+        <header class="bg-white/70 backdrop-blur-sm sticky top-0 z-20 p-4 border-b border-b-[var(--border-color)] flex justify-between items-center">
+             <h2 class="text-2xl font-bold text-text-primary"><%= typeof title !== 'undefined' ? title : 'Halaman' %></h2>
+             <% if (user) { %>
+                <div class="text-right">
+                    <p class="font-semibold text-text-primary">Welcome, <%= user.nama_lengkap %></p>
+                    <p class="text-sm text-text-secondary"><%= user.email %></p>
+                </div>
+             <% } %>
+        </header>
+
+        <main class="flex-1 p-6 overflow-y-auto">
+            <!-- Konten halaman spesifik dari controller akan dirender di sini -->
+            <%- body %>
+        </main>
+    </div>
+
+    <!-- Script JS Anda (jika ada) -->
+    <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<div class="card-container max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-6">Manajemen Seleksi Kandidat</h2>
+
+    <!-- Filter berdasarkan Program -->
+    <div class="mb-6">
+        <label for="program-filter" class="form-label">Tampilkan Pendaftar untuk Program:</label>
+        <select id="program-filter" name="program-filter" class="form-select">
+            <option value="all">Semua Program</option>
+            <% programs.forEach(program => { %>
+                <option value="<%= program.id %>"><%= program.title %></option>
+            <% }) %>
+        </select>
+    </div>
+
+    <!-- Tabel Pendaftar -->
+    <div class="table-container">
+        <table class="table">
+            <thead class="table-header">
+                <tr>
+                    <th class="table-header-cell">Nama Kandidat</th>
+                    <th class="table-header-cell">Program Dilamar</th>
+                    <th class="table-header-cell">Status Saat Ini</th>
+                    <th class="table-header-cell">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                <% if (aplikasi && aplikasi.length > 0) { %>
+                    <% aplikasi.forEach(app => { %>
+                        <tr class="aplikasi-row" data-program-id="<%= app.program_id %>">
+                            <td class="table-body-cell">
+                                <div class="font-semibold"><%= app.nama_mahasiswa %></div>
+                                <div class="text-xs text-gray-500"><%= app.email_mahasiswa %></div>
+                            </td>
+                            <td class="table-body-cell"><%= app.nama_program %></td>
+                            <td class="table-body-cell">
+                                <form action="/pengurus/seleksi/<%= app.id %>" method="POST">
+                                    <select name="status" class="form-select py-1 text-sm" onchange="this.form.submit()">
+                                        <option value="Ditinjau" <%= app.status === 'Ditinjau' ? 'selected' : '' %>>Ditinjau</option>
+                                        <option value="Wawancara" <%= app.status === 'Wawancara' ? 'selected' : '' %>>Wawancara</option>
+                                        <option value="Diterima" <%= app.status === 'Diterima' ? 'selected' : '' %>>Diterima</option>
+                                        <option value="Ditolak" <%= app.status === 'Ditolak' ? 'selected' : '' %>>Ditolak</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td class="table-body-cell">
+                                <button class="secondary-button py-1.5 px-3 text-xs">Detail</button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="4" class="text-center py-6 text-gray-500">Belum ada pendaftar untuk program Anda.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filter = document.getElementById('program-filter');
+        const rows = document.querySelectorAll('.aplikasi-row');
+
+        filter.addEventListener('change', function() {
+            const selectedProgramId = this.value;
+
+            rows.forEach(row => {
+                if (selectedProgramId === 'all' || row.dataset.programId === selectedProgramId) {
+                    row.style.display = ''; // Tampilkan baris
+                } else {
+                    row.style.display = 'none'; // Sembunyikan baris
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,43 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2 class="auth-title">Login Admin</h2>
+    <p class="auth-subtitle">Gunakan username dan password Anda.</p>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4 text-sm" role="alert">
+        <span class="block sm:inline"><%= error %></span>
+      </div>
+    <% } %>
+    <form class="space-y-5" method="POST" action="/auth/login">
+      <input type="hidden" name="role" value="admin" />
+      <div>
+        <label for="username" class="sr-only">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          class="auth-input-field" 
+          placeholder="Username" 
+          required 
+        />
+      </div>
+      <div>
+        <label for="password" class="sr-only">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          class="auth-input-field" 
+          placeholder="Password" 
+          required 
+        />
+      </div>
+      <button type="submit" class="auth-button">Login</button>
+    </form>
+    
+    <p class="text-sm mt-6 text-gray-600">
+        Perlu membuat akun admin baru? 
+        <a href="/auth/register?role=admin" class="auth-link-text">Buat disini</a>
+    </p>
+
+  </div>
+</div>

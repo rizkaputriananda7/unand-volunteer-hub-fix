@@ -1,0 +1,74 @@
+<div class="card-container max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Manajemen Pusat Volunteer</h2>
+        <a href="/admin/manajemen-pusat/tambah" class="primary-button">
+            <i class="fas fa-plus mr-2"></i>Tambah Pusat
+        </a>
+    </div>
+
+    <!-- Form Pencarian -->
+    <form action="/admin/manajemen-pusat" method="GET" class="mb-6 flex gap-2">
+        <input type="search" name="q" class="form-input flex-grow" placeholder="Cari berdasarkan nama pusat..." value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+        <button type="submit" class="secondary-button"><i class="fas fa-search"></i> Cari</button>
+    </form>
+
+    <!-- Daftar Pusat Volunteer -->
+    <div class="space-y-3">
+        <% if (centers && centers.length > 0) { %>
+            <% centers.forEach(center => { %>
+                <div class="document-item p-4 flex justify-between items-center bg-white">
+                    <div>
+                        <span class="document-name font-semibold"><i class="fas fa-university mr-2"></i> <%= center.nama_pusat %></span>
+                        <span class="status-badge <%= center.status === 'Aktif' ? 'badge-accepted' : 'badge-rejected' %> ml-2"><%= center.status %></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="/admin/manajemen-pusat/edit/<%= center.id %>" class="secondary-button py-1 px-3 text-xs">Edit</a>
+                        <button type="button" class="danger-button py-1 px-3 text-xs open-delete-modal-btn" data-center-id="<%= center.id %>" data-center-name="<%= center.nama_pusat %>">Hapus</button>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p class="text-center text-gray-500 py-6">Tidak ada data pusat volunteer.</p>
+        <% } %>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Hapus -->
+<div id="center-delete-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
+        <div class="p-6 text-center">
+            <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+            <h3 class="text-lg font-bold text-gray-900">Konfirmasi Penghapusan</h3>
+            <p class="mt-2 text-sm text-gray-600">Yakin ingin menghapus <strong id="center-to-delete-name"></strong>? Menghapus pusat akan menghapus SEMUA program dan pendaftar terkait secara permanen.</p>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse rounded-b-xl">
+            <form id="center-delete-form" action="" method="POST">
+                <button type="submit" class="w-full inline-flex justify-center rounded-md border bg-red-600 text-white px-4 py-2 hover:bg-red-700 sm:ml-3 sm:w-auto">Ya, Hapus Permanen</button>
+            </form>
+            <button type="button" id="cancel-center-delete-btn" class="mt-3 w-full inline-flex justify-center rounded-md border bg-white px-4 py-2 hover:bg-gray-50 sm:mt-0 sm:w-auto">Batal</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('center-delete-modal');
+    if (!modal) return;
+    
+    const openButtons = document.querySelectorAll('.open-delete-modal-btn');
+    const cancelBtn = document.getElementById('cancel-center-delete-btn');
+    const centerNameEl = document.getElementById('center-to-delete-name');
+    const deleteForm = document.getElementById('center-delete-form');
+
+    const openModal = (id, name) => {
+        centerNameEl.textContent = `"${name}"`;
+        deleteForm.action = `/admin/manajemen-pusat/delete/${id}`;
+        modal.classList.remove('hidden');
+    };
+    const closeModal = () => modal.classList.add('hidden');
+
+    openButtons.forEach(btn => btn.addEventListener('click', () => openModal(btn.dataset.centerId, btn.dataset.centerName)));
+    cancelBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+});
+</script>

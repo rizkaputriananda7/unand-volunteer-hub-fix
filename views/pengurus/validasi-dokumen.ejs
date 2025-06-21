@@ -1,0 +1,118 @@
+<div class="card-container max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-6">Validasi Dokumen Pendukung</h2>
+
+    <!-- Bagian Dokumen Spesifik Pusat -->
+    <div class="mb-8">
+        <h3 class="text-xl font-bold mb-4">Dokumen Spesifik untuk <%= user.nama_pusat %></h3>
+        <div class="table-container">
+            <table class="table">
+                <thead class="table-header">
+                    <tr>
+                        <th class="table-header-cell">Nama Mahasiswa</th>
+                        <th class="table-header-cell">Tipe Dokumen</th>
+                        <th class="table-header-cell">File</th>
+                        <th class="table-header-cell">Status</th>
+                        <th class="table-header-cell text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body">
+                    <% if (dokumen.specific && dokumen.specific.length > 0) { %>
+                        <% dokumen.specific.forEach(doc => { %>
+                            <%- include('../partials/dokumen_validasi_row', { doc: doc }) %>
+                        <% }) %>
+                    <% } else { %>
+                        <tr><td colspan="5" class="text-center py-4 text-gray-500">Tidak ada dokumen spesifik yang diunggah.</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bagian Dokumen Umum dari Pendaftar -->
+    <div>
+        <h3 class="text-xl font-bold mb-4">Dokumen Umum dari Pendaftar Program Anda</h3>
+         <div class="table-container">
+            <table class="table">
+                <thead class="table-header">
+                     <tr>
+                        <th class="table-header-cell">Nama Mahasiswa</th>
+                        <th class="table-header-cell">Tipe Dokumen</th>
+                        <th class="table-header-cell">File</th>
+                        <th class="table-header-cell">Status</th>
+                        <th class="table-header-cell text-center">Aksi</th>
+                    </tr>
+                </thead>
+                 <tbody class="table-body">
+                    <% if (dokumen.general && dokumen.general.length > 0) { %>
+                        <% dokumen.general.forEach(doc => { %>
+                            <%- include('../partials/dokumen_validasi_row', { doc: doc }) %>
+                        <% }) %>
+                    <% } else { %>
+                        <tr><td colspan="5" class="text-center py-4 text-gray-500">Tidak ada dokumen umum dari pendaftar.</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Validasi -->
+<div id="validation-confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
+        <div class="p-6 text-center">
+            <i class="fas fa-question-circle text-4xl text-blue-500 mb-4"></i>
+            <h3 class="text-lg font-bold text-gray-900">Konfirmasi Status</h3>
+            <p class="mt-2 text-sm text-gray-600">Anda akan mengubah status untuk <strong id="doc-to-validate-name"></strong> menjadi <strong id="doc-to-validate-status"></strong>. Lanjutkan?</p>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse rounded-b-xl">
+            <form id="validation-form" action="" method="POST">
+                 <input type="hidden" name="status" id="validation-status-input">
+                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-teal text-base font-medium text-white hover:bg-dark-teal sm:ml-3 sm:w-auto sm:text-sm">
+                    Ya, Simpan
+                </button>
+            </form>
+            <button type="button" id="cancel-validation-btn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">
+                Batal
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('validation-confirm-modal');
+    if (!modal) return;
+    
+    const openModalButtons = document.querySelectorAll('.open-validation-modal-btn');
+    const cancelBtn = document.getElementById('cancel-validation-btn');
+    const docNameEl = document.getElementById('doc-to-validate-name');
+    const docStatusEl = document.getElementById('doc-to-validate-status');
+    const validationForm = document.getElementById('validation-form');
+    const statusInput = document.getElementById('validation-status-input');
+
+    const openModal = (docId, docName, newStatus) => {
+        docNameEl.textContent = `"${docName}"`;
+        docStatusEl.textContent = `"${newStatus}"`;
+        validationForm.action = `/pengurus/validasi/update/${docId}`;
+        statusInput.value = newStatus;
+        modal.classList.remove('hidden');
+    };
+
+    const closeModal = () => modal.classList.add('hidden');
+
+    openModalButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            const docId = button.dataset.docId;
+            const docName = button.dataset.docName;
+            const newStatus = row.querySelector('.status-select').value;
+            openModal(docId, docName, newStatus);
+        });
+    });
+
+    cancelBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+});
+</script>

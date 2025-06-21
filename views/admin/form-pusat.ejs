@@ -1,0 +1,38 @@
+<div class="card-container max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-6">
+        <i class="fas <%= typeof center !== 'undefined' ? 'fa-edit' : 'fa-plus-circle' %> mr-2"></i>
+        <%= typeof center !== 'undefined' ? 'Edit Pusat Volunteer' : 'Tambah Pusat Volunteer Baru' %>
+    </h2>
+    
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4 text-sm" role="alert">
+        <span class="block sm:inline"><%= error %></span>
+      </div>
+    <% } %>
+
+    <form action="<%= typeof center !== 'undefined' ? '/admin/manajemen-pusat/edit/' + center.id : '/admin/manajemen-pusat/tambah' %>" method="POST" class="space-y-5 mt-6">
+        <div>
+            <label for="nama_pusat" class="form-label">Nama Pusat Volunteer</label>
+            <input type="text" id="nama_pusat" name="nama_pusat" class="form-input" placeholder="Contoh: UPT Perpustakaan" value="<%= typeof center !== 'undefined' ? center.nama_pusat : '' %>" required>
+        </div>
+        <div>
+            <label for="deskripsi" class="form-label">Deskripsi Singkat (Opsional)</label>
+            <textarea id="deskripsi" name="deskripsi" class="form-textarea" rows="4" placeholder="Jelaskan sedikit tentang pusat ini..."><%= typeof center !== 'undefined' ? (center.deskripsi || '') : '' %></textarea>
+        </div>
+        <% if (typeof center !== 'undefined') { %>
+            <div>
+                <label for="status" class="form-label">Status</label>
+                <select name="status" id="status" class="form-select">
+                    <option value="Aktif" <%= center.status === 'Aktif' ? 'selected' : '' %>>Aktif</option>
+                    <option value="Diarsipkan" <%= center.status === 'Diarsipkan' ? 'selected' : '' %>>Diarsipkan</option>
+                </select>
+            </div>
+        <% } %>
+        <div class="flex justify-end pt-4 border-t">
+            <a href="/admin/manajemen-pusat" class="secondary-button mr-3">Batal</a>
+            <button type="submit" class="primary-button">
+                <i class="fas fa-save mr-2"></i>Simpan
+            </button>
+        </div>
+    </form>
+</div>

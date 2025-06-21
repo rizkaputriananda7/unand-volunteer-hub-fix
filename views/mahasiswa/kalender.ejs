@@ -1,0 +1,155 @@
+<!-- Struktur HTML untuk Kalender -->
+<div 
+    class="card-container max-w-5xl mx-auto" 
+    id="calendar-container"
+    data-events='<%- JSON.stringify(events || []) %>'
+>
+    <div class="calendar-header flex justify-between items-center mb-6">
+        <button id="prev-month-btn" class="secondary-button py-2 px-4">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <h2 id="current-month-year" class="text-2xl font-bold text-center"></h2>
+        <button id="next-month-btn" class="secondary-button py-2 px-4">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <div class="calendar-grid grid grid-cols-7 gap-1 text-center">
+        <!-- Kalender akan dirender oleh JavaScript di sini -->
+    </div>
+</div>
+
+<!-- === MODAL UNTUK MENAMPILKAN DETAIL ACARA (BARU) === -->
+<div id="event-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
+        <div class="p-4 border-b flex justify-between items-center">
+            <h3 id="modal-title" class="text-lg font-bold"></h3>
+            <button id="modal-close-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+        </div>
+        <div id="modal-body" class="p-6 space-y-3">
+            <!-- Daftar acara akan dimasukkan di sini oleh JavaScript -->
+        </div>
+    </div>
+</div>
+<!-- =================================================== -->
+
+<!-- Style untuk Modal (opsional, untuk tampilan lebih baik) -->
+<style>
+    #event-modal { backdrop-filter: blur(4px); }
+</style>
+
+<!-- Script untuk merender Kalender -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('calendar-container');
+        if (!container) return;
+
+        // Ambil elemen-elemen modal
+        const eventModal = document.getElementById('event-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        const rawEvents = JSON.parse(container.dataset.events);
+        const eventsByDate = {};
+        rawEvents.forEach(event => {
+            const date = new Date(event.tanggal_acara).toISOString().split('T')[0];
+            if (!eventsByDate[date]) eventsByDate[date] = [];
+            eventsByDate[date].push(event);
+        });
+
+        const currentMonthYearEl = document.getElementById('current-month-year');
+        const calendarGridEl = document.querySelector('.calendar-grid');
+        let currentDisplayedDate = new Date();
+
+        // === FUNGSI BARU UNTUK MENAMPILKAN MODAL ===
+        function showEventsModal(dateString, day) {
+            const events = eventsByDate[dateString];
+            if (!events || events.length === 0) return;
+
+            // Atur judul modal dengan tanggal yang diformat
+            const dateObj = new Date(dateString + 'T00:00:00');
+            modalTitle.textContent = `Jadwal untuk ${dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
+            
+            // Kosongkan isi modal sebelumnya dan isi dengan acara baru
+            modalBody.innerHTML = '';
+            events.forEach(event => {
+                const eventHtml = `
+                    <div class="p-3 border-l-4 border-primary-teal bg-teal-50 rounded-r-lg">
+                        <p class="font-semibold text-gray-800">${event.nama_acara}</p>
+                        <p class="text-sm text-gray-600">Program: ${event.nama_program}</p>
+                    </div>
+                `;
+                modalBody.innerHTML += eventHtml;
+            });
+
+            // Tampilkan modal
+            eventModal.classList.remove('hidden');
+        }
+
+        function renderCalendar(date) {
+            calendarGridEl.innerHTML = '';
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            currentMonthYearEl.textContent = `${date.toLocaleString('id-ID', { month: 'long' })} ${year}`;
+            
+            ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].forEach(day => {
+                const dayHeaderDiv = document.createElement('div');
+                dayHeaderDiv.className = 'day-header font-bold p-2 text-sm text-gray-600';
+                dayHeaderDiv.textContent = day;
+                calendarGridEl.appendChild(dayHeaderDiv);
+            });
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDayOfMonth; i++) calendarGridEl.appendChild(document.createElement('div'));
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCellDiv = document.createElement('div');
+                dayCellDiv.className = 'day-cell p-2 border rounded-md min-h-[120px] bg-white transition hover:bg-gray-50 relative text-left';
+                dayCellDiv.innerHTML = `<span class="day-number font-semibold text-gray-800">${day}</span>`;
+                
+                const today = new Date();
+                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dayCellDiv.classList.add('current-day', 'bg-teal-50', 'border-primary-teal');
+                }
+
+                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                if (eventsByDate[dateString]) {
+                    dayCellDiv.classList.add('cursor-pointer', 'has-event');
+                    // Tambahkan event listener untuk membuka modal saat diklik
+                    dayCellDiv.addEventListener('click', () => showEventsModal(dateString, day));
+                    
+                    const eventsContainer = document.createElement('div');
+                    eventsContainer.className = 'mt-1 space-y-1';
+                    eventsByDate[dateString].forEach(event => {
+                        const eventDiv = document.createElement('div');
+                        eventDiv.className = 'event-dot text-xs text-left p-1 bg-primary-teal text-white rounded truncate';
+                        eventDiv.textContent = event.nama_acara;
+                        eventDiv.title = `${event.nama_acara} - ${event.nama_program}`;
+                        eventsContainer.appendChild(eventDiv);
+                    });
+                    dayCellDiv.appendChild(eventsContainer);
+                }
+                calendarGridEl.appendChild(dayCellDiv);
+            }
+        }
+
+        // Event listener untuk tombol navigasi dan menutup modal
+        document.getElementById('prev-month-btn').addEventListener('click', () => {
+            currentDisplayedDate.setMonth(currentDisplayedDate.getMonth() - 1);
+            renderCalendar(currentDisplayedDate);
+        });
+        document.getElementById('next-month-btn').addEventListener('click', () => {
+            currentDisplayedDate.setMonth(currentDisplayedDate.getMonth() + 1);
+            renderCalendar(currentDisplayedDate);
+        });
+        modalCloseBtn.addEventListener('click', () => eventModal.classList.add('hidden'));
+        eventModal.addEventListener('click', (e) => { // Tutup modal jika mengklik area luar
+            if (e.target === eventModal) eventModal.classList.add('hidden');
+        });
+
+        renderCalendar(currentDisplayedDate);
+    });
+</script>

@@ -1,0 +1,44 @@
+<div class="card-container max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-6">
+        <i class="fas <%= typeof item !== 'undefined' ? 'fa-edit' : 'fa-bullhorn' %> mr-2"></i>
+        <%= typeof item !== 'undefined' ? 'Edit Pengumuman Global' : 'Buat Pengumuman Global Baru' %>
+    </h2>
+
+    <!-- Form akan mengarah ke rute yang benar (tambah atau edit) -->
+    <form action="<%= typeof item !== 'undefined' ? '/admin/log-pengumuman/edit/' + item.id : '/admin/log-pengumuman/tambah' %>" method="POST">
+        <div class="space-y-4">
+            <div>
+                <label for="subjek" class="form-label">Subjek</label>
+                <input type="text" name="subjek" id="subjek" class="form-input" value="<%= typeof item !== 'undefined' ? item.subjek : '' %>" required>
+            </div>
+            <div>
+                <label for="pesan" class="form-label">Isi Pesan</label>
+                <textarea name="pesan" id="pesan" class="form-textarea" rows="5" placeholder="Tuliskan isi pengumuman yang akan ditampilkan di banner..." required><%= typeof item !== 'undefined' ? item.pesan : '' %></textarea>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 <div>
+                    <label for="level_urgensi" class="form-label">Level Urgensi (Warna Banner)</label>
+                    <select name="level_urgensi" id="level_urgensi" class="form-select">
+                        <option value="Info" <%= (typeof item !== 'undefined' && item.level_urgensi === 'Info') ? 'selected' : '' %>>Info (Biru)</option>
+                        <option value="Peringatan" <%= (typeof item !== 'undefined' && item.level_urgensi === 'Peringatan') ? 'selected' : '' %>>Peringatan (Kuning)</option>
+                        <option value="Bahaya" <%= (typeof item !== 'undefined' && item.level_urgensi === 'Bahaya') ? 'selected' : '' %>>Bahaya (Merah)</option>
+                    </select>
+                </div>
+                <!-- Dropdown Status hanya muncul saat mode edit -->
+                <% if (typeof item !== 'undefined') { %>
+                <div>
+                    <label for="status" class="form-label">Status</label>
+                    <select name="status" id="status" class="form-select">
+                        <option value="Aktif" <%= item.status === 'Aktif' ? 'selected' : '' %>>Aktif (Tampilkan di Banner)</option>
+                        <option value="Diarsipkan" <%= item.status === 'Diarsipkan' ? 'selected' : '' %>>Diarsipkan (Sembunyikan)</option>
+                    </select>
+                </div>
+                <% } %>
+            </div>
+        </div>
+        <div class="flex justify-end mt-6 pt-4 border-t">
+            <a href="/admin/log-pengumuman" class="secondary-button mr-3">Batal</a>
+            <button type="submit" class="primary-button"><i class="fas fa-save mr-2"></i>Simpan Pengumuman</button>
+        </div>
+    </form>
+</div>

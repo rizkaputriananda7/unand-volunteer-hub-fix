@@ -1,0 +1,83 @@
+<div class="card-container max-w-5xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Log Pengumuman Sistem</h2>
+        <a href="/admin/log-pengumuman/tambah" class="primary-button">
+            <i class="fas fa-bullhorn mr-2"></i>Buat Pengumuman Baru
+        </a>
+    </div>
+    <div class="table-container">
+        <table class="table">
+            <thead class="table-header">
+                <tr>
+                    <th class="table-header-cell">Subjek</th>
+                    <th class="table-header-cell">Level</th>
+                    <th class="table-header-cell">Status</th>
+                    <th class="table-header-cell">Dikirim oleh</th>
+                    <th class="table-header-cell">Tanggal</th>
+                    <th class="table-header-cell text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                <% if (announcements && announcements.length > 0) { %>
+                    <% announcements.forEach(item => { %>
+                        <tr>
+                            <td class="table-body-cell font-semibold"><%= item.subjek %></td>
+                            <td class="table-body-cell">
+                                <% 
+                                    let levelClass = 'badge-info';
+                                    if(item.level_urgensi === 'Peringatan') levelClass = 'badge-pending';
+                                    if(item.level_urgensi === 'Bahaya') levelClass = 'badge-rejected';
+                                %>
+                                <span class="status-badge <%= levelClass %>"><%= item.level_urgensi %></span>
+                            </td>
+                            <td class="table-body-cell">
+                                <span class="status-badge <%= item.status === 'Aktif' ? 'badge-accepted' : 'badge-closed' %>"><%= item.status %></span>
+                            </td>
+                            <td class="table-body-cell"><%= item.nama_admin %></td>
+                            <td class="table-body-cell"><%= new Date(item.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) %></td>
+                            <td class="table-body-cell text-center space-x-2">
+                                <a href="/admin/log-pengumuman/edit/<%= item.id %>" class="secondary-button py-1 px-3 text-xs">Edit</a>
+                                <button type="button" class="danger-button py-1 px-3 text-xs open-delete-modal-btn" data-item-id="<%= item.id %>" data-item-title="<%= item.subjek %>">Hapus</button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="6" class="text-center py-6 text-gray-500">Belum ada pengumuman yang dibuat.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Hapus -->
+<div id="delete-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
+        <div class="p-6 text-center">
+            <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+            <h3 class="text-lg font-bold">Konfirmasi Penghapusan</h3>
+            <p class="mt-2 text-sm text-gray-600">Anda yakin ingin menghapus pengumuman <strong id="item-to-delete-name"></strong>?</p>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse rounded-b-xl">
+            <form id="delete-form" action="" method="POST">
+                <button type="submit" class="w-full inline-flex justify-center rounded-md border bg-red-600 text-white px-4 py-2 hover:bg-red-700 sm:ml-3">Ya, Hapus</button>
+            </form>
+            <button type="button" id="cancel-btn" class="mt-3 w-full inline-flex justify-center rounded-md border bg-white px-4 py-2 hover:bg-gray-50 sm:mt-0">Batal</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('delete-modal');
+    if (!modal) return;
+    document.querySelectorAll('.open-delete-modal-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('item-to-delete-name').textContent = `"${btn.dataset.itemTitle}"`;
+            document.getElementById('delete-form').action = `/admin/log-pengumuman/delete/${btn.dataset.itemId}`;
+            modal.classList.remove('hidden');
+        });
+    });
+    document.getElementById('cancel-btn').addEventListener('click', () => modal.classList.add('hidden'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden') });
+});
+</script>

@@ -1,0 +1,102 @@
+<div class="card-container max-w-4xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-2">
+        <i class="fas fa-edit mr-2"></i>Edit Program Volunteer
+    </h2>
+     <p class="auth-subtitle text-sm -mt-2 text-center">
+        Memperbarui detail untuk: <strong><%= program.title %></strong>
+    </p>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4 text-sm" role="alert">
+        <span class="block sm:inline"><%= error %></span>
+      </div>
+    <% } %>
+
+    <form action="/pengurus/program/edit/<%= program.id %>" method="POST" class="space-y-6 mt-6">
+        
+        <fieldset class="border-t pt-4">
+            <legend class="text-lg font-semibold px-2">Informasi Dasar</legend>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4 mt-4">
+                <div>
+                    <label for="title" class="form-label">Judul Program</label>
+                    <input class="form-input" id="title" name="title" type="text" value="<%= program.title %>" required>
+                </div>
+                <div>
+                    <label for="location" class="form-label">Lokasi Spesifik Kegiatan</label>
+                    <input class="form-input" id="location" name="location" type="text" value="<%= program.location %>" required>
+                </div>
+            </div>
+            <div>
+                <label for="description" class="form-label">Deskripsi Program</label>
+                <textarea class="form-textarea" id="description" name="description" rows="3" required><%= program.description %></textarea>
+            </div>
+             <div>
+                <label for="persyaratan" class="form-label">Persyaratan</label>
+                <textarea class="form-textarea" id="persyaratan" name="persyaratan" rows="3" required><%= program.persyaratan %></textarea>
+            </div>
+        </fieldset>
+
+        <fieldset class="border-t pt-4">
+            <legend class="text-lg font-semibold px-2">Jadwal & Durasi</legend>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mt-4">
+                 <div>
+                    <label for="pendaftaran_mulai" class="form-label">Pendaftaran Dibuka</label>
+                    <input class="form-input" id="pendaftaran_mulai" name="pendaftaran_mulai" type="date" value="<%= new Date(program.pendaftaran_mulai).toISOString().split('T')[0] %>" required>
+                </div>
+                <div>
+                    <label for="pendaftaran_akhir" class="form-label">Pendaftaran Ditutup</label>
+                    <input class="form-input" id="pendaftaran_akhir" name="pendaftaran_akhir" type="date" value="<%= new Date(program.pendaftaran_akhir).toISOString().split('T')[0] %>" required>
+                </div>
+                <div>
+                    <label for="tanggal_pelaksanaan" class="form-label">Tanggal Pelaksanaan</label>
+                    <input class="form-input" id="tanggal_pelaksanaan" name="tanggal_pelaksanaan" type="date" value="<%= new Date(program.tanggal_pelaksanaan).toISOString().split('T')[0] %>" required>
+                </div>
+            </div>
+        </fieldset>
+        
+        <fieldset class="border-t pt-4">
+            <legend class="text-lg font-semibold px-2">Detail Tambahan</legend>
+             <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mt-4">
+                <div>
+                    <label for="quota" class="form-label">Kuota Volunteer</label>
+                    <input class="form-input" id="quota" name="quota" type="number" value="<%= program.quota %>" required min="1">
+                </div>
+                 <div>
+                    <label for="durasi" class="form-label">Durasi Komitmen</label>
+                    <input class="form-input" id="durasi" name="durasi" type="text" value="<%= program.durasi %>" required>
+                </div>
+                <div>
+                    <label for="kontak_narahubung" class="form-label">Kontak Narahubung</label>
+                    <input class="form-input" id="kontak_narahubung" name="kontak_narahubung" type="text" value="<%= program.kontak_narahubung %>" required>
+                </div>
+                 <div>
+                    <label for="kategori" class="form-label">Kategori</label>
+                    <select name="kategori" id="kategori" class="form-select w-full">
+                        <% ['Edukasi', 'Lingkungan', 'Sosial', 'Kesehatan', 'Teknologi', 'Lainnya'].forEach(kat => { %>
+                            <option value="<%= kat %>" <%= program.kategori === kat ? 'selected' : '' %>><%= kat %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                 <div>
+                    <label for="status" class="form-label">Status Program</label>
+                    <select name="status" id="status" class="form-select w-full">
+                        <option value="Aktif" <%= program.status === 'Aktif' ? 'selected' : '' %>>Aktif</option>
+                        <option value="Selesai" <%= program.status === 'Selesai' ? 'selected' : '' %>>Selesai</option>
+                        <option value="Dibatalkan" <%= program.status === 'Dibatalkan' ? 'selected' : '' %>>Dibatalkan</option>
+                    </select>
+                </div>
+            </div>
+             <div>
+                <label for="manfaat" class="form-label">Manfaat Untuk Volunteer</label>
+                <textarea class="form-textarea" id="manfaat" name="manfaat" rows="3"><%= program.manfaat %></textarea>
+            </div>
+        </fieldset>
+
+        <div class="flex justify-end pt-5">
+            <a href="/pengurus/dashboard" class="secondary-button mr-3">Batal</a>
+            <button class="primary-button text-base py-3 px-6" type="submit">
+                <i class="fas fa-save mr-2"></i> Simpan Perubahan
+            </button>
+        </div>
+    </form>
+</div>

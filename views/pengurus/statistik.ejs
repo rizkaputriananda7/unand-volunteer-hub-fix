@@ -1,0 +1,107 @@
+<div class="card-container max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-8">Statistik & Analitik Pusat Volunteer Anda</h2>
+    
+    <!-- Kotak Statistik -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="stat-box">
+            <div class="stat-icon icon-pendaftar"><i class="fas fa-users"></i></div>
+            <div class="stat-content">
+                <p class="stat-value"><%= stats.totalPendaftar %></p>
+                <p class="stat-label">Total Pendaftar</p>
+            </div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon icon-diterima"><i class="fas fa-user-check"></i></div>
+            <div class="stat-content">
+                <p class="stat-value"><%= stats.totalDiterima %></p>
+                <p class="stat-label">Diterima</p>
+            </div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon icon-program"><i class="fas fa-tasks"></i></div>
+            <div class="stat-content">
+                <p class="stat-value"><%= stats.programAktif %></p>
+                <p class="stat-label">Program Aktif</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bagian Grafik -->
+    <div>
+        <h3 class="text-xl font-bold text-center mb-4">Distribusi Pendaftar per Program</h3>
+        <% if (stats.distribusiProgram && stats.distribusiProgram.length > 0) { %>
+            <div class="chart-placeholder p-4 bg-gray-50 rounded-lg" style="height: 400px;">
+                <!-- === BAGIAN YANG DIPERBAIKI === -->
+                <!-- Data JSON sekarang disimpan di dalam atribut data-chartdata -->
+                <canvas 
+                    id="distribusiChart"
+                    data-chartdata='<%- JSON.stringify(stats.distribusiProgram) %>'
+                ></canvas>
+                <!-- ============================ -->
+            </div>
+        <% } else { %>
+            <p class="text-center text-gray-500 py-8">Tidak ada data pendaftar untuk ditampilkan dalam grafik.</p>
+        <% } %>
+    </div>
+</div>
+
+<!-- Impor pustaka Chart.js dari CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chartCanvas = document.getElementById('distribusiChart');
+
+        // Hanya jalankan skrip jika elemen canvas ada di halaman
+        if (chartCanvas) {
+            try {
+                // 1. Baca data dari atribut data-chartdata
+                const distribusiDataString = chartCanvas.dataset.chartdata;
+                // 2. Ubah string JSON kembali menjadi objek/array JavaScript
+                const distribusiData = JSON.parse(distribusiDataString);
+
+                if (distribusiData && distribusiData.length > 0) {
+                    const labels = distribusiData.map(item => item.title);
+                    const data = distribusiData.map(item => item.jumlahPendaftar);
+
+                    const ctx = chartCanvas.getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Jumlah Pendaftar',
+                                data: data,
+                                backgroundColor: 'rgba(32, 178, 170, 0.6)',
+                                borderColor: 'rgba(32, 178, 170, 1)',
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        stepSize: 1,
+                                        precision: 0 // Memastikan tidak ada angka desimal di sumbu Y
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Gagal membuat grafik:", e);
+                chartCanvas.parentElement.innerHTML = '<p class="text-center text-red-500">Terjadi kesalahan saat memuat data grafik.</p>';
+            }
+        }
+    });
+</script>

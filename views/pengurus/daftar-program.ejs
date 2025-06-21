@@ -1,0 +1,117 @@
+<div class="card-container max-w-5xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Daftar Program Anda</h2>
+        <a href="/pengurus/program/buat" class="primary-button">
+            <i class="fas fa-plus mr-2"></i>Tambah Program
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead class="table-header">
+                <tr>
+                    <th class="table-header-cell">Judul Program</th>
+                    <th class="table-header-cell">Status</th>
+                    <th class="table-header-cell">Tanggal Pelaksanaan</th>
+                    <th class="table-header-cell text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                <% if (programs && programs.length > 0) { %>
+                    <% programs.forEach(program => { %>
+                        <tr>
+                            <td class="table-body-cell font-semibold"><%= program.title %></td>
+                            <td class="table-body-cell">
+                                <span class="status-badge badge-<%= program.status.toLowerCase() %>"><%= program.status %></span>
+                            </td>
+                            <td class="table-body-cell"><%= new Date(program.tanggal_pelaksanaan).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></td>
+                            <td class="table-body-cell text-center space-x-2">
+                                <a href="/pengurus/program/edit/<%= program.id %>" class="secondary-button py-1 px-3 text-xs">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <!-- Tombol Hapus sekarang memicu modal, bukan confirm() -->
+                                <button 
+                                    type="button" 
+                                    class="danger-button py-1 px-3 text-xs open-delete-modal-btn"
+                                    data-program-id="<%= program.id %>"
+                                    data-program-title="<%= program.title %>"
+                                >
+                                    <i class="fas fa-trash-alt"></i> Hapus
+                                </button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="4" class="text-center py-6 text-gray-500">Anda belum membuat program apapun.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Hapus Program -->
+<div id="delete-program-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md transform transition-all">
+        <div class="p-6 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mt-5">Konfirmasi Penghapusan</h3>
+            <div class="mt-2 text-sm text-gray-600">
+                <p>Apakah Anda yakin ingin menghapus program:</p>
+                <p id="program-to-delete-name" class="font-semibold my-2"></p>
+                <p>Semua data terkait (pendaftar, jadwal, dll.) akan dihapus secara permanen. Tindakan ini tidak dapat diurungkan.</p>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse rounded-b-xl">
+            <form id="delete-program-form" action="" method="POST">
+                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 sm:ml-3 sm:w-auto sm:text-sm">
+                    Ya, Hapus Program
+                </button>
+            </form>
+            <button type="button" id="cancel-delete-btn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">
+                Batal
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('delete-program-modal');
+        // Pastikan modal ada sebelum melanjutkan
+        if (!modal) return;
+
+        const openModalButtons = document.querySelectorAll('.open-delete-modal-btn');
+        const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+        const programNameEl = document.getElementById('program-to-delete-name');
+        const deleteForm = document.getElementById('delete-program-form');
+
+        const openModal = (programId, programTitle) => {
+            programNameEl.textContent = `"${programTitle}"`;
+            deleteForm.action = `/pengurus/program/delete/${programId}`;
+            modal.classList.remove('hidden');
+        };
+
+        const closeModal = () => {
+            modal.classList.add('hidden');
+        };
+
+        openModalButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const programId = button.dataset.programId;
+                const programTitle = button.dataset.programTitle;
+                openModal(programId, programTitle);
+            });
+        });
+
+        cancelDeleteBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    });
+</script>

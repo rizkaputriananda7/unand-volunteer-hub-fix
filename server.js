@@ -1,9 +1,13 @@
-// server.js
+require('dotenv').config(); // Memuat variabel dari file .env
 
 const app = require('./app');
+const http = require('http');
 
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
+app.set('port', port);
 
-app.listen(PORT, () => {
-  console.log(`Server berjalan di http://localhost:${PORT}`);
+const server = http.createServer(app);
+
+server.listen(port, () => {
+    console.log(`Server berjalan di port ${port}`);
 });

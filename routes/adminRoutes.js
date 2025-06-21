@@ -1,36 +1,35 @@
-// routes/adminRoutes.js
-
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
-// --- AWAL TAMBAHAN ---
-const authController = require('../controllers/authController'); // Impor authController
+const { authenticateToken, authorizeRole } = require('../utils/authUtils');
 
-// Rute untuk menampilkan halaman login admin
-router.get('/login', authController.showAdminLoginPage);
+router.use(authenticateToken, authorizeRole('admin'));
 
-// Rute untuk menangani submit form login admin
-router.post('/login', authController.handleAdminLogin);
-// --- AKHIR TAMBAHAN ---
-
-// Rute untuk dashboard admin
 router.get('/dashboard', adminController.showDashboard);
-
-// --- RUTE BARU UNTUK KELOLA PENGGUNA ---
-// Halaman utama untuk melihat semua pengguna
-router.get('/users', adminController.showUserManagementPage);
-
-// Rute untuk menghapus akun mahasiswa
-router.post('/users/mahasiswa/:id/delete', adminController.handleDeleteMahasiswa);
-
-// Rute untuk menghapus akun pengurus
-router.post('/users/pengurus/:id/delete', adminController.handleDeletePengurus);
+router.get('/seleksi-overview', adminController.showSeleksiOverview);
+router.get('/analitik-komprehensif', adminController.showAnalitikKomprehensif);
+router.get('/umpan-balik', adminController.showFeedbackPage);
 
 
-// Rute lain yang mungkin sudah ada atau akan ditambahkan nanti
-// router.get('/centers', adminController.showVCManagement);
-// router.post('/centers/:id/delete', adminController.deleteVC);
-// router.get('/analytics', adminController.showAnalyticsPage);
+router.get('/manajemen-pusat', adminController.showCenterManagement);
+router.get('/manajemen-pusat/tambah', adminController.showAddCenterForm);
+router.post('/manajemen-pusat/tambah', adminController.handleAddCenter);
+router.get('/manajemen-pusat/edit/:id', adminController.showEditCenterForm);
+router.post('/manajemen-pusat/edit/:id', adminController.handleUpdateCenter);
+router.post('/manajemen-pusat/delete/:id', adminController.handleDeleteCenter);
 
+router.get('/manajemen-pengguna', adminController.showUserManagement);
+router.get('/manajemen-pengguna/tambah', adminController.showUserForm);
+router.post('/manajemen-pengguna/tambah', adminController.handleCreateUser);
+router.get('/manajemen-pengguna/edit/:role/:id', adminController.showUserForm);
+router.post('/manajemen-pengguna/edit/:role/:id', adminController.handleUpdateUser);
+router.post('/manajemen-pengguna/status', adminController.handleUpdateUserStatus);
+router.post('/manajemen-pengguna/delete', adminController.handleDeleteUser);
+
+router.get('/log-pengumuman', adminController.showLogPengumuman);
+router.get('/log-pengumuman/tambah', adminController.showPengumumanForm);
+router.post('/log-pengumuman/tambah', adminController.handleCreatePengumuman);
+router.get('/log-pengumuman/edit/:id', adminController.showPengumumanForm);
+router.post('/log-pengumuman/edit/:id', adminController.handleUpdatePengumuman);
 
 module.exports = router;

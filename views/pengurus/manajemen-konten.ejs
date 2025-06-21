@@ -1,0 +1,37 @@
+<div class="card-container max-w-5xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Manajemen Konten & Sumber Daya</h2>
+        <a href="/pengurus/konten/tambah" class="primary-button">
+            <i class="fas fa-plus mr-2"></i>Buat Konten Baru
+        </a>
+    </div>
+    <div class="table-container">
+        <table class="table">
+            <thead class="table-header">
+                <tr>
+                    <th class="table-header-cell">Judul Konten</th>
+                    <th class="table-header-cell">Tanggal Publikasi</th>
+                    <th class="table-header-cell text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                <% if (kontenList && kontenList.length > 0) { %>
+                    <% kontenList.forEach(item => { %>
+                        <tr>
+                            <td class="table-body-cell font-semibold"><%= item.judul_konten %></td>
+                            <td class="table-body-cell"><%= new Date(item.created_at).toLocaleDateString('id-ID') %></td>
+                            <td class="table-body-cell text-center">
+                                <a href="/pengurus/konten/edit/<%= item.id %>" class="secondary-button py-1 px-3 text-xs">Edit</a>
+                                <form action="/pengurus/konten/delete/<%= item.id %>" method="POST" class="inline ml-2">
+                                    <button type="submit" class="danger-button py-1 px-3 text-xs" onclick="return confirm('Yakin ingin menghapus konten ini?')">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="3" class="text-center py-6 text-gray-500">Anda belum membuat konten apapun.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>

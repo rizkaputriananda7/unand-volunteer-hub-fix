@@ -1,14 +1,14 @@
-// routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 
-// --- AWAL PERUBAHAN ---
-// Hanya menangani halaman pemilihan peran
-router.get('/', authController.showRoleSelection);
+// Rute untuk menampilkan halaman
+router.get('/register', authController.showRegisterPage);
+router.get('/login', authController.showLoginPage);
 
-// Rute logout bisa ditambahkan di sini jika ingin global
+// Rute untuk memproses form
+router.post('/register', authController.register);
+router.post('/login', authController.login);
 router.get('/logout', authController.logout);
-// --- AKHIR PERUBAHAN ---
 
 module.exports = router;

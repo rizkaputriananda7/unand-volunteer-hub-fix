@@ -1,0 +1,60 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <span>Admin Panel</span>
+  </div>
+  <nav class="sidebar-nav-links">
+    <a
+      href="/admin/dashboard"
+      class="sidebar-nav-item <%= (active === 'dashboard') ? 'active' : '' %>"
+    >
+      <i class="fas fa-cogs"></i> <span>Dashboard Admin</span>
+    </a>
+    <a
+      href="/admin/manajemen-pengguna"
+      class="sidebar-nav-item <%= (active === 'manajemen-pengguna') ? 'active' : '' %>"
+    >
+      <i class="fas fa-users"></i> <span>Manajemen Pengguna</span>
+    </a>
+    <a
+      href="/admin/manajemen-pusat"
+      class="sidebar-nav-item <%= (active === 'manajemen-pusat') ? 'active' : '' %>"
+    >
+      <i class="fas fa-university"></i> <span>Manajemen Pusat</span>
+    </a>
+    <a
+      href="/admin/seleksi-overview"
+      class="sidebar-nav-item <%= (active === 'seleksi-overview') ? 'active' : '' %>"
+    >
+      <i class="fas fa-user-check"></i> <span>Overview Seleksi</span>
+    </a>
+    <a
+      href="/admin/log-pengumuman"
+      class="sidebar-nav-item <%= (active === 'log-pengumuman') ? 'active' : '' %>"
+    >
+      <i class="fas fa-history"></i> <span>Log Pengumuman</span>
+    </a>
+    <a
+      href="/admin/analitik-komprehensif"
+      class="sidebar-nav-item <%= (active === 'analitik-komprehensif') ? 'active' : '' %>"
+    >
+      <i class="fas fa-chart-line"></i> <span>Analitik</span>
+    </a>
+    <a
+      href="/admin/umpan-balik"
+      class="sidebar-nav-item <%= (active === 'lihat-umpan-balik') ? 'active' : '' %>"
+    >
+      <i class="fas fa-comments"></i> <span>Lihat Umpan Balik</span>
+    </a>
+  </nav>
+  <div class="p-4 border-t" style="border-color: var(--border-color)">
+    <% if (user) { %>
+    <div class="text-xs mb-2">
+      <p class="font-semibold text-text-primary"><%= user.nama_lengkap %></p>
+      <p class="text-text-secondary capitalize"><%= user.role %></p>
+    </div>
+    <% } %>
+    <a href="/auth/logout" class="sidebar-nav-item sidebar-logout">
+      <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+    </a>
+  </div>
+</aside>

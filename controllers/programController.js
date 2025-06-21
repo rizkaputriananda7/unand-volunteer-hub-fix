@@ -1,167 +1,101 @@
-/**
- * controllers/programController.js (Tanpa Sequelize)
- * * Semua dependensi ke Sequelize dan data statis telah dihapus.
- * * Fungsi-fungsi ini sekarang memiliki placeholder untuk query SQL manual.
- */
+const Program = require("../models/Program");
+const VolunteerCenter = require("../models/VolunteerCenter");
+const Aplikasi = require("../models/Aplikasi");
+const Bookmark = require("../models/Bookmark");
 
-// Impor koneksi database (nantinya akan digunakan untuk query manual)
-// const db = require('../config/database');
+// Menampilkan semua program dengan filter lengkap
+exports.showAllPrograms = async (req, res) => {
+  try {
+    // Ambil semua parameter filter dari query URL
+    const { centerId, q: searchTerm, kategori, statusPendaftaran } = req.query;
 
-// --- FUNGSI UNTUK MAHASISWA ---
+    const filters = {
+      centerId,
+      searchTerm,
+      kategori,
+      statusPendaftaran,
+    };
 
-// Menampilkan semua program di halaman dashboard mahasiswa
-exports.getAllProgramsForUser = async (req, res) => {
-    try {
-        // TODO: Ganti dengan query SQL manual untuk mengambil data program
-        // Contoh:
-        // const [programs] = await db.promise().query("SELECT * FROM program WHERE is_published = true");
+    const [programs, centers, bookmarkedIds] = await Promise.all([
+      Program.findAll(filters), // Kirim semua filter ke model
+      VolunteerCenter.findAll(),
+      Bookmark.findBookmarkedProgramIds(req.user.id),
+    ]);
 
-        // Untuk sekarang, kita kirim array kosong agar halaman tidak error
-        const programs = [];
+    const programsWithBookmarkStatus = programs.map((program) => ({
+      ...program,
+      isBookmarked: bookmarkedIds.includes(program.id),
+    }));
 
-        res.render('mahasiswa/dashboard', { // Atau view lain yang sesuai
-            title: 'Dashboard',
-           
-            programs: programs,
-            currentRoute: '/mahasiswa/dashboard'
-        });
-    } catch (error) {
-        console.error("Error mengambil data program untuk mahasiswa:", error);
-        res.status(500).send('Terjadi kesalahan pada server');
-    }
-};
-
-// Menampilkan detail satu program
-exports.getProgramDetail = async (req, res) => {
-    try {
-        const programId = parseInt(req.params.id);
-        const { programData } = require('../models/staticData');
-        // Cari program berdasarkan id
-        const programRaw = programData.find(p => p.id === programId);
-        if (!programRaw) {
-            return res.status(404).send("Program tidak ditemukan.");
-        }
-        // Dummy data detail (bisa diubah sesuai kebutuhan)
-        const program = {
-            _id: programRaw.id,
-            nama: programRaw.judul,
-            penyelenggara: programRaw.pusat,
-            gambar: null, // tambahkan path gambar jika ada
-            deskripsi: `Deskripsi lengkap untuk program ${programRaw.judul}.`,
-            persyaratan: [
-                'Mahasiswa aktif Unand',
-                'Bersedia mengikuti seluruh rangkaian program',
-                'Memiliki komitmen tinggi'
-            ],
-            manfaat: [
-                'Pengalaman organisasi',
-                'Sertifikat volunteer',
-                'Relasi dan networking'
-            ],
-            durasi: programRaw.durasi,
-            kontak: {
-                nama: 'Koordinator Pusat',
-                wa: '6281234567890',
-                email: 'koordinator@unand.ac.id'
-            }
-        };
-        res.render('mahasiswa/detail-program', {
-            title: 'Detail Program',
-            user: { name: 'Naufal H.', role: 'Mahasiswa' }, // Dummy user, ganti dengan session jika ada
-            program: program,
-            currentRoute: ''
-        });
-    } catch (error) {
-        console.error("Error mengambil detail program:", error);
-        res.status(500).send("Error mengambil detail program.");
-    }
-};
-
-// Pencarian & list program volunteer untuk mahasiswa
-exports.searchProgramsForUser = (req, res) => {
-    const { q } = req.query;
-    // Ambil data program dari staticData
-    const { programData, bookmarkedPrograms } = require('../models/staticData');
-    let programs = programData.filter(p => p.isPublished);
-    // Filter berdasarkan kata kunci (judul/deskripsi)
-    if (q && q.trim() !== '') {
-        const keyword = q.trim().toLowerCase();
-        programs = programs.filter(p =>
-            p.judul.toLowerCase().includes(keyword) ||
-            (p.deskripsi && p.deskripsi.toLowerCase().includes(keyword))
-        );
-    }
-    // Dummy: semua program belum ada field deskripsi, bisa ditambah nanti
-    res.render('mahasiswa/program', {
-        title: 'Program Volunteer',
-        user: { name: 'Iqbal H.', role: 'Mahasiswa' },
-        programs,
-        bookmarkedIds: bookmarkedPrograms.map(p => p.id),
-        currentRoute: '/mahasiswa/program',
-        q: q || ''
+    res.render("mahasiswa/melihat-program-volunteer", {
+      title: "Jelajahi Program",
+      active: "program",
+      programs: programsWithBookmarkStatus,
+      centers,
+      // Kirim kembali nilai filter ke view agar dropdown tetap pada pilihan pengguna
+      selectedCenter: centerId,
+      selectedKategori: kategori,
+      selectedStatus: statusPendaftaran,
+      searchQuery: searchTerm,
     });
+  } catch (error) {
+    console.error("Error menampilkan program:", error);
+    res.status(500).send("Gagal memuat halaman program.");
+  }
 };
 
-// --- FUNGSI UNTUK PENGURUS ---
-
-// Menampilkan halaman manajemen program untuk pengurus
-exports.getAllProgramsForPengurus = async (req, res) => {
-    try {
-        // TODO: Ganti dengan query SQL manual untuk mengambil semua program
-        // Contoh:
-        // const [programs] = await db.promise().query("SELECT * FROM program ORDER BY id DESC");
-        const programs = [];
-
-        res.render('pengurus/dashboard', { // Atau view 'pengurus/program-management'
-            title: 'Manajemen Program',
-           
-            programs: programs
-        });
-    } catch (error) {
-        console.error("Error mengambil data program untuk pengurus:", error);
-        res.status(500).send("Terjadi kesalahan pada server.");
+// Menampilkan halaman detail dari satu program
+exports.showProgramDetails = async (req, res) => {
+  try {
+    const program = await Program.findById(req.params.id);
+    if (!program) {
+      // Jika program dengan ID tersebut tidak ada, tampilkan halaman 404
+      return res.status(404).send("Program tidak ditemukan.");
     }
-};
 
-// Menampilkan halaman form untuk membuat program baru
-exports.showCreateProgramPage = (req, res) => {
-    res.render('pengurus/create-program', {
-        title: 'Buat Program Baru',
-       
+    // Cek apakah mahasiswa yang login sudah melamar program ini
+    const hasApplied = await Aplikasi.hasApplied(req.user.id, program.id);
+
+    // Render view detail dengan data program dan status lamaran
+    res.render("mahasiswa/detail-program-volunteer", {
+      title: program.title,
+      active: "program",
+      program: program,
+      hasApplied: hasApplied,
     });
+  } catch (error) {
+    console.error("Error menampilkan detail program:", error);
+    res.status(500).send("Gagal memuat halaman detail.");
+  }
 };
 
-// Memproses data dari form pembuatan program
-exports.handleCreateProgram = async (req, res) => {
-    try {
-        const { judul, pusat, deskripsi, kuota, durasi, persyaratan, manfaat, action } = req.body;
-        const isPublished = action === 'Publikasi Program';
+exports.handleApplyToProgram = async (req, res) => {
+  try {
+    const programId = req.params.id;
+    const mahasiswaId = req.user.id;
 
-        // TODO: Ganti dengan query SQL manual untuk INSERT data
-        // Contoh:
-        // const query = "INSERT INTO program (judul, pusat, deskripsi, kuota, durasi, persyaratan, manfaat, is_published) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        // await db.promise().execute(query, [judul, pusat, deskripsi, kuota, durasi, persyaratan, manfaat, isPublished]);
-
-        res.redirect('/pengurus/dashboard');
-    } catch (error) {
-        console.error("Error saat membuat program:", error);
-        res.status(500).send("Gagal membuat program.");
+    // Cek lagi untuk mencegah pendaftaran ganda
+    const hasApplied = await Aplikasi.hasApplied(mahasiswaId, programId);
+    if (hasApplied) {
+      // Jika sudah mendaftar, cukup arahkan kembali ke detail program
+      return res.redirect(`/programs/${programId}`);
     }
-};
 
-// Memproses publikasi program
-exports.publishProgram = async (req, res) => {
-    try {
-        const programId = req.params.id;
+    // Buat entri aplikasi baru di database
+    await Aplikasi.create(mahasiswaId, programId);
 
-        // TODO: Ganti dengan query SQL manual untuk UPDATE status publikasi
-        // Contoh:
-        // const query = "UPDATE program SET is_published = true WHERE id = ?";
-        // await db.promise().execute(query, [programId]);
+    // Ambil kembali detail program yang baru dilamar untuk ditampilkan di halaman konfirmasi
+    const program = await Program.findById(programId);
 
-        res.redirect('/pengurus/dashboard');
-    } catch (error) {
-        console.error("Error saat mempublikasikan program:", error);
-        res.status(500).send("Gagal mempublikasikan program.");
-    }
+    // Render halaman konfirmasi dengan data yang diperlukan
+    res.render("mahasiswa/konfirmasi-pendaftaran", {
+      title: "Pendaftaran Berhasil",
+      active: "program", // Sidebar tetap aktif di menu program
+      program: program,
+      // 'user' sudah otomatis tersedia dari res.locals
+    });
+  } catch (error) {
+    console.error("Error saat mendaftar program:", error);
+    res.status(500).send("Gagal mendaftar ke program. Silakan coba lagi.");
+  }
 };

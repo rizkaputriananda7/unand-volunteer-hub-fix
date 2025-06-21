@@ -1,0 +1,91 @@
+<div class="card-container max-w-4xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-4">
+        <i class="fas fa-question-circle mr-2"></i>Frequently Asked Questions (FAQ)
+    </h2>
+    <p class="auth-subtitle text-sm -mt-2 text-center mb-6">
+        Temukan jawaban untuk pertanyaan yang paling sering diajukan.
+    </p>
+
+    <!-- Kotak Pencarian -->
+    <div class="mb-8">
+        <input type="search" id="faq-search" class="form-input text-base" placeholder="Ketik untuk mencari pertanyaan...">
+    </div>
+
+    <!-- Kontainer Accordion FAQ -->
+    <div id="faq-container" class="space-y-4">
+        <% if (Object.keys(faqsByCategory).length > 0) { %>
+            <% Object.keys(faqsByCategory).forEach(category => { %>
+                <div class="faq-category-group">
+                    <h3 class="text-xl font-bold text-primary-teal mb-3"><%= category %></h3>
+                    <div class="space-y-2">
+                        <% faqsByCategory[category].forEach(faq => { %>
+                            <div class="faq-item border rounded-lg bg-white overflow-hidden">
+                                <button class="faq-question w-full text-left p-4 flex justify-between items-center hover:bg-gray-50">
+                                    <span class="font-semibold text-gray-800"><%= faq.pertanyaan %></span>
+                                    <i class="fas fa-chevron-down transition-transform"></i>
+                                </button>
+                                <div class="faq-answer p-4 bg-gray-50 border-t" style="display: none;">
+                                    <p class="text-gray-700 whitespace-pre-wrap"><%= faq.jawaban %></p>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p class="text-center text-gray-500 py-10">Belum ada pertanyaan yang ditambahkan ke FAQ.</p>
+        <% } %>
+        <p id="no-results-message" class="text-center text-gray-500 py-10 hidden">Tidak ada pertanyaan yang cocok dengan pencarian Anda.</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const faqItems = document.querySelectorAll('.faq-item');
+        const searchInput = document.getElementById('faq-search');
+        const noResultsMessage = document.getElementById('no-results-message');
+
+        // Logika untuk Accordion
+        faqItems.forEach(item => {
+            const questionButton = item.querySelector('.faq-question');
+            const answerDiv = item.querySelector('.faq-answer');
+            const icon = questionButton.querySelector('i');
+
+            questionButton.addEventListener('click', () => {
+                const isVisible = answerDiv.style.display === 'block';
+                answerDiv.style.display = isVisible ? 'none' : 'block';
+                icon.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+            });
+        });
+
+        // Logika untuk Pencarian
+        searchInput.addEventListener('keyup', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            let visibleCount = 0;
+
+            document.querySelectorAll('.faq-category-group').forEach(group => {
+                let questionsInCategory = group.querySelectorAll('.faq-item');
+                let visibleInCategory = 0;
+
+                questionsInCategory.forEach(item => {
+                    const questionText = item.querySelector('.faq-question span').textContent.toLowerCase();
+                    const answerText = item.querySelector('.faq-answer p').textContent.toLowerCase();
+                    
+                    if (questionText.includes(searchTerm) || answerText.includes(searchTerm)) {
+                        item.style.display = 'block';
+                        visibleInCategory++;
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Sembunyikan judul kategori jika tidak ada pertanyaan yang cocok di dalamnya
+                group.style.display = visibleInCategory > 0 ? 'block' : 'none';
+            });
+            
+            // Tampilkan pesan "tidak ada hasil" jika diperlukan
+            noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+        });
+    });
+</script>

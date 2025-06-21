@@ -1,0 +1,86 @@
+<div class="card-container max-w-4xl mx-auto" id="feedback-content-admin">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Umpan Balik Umum & Masalah Teknis</h2>
+        <button id="export-pdf-btn" class="secondary-button">
+            <i class="fas fa-file-pdf mr-2"></i>Ekspor ke PDF
+        </button>
+    </div>
+    
+    <div class="space-y-4">
+        <% if (feedback && feedback.length > 0) { %>
+            <% feedback.forEach(item => { %>
+                <div class="feedback-item p-4 border rounded-lg bg-white shadow-sm">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="font-semibold nama-mahasiswa"><i class="fas fa-user mr-2"></i><%= item.nama_mahasiswa %></div>
+                        <div class="text-sm text-gray-500 tanggal-feedback"><%= new Date(item.created_at).toLocaleString('id-ID') %></div>
+                    </div>
+                    <div class="flex items-center mb-2">
+                        <span class="font-semibold mr-2">Rating:</span>
+                        <div class="text-yellow-400 rating" data-rating="<%= item.rating %>">
+                            <% for(let i = 1; i <= 5; i++) { %>
+                                <i class="<%= i <= item.rating ? 'fas' : 'far' %> fa-star"></i>
+                            <% } %>
+                        </div>
+                    </div>
+                    <% if (item.saran) { %>
+                        <div class="mt-2">
+                            <h4 class="font-semibold text-sm">Saran & Masukan:</h4>
+                            <p class="text-sm text-gray-700 bg-gray-50 p-2 rounded-md saran-masukan"><%= item.saran %></p>
+                        </div>
+                    <% } %>
+                     <% if (item.masalah_teknis) { %>
+                        <div class="mt-2">
+                            <h4 class="font-semibold text-sm text-red-600">Laporan Masalah Teknis:</h4>
+                            <p class="text-sm text-gray-700 bg-red-50 p-2 rounded-md masalah-teknis"><%= item.masalah_teknis %></p>
+                        </div>
+                    <% } %>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p class="text-center text-gray-500 py-8">Tidak ada umpan balik umum yang masuk.</p>
+        <% } %>
+    </div>
+</div>
+
+<!-- Impor pustaka untuk membuat PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+    document.getElementById('export-pdf-btn').addEventListener('click', function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Judul Dokumen
+        doc.setFontSize(18);
+        doc.text('Laporan Umpan Balik Umum - Unand Volunteer Hub', 14, 22);
+        doc.setFontSize(11);
+        doc.setTextColor(100);
+        doc.text(`Dokumen dibuat pada: ${new Date().toLocaleString('id-ID')}`, 14, 30);
+
+        // Siapkan data untuk tabel
+        const tableData = [];
+        const feedbackItems = document.querySelectorAll('.feedback-item');
+        
+        feedbackItems.forEach(item => {
+            const nama = item.querySelector('.nama-mahasiswa').innerText.trim();
+            const rating = item.querySelector('.rating').dataset.rating + ' Bintang';
+            const saran = item.querySelector('.saran-masukan')?.innerText || 'Tidak ada.';
+            const masalah = item.querySelector('.masalah-teknis')?.innerText || 'Tidak ada.';
+            
+            tableData.push([nama, rating, saran, masalah]);
+        });
+
+        // Buat tabel di PDF
+        doc.autoTable({
+            head: [['Nama Mahasiswa', 'Rating', 'Saran & Masukan', 'Masalah Teknis']],
+            body: tableData,
+            startY: 40,
+            theme: 'grid',
+            headStyles: { fillColor: [13, 148, 136] }, // Warna dark-teal
+        });
+
+        // Simpan file PDF
+        doc.save('laporan-umpan-balik-umum.pdf');
+    });
+</script>

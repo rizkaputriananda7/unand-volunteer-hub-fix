@@ -1,0 +1,77 @@
+<div class="card-container max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-6">
+        <i class="fas <%= typeof userToEdit !== 'undefined' ? 'fa-user-edit' : 'fa-user-plus' %> mr-2"></i>
+        <%= typeof userToEdit !== 'undefined' ? 'Edit Pengguna' : 'Tambah Pengguna Baru' %>
+    </h2>
+    
+    <form id="user-form" action="<%= typeof userToEdit !== 'undefined' ? '/admin/manajemen-pengguna/edit/' + userToEdit.role + '/' + userToEdit.id : '/admin/manajemen-pengguna/tambah' %>" method="POST" class="space-y-4">
+        <div>
+            <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
+            <input type="text" name="nama_lengkap" class="form-input" value="<%= typeof userToEdit !== 'undefined' ? userToEdit.nama_lengkap : '' %>" required>
+        </div>
+        <div>
+            <label for="email" class="form-label">Alamat Email</label>
+            <input type="email" name="email" class="form-input" value="<%= typeof userToEdit !== 'undefined' ? userToEdit.email : '' %>" required>
+        </div>
+
+        <div>
+            <label for="role" class="form-label">Peran Pengguna</label>
+            <select name="role" id="role-select" class="form-select" <%= typeof userToEdit !== 'undefined' ? 'disabled' : '' %>>
+                <option value="mahasiswa" <%= (typeof userToEdit !== 'undefined' && userToEdit.role === 'mahasiswa') ? 'selected' : '' %>>Mahasiswa</option>
+                <option value="pengurus" <%= (typeof userToEdit !== 'undefined' && userToEdit.role === 'pengurus') ? 'selected' : '' %>>Pengurus</option>
+                <option value="admin" <%= (typeof userToEdit !== 'undefined' && userToEdit.role === 'admin') ? 'selected' : '' %>>Admin</option>
+            </select>
+             <% if (typeof userToEdit !== 'undefined') { %> <input type="hidden" name="role" value="<%= userToEdit.role %>" /> <% } %>
+        </div>
+
+        <!-- Kolom Dinamis -->
+        <div id="mahasiswa-fields" class="hidden space-y-4">
+            <label for="nim" class="form-label">NIM</label>
+            <input type="text" name="nim" class="form-input" value="<%= typeof userToEdit !== 'undefined' ? userToEdit.nim : '' %>">
+        </div>
+        <div id="pengurus-admin-fields" class="hidden space-y-4">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" name="username" class="form-input" value="<%= typeof userToEdit !== 'undefined' ? userToEdit.username : '' %>">
+        </div>
+        <div id="pengurus-fields" class="hidden space-y-4">
+            <label for="volunteer_center_id" class="form-label">Pusat Volunteer</label>
+            <select name="volunteer_center_id" class="form-select">
+                <% if(centers && centers.length > 0) { %>
+                    <% centers.forEach(center => { %>
+                        <option value="<%= center.id %>" <%= (typeof userToEdit !== 'undefined' && userToEdit.volunteer_center_id == center.id) ? 'selected' : '' %>><%= center.nama_pusat %></option>
+                    <% }) %>
+                <% } %>
+            </select>
+        </div>
+        
+        <% if (typeof userToEdit === 'undefined') { %>
+        <div>
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-input" required>
+        </div>
+        <% } %>
+
+        <div class="flex justify-end pt-4 border-t">
+            <a href="/admin/manajemen-pengguna" class="secondary-button mr-3">Batal</a>
+            <button type="submit" class="primary-button"><i class="fas fa-save mr-2"></i>Simpan</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const roleSelect = document.getElementById('role-select');
+        const mhsFields = document.getElementById('mahasiswa-fields');
+        const pengurusAdminFields = document.getElementById('pengurus-admin-fields');
+        const pengurusFields = document.getElementById('pengurus-fields');
+
+        function toggleFields(role) {
+            mhsFields.classList.toggle('hidden', role !== 'mahasiswa');
+            pengurusAdminFields.classList.toggle('hidden', role === 'mahasiswa');
+            pengurusFields.classList.toggle('hidden', role !== 'pengurus');
+        }
+
+        roleSelect.addEventListener('change', () => toggleFields(roleSelect.value));
+        toggleFields(roleSelect.value);
+    });
+</script>

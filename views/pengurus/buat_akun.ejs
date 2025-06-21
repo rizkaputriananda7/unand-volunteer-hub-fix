@@ -1,0 +1,38 @@
+<div class="auth-container">
+    <div class="auth-card">
+        <h2 class="auth-title">Daftar Akun Pengurus</h2>
+        <p class="auth-subtitle">Daftar untuk mengelola pusat volunteer Anda.</p>
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4 text-sm" role="alert">
+            <span class="block sm:inline"><%= error %></span>
+          </div>
+        <% } %>
+        <form class="space-y-5" method="POST" action="/auth/register">
+            <input type="hidden" name="role" value="pengurus" />
+            <div>
+                <input type="text" name="nama_lengkap" class="auth-input-field" placeholder="Nama Lengkap" required>
+            </div>
+            <div>
+                <input type="text" name="username" class="auth-input-field" placeholder="Username (untuk login)" required>
+            </div>
+            <div>
+                <input type="email" name="email" class="auth-input-field" placeholder="Alamat Email" required>
+            </div>
+            <div>
+                <input type="password" name="password" class="auth-input-field" placeholder="Password" required>
+            </div>
+            <div>
+                <label for="volunteer_center_id" class="form-label text-left">Pilih Pusat Volunteer</label>
+                <select name="volunteer_center_id" id="volunteer_center_id" class="form-select w-full" required>
+                    <option value="" disabled selected>-- Pilih Pusat --</option>
+                    <% if (centers && centers.length > 0) { %>
+                        <% centers.forEach(center => { %>
+                            <option value="<%= center.id %>"><%= center.nama_pusat %></option>
+                        <% }) %>
+                    <% } %>
+                </select>
+            </div>
+            <button type="submit" class="auth-button">Daftar Akun</button>
+        </form>
+    </div>
+</div>

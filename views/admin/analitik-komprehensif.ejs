@@ -1,0 +1,123 @@
+<div class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-800">Dashboard Analitik Komprehensif</h2>
+
+    <!-- Kotak Statistik Utama -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="stat-box"><div class="stat-icon icon-pendaftar"><i class="fas fa-users"></i></div><div class="stat-content"><p class="stat-value"><%= data.stats.totalUsers %></p><p class="stat-label">Total Pengguna</p></div></div>
+        <div class="stat-box"><div class="stat-icon icon-diterima" style="background: var(--accent-blue)"><i class="fas fa-tasks"></i></div><div class="stat-content"><p class="stat-value"><%= data.stats.totalPrograms %></p><p class="stat-label">Total Program</p></div></div>
+        <div class="stat-box"><div class="stat-icon icon-program"><i class="fas fa-file-alt"></i></div><div class="stat-content"><p class="stat-value"><%= data.stats.totalAplikasi %></p><p class="stat-label">Total Lamaran</p></div></div>
+        <div class="stat-box"><div class="stat-icon" style="background: var(--accent-purple)"><i class="fas fa-university"></i></div><div class="stat-content"><p class="stat-value"><%= data.stats.totalPusat %></p><p class="stat-label">Total Pusat Volunteer</p></div></div>
+    </div>
+
+    <!-- Wrapper untuk semua grafik, dengan data yang disematkan -->
+    <div id="analytics-data-container" data-charts='<%- JSON.stringify(data.charts || {}) %>'>
+        <!-- Grafik Pertumbuhan Pengguna & Status Aplikasi -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="card-container p-6">
+                <h3 class="text-xl font-bold mb-4 text-center">Tren Pendaftaran Mahasiswa Baru</h3>
+                <div class="h-80"><canvas id="userGrowthChart"></canvas></div>
+            </div>
+            <div class="card-container p-6">
+                <h3 class="text-xl font-bold mb-4 text-center">Corong Status Aplikasi</h3>
+                 <div class="h-80 flex items-center justify-center"><canvas id="appStatusChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Grafik Pendaftar per Program & Distribusi per Pusat -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+            <div class="card-container p-6">
+                <h3 class="text-xl font-bold mb-4 text-center">Program Terpopuler (Berdasarkan Pendaftar)</h3>
+                <div class="h-80"><canvas id="programsChart"></canvas></div>
+            </div>
+            <div class="card-container p-6">
+                <h3 class="text-xl font-bold mb-4 text-center">Distribusi Volunteer Diterima per Pusat</h3>
+                <div class="h-80 flex items-center justify-center"><canvas id="centersChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Impor Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Script untuk membuat grafik -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('analytics-data-container');
+    if (!container) return;
+
+    try {
+        const chartDataString = container.dataset.charts;
+        const chartData = JSON.parse(chartDataString);
+
+        // Grafik Pertumbuhan Pengguna (Line Chart)
+        const userGrowthCtx = document.getElementById('userGrowthChart');
+        if(userGrowthCtx && chartData.userGrowth && chartData.userGrowth.length > 0) {
+            new Chart(userGrowthCtx, {
+                type: 'line',
+                data: {
+                    labels: chartData.userGrowth.map(d => new Date(d.date).toLocaleDateString('id-ID')),
+                    datasets: [{
+                        label: 'Pendaftar Baru',
+                        data: chartData.userGrowth.map(d => d.count),
+                        borderColor: 'rgba(32, 178, 170, 1)',
+                        backgroundColor: 'rgba(32, 178, 170, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                }
+            });
+        }
+
+        // Grafik Status Aplikasi (Doughnut Chart)
+        const appStatusCtx = document.getElementById('appStatusChart');
+        if(appStatusCtx && chartData.applicationStatus && chartData.applicationStatus.length > 0) {
+            new Chart(appStatusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: chartData.applicationStatus.map(d => d.status),
+                    datasets: [{
+                        data: chartData.applicationStatus.map(d => d.count),
+                        backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444'] // Blue, Green, Amber, Red
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // Grafik Program Terpopuler (Bar Chart)
+        const programsCtx = document.getElementById('programsChart');
+        if(programsCtx && chartData.applicantsPerProgram && chartData.applicantsPerProgram.length > 0) {
+            new Chart(programsCtx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.applicantsPerProgram.map(d => d.title),
+                    datasets: [{
+                        label: 'Jumlah Pendaftar',
+                        data: chartData.applicantsPerProgram.map(d => d.count),
+                        backgroundColor: 'rgba(59, 130, 246, 0.6)'
+                    }]
+                },
+                options: { indexAxis: 'y' } // Membuat grafik menjadi horizontal
+            });
+        }
+
+        // Grafik Distribusi per Pusat (Pie Chart)
+        const centersCtx = document.getElementById('centersChart');
+        if(centersCtx && chartData.volunteersPerCenter && chartData.volunteersPerCenter.length > 0) {
+            new Chart(centersCtx, {
+                type: 'pie',
+                data: {
+                    labels: chartData.volunteersPerCenter.map(d => d.nama_pusat),
+                    datasets: [{
+                        data: chartData.volunteersPerCenter.map(d => d.count),
+                        backgroundColor: ['#A78BFA', '#2DD4BF', '#FBBF24', '#60A5FA', '#F87171']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+    } catch (e) {
+        console.error("Gagal mem-parsing data grafik atau membuat grafik:", e);
+    }
+});
+</script>

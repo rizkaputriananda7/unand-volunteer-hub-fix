@@ -1,0 +1,70 @@
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <!-- Kolom Kiri: Foto Profil dan Info Dasar -->
+    <div class="md:col-span-1">
+        <div class="card-container p-6 text-center">
+            <img 
+                id="profile-image-preview"
+                src="/<%= user.foto_profil %>" 
+                alt="Foto Profil" 
+                class="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-primary-teal"
+                onerror="this.onerror=null; this.src='/uploads/profil/default.png';"
+            >
+            <h3 class="text-xl font-bold"><%= user.nama_lengkap %></h3>
+            <p class="text-sm text-gray-500"><%= user.nim %></p>
+            <p class="text-sm text-gray-500"><%= user.email %></p>
+
+            <form action="/mahasiswa/profil/foto" method="POST" enctype="multipart/form-data" class="mt-4">
+                <label for="foto_profil" class="primary-button text-sm cursor-pointer w-full justify-center">
+                    <i class="fas fa-camera mr-2"></i> Ganti Foto
+                </label>
+                <input type="file" name="foto_profil" id="foto_profil" class="hidden" accept="image/png, image/jpeg" onchange="this.form.submit()">
+            </form>
+        </div>
+    </div>
+
+    <!-- Kolom Kanan: Form Edit -->
+    <div class="md:col-span-2 space-y-8">
+        <!-- Form Informasi Pribadi -->
+        <div class="card-container p-6">
+            <h3 class="text-lg font-bold mb-4">Informasi Pribadi</h3>
+             <% if (typeof success_msg !== 'undefined' && success_msg) { %>
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-3 mb-4 text-sm" role="alert"><%= success_msg %></div>
+            <% } %>
+            <form action="/mahasiswa/profil" method="POST" class="space-y-4">
+                <div>
+                    <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
+                    <input type="text" name="nama_lengkap" id="nama_lengkap" class="form-input" value="<%= user.nama_lengkap %>" required>
+                </div>
+                 <div>
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" name="email" id="email" class="form-input" value="<%= user.email %>" required>
+                </div>
+                <div>
+                    <label for="nomor_hp" class="form-label">Nomor HP/WhatsApp</label>
+                    <input type="tel" name="nomor_hp" id="nomor_hp" class="form-input" value="<%= user.nomor_hp || '' %>" placeholder="Contoh: 081234567890">
+                </div>
+                <div class="flex justify-end pt-3">
+                    <button type="submit" class="primary-button">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Form Ubah Password -->
+        <div class="card-container p-6">
+            <h3 class="text-lg font-bold mb-4">Ubah Password</h3>
+            <form action="/mahasiswa/profil/password" method="POST" class="space-y-4">
+                 <div>
+                    <label for="password_lama" class="form-label">Password Saat Ini</label>
+                    <input type="password" name="password_lama" id="password_lama" class="form-input" required>
+                </div>
+                <div>
+                    <label for="password_baru" class="form-label">Password Baru</label>
+                    <input type="password" name="password_baru" id="password_baru" class="form-input" required>
+                </div>
+                <div class="flex justify-end pt-3">
+                    <button type="submit" class="secondary-button">Ubah Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

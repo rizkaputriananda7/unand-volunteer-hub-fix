@@ -1,0 +1,22 @@
+<tr>
+    <td class="table-body-cell font-semibold"><%= doc.nama_mahasiswa %></td>
+    <td class="table-body-cell"><%= doc.tipe_dokumen %></td>
+    <td class="table-body-cell">
+        <!-- === BAGIAN YANG DIPERBAIKI === -->
+        <!-- Path sekarang sudah benar, tidak perlu diubah lagi, cukup tambahkan '/' di depan -->
+        <a href="/<%= doc.path_file %>" target="_blank" class="text-primary-teal hover:underline"><%= doc.nama_file_asli %></a>
+        <!-- ============================ -->
+    </td>
+    <td class="table-body-cell">
+        <select class="form-select py-1 text-sm status-select">
+            <option value="Menunggu Validasi" <%= doc.status_validasi === 'Menunggu Validasi' ? 'selected' : '' %>>Menunggu</option>
+            <option value="Valid" <%= doc.status_validasi === 'Valid' ? 'selected' : '' %>>Valid</option>
+            <option value="Perlu Revisi" <%= doc.status_validasi === 'Perlu Revisi' ? 'selected' : '' %>>Perlu Revisi</option>
+        </select>
+    </td>
+    <td class="table-body-cell text-center">
+        <button type="button" class="primary-button py-1 px-3 text-xs open-validation-modal-btn" data-doc-id="<%= doc.id %>" data-doc-name="<%= doc.tipe_dokumen %>">
+            Simpan
+        </button>
+    </td>
+</tr>

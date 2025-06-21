@@ -1,0 +1,85 @@
+<div class="card-container max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Umpan Balik untuk Program Anda</h2>
+         <% if (feedback && feedback.length > 0) { %>
+            <button id="export-pdf-btn-pengurus" class="secondary-button">
+                <i class="fas fa-file-pdf mr-2"></i>Ekspor ke PDF
+            </button>
+        <% } %>
+    </div>
+    
+    <div class="space-y-4">
+        <% if (feedback && feedback.length > 0) { %>
+            <% feedback.forEach(item => { %>
+                <div class="feedback-item p-4 border rounded-lg bg-white shadow-sm">
+                    <div class="flex justify-between items-center mb-2">
+                         <div class="font-semibold nama-mahasiswa"><i class="fas fa-user mr-2"></i><%= item.nama_mahasiswa %></div>
+                        <div class="text-sm text-gray-500"><%= new Date(item.created_at).toLocaleString('id-ID') %></div>
+                    </div>
+                     <div class="text-xs font-bold text-primary-teal bg-teal-50 px-2 py-1 rounded-full inline-block mb-2 nama-program">
+                        Untuk Program: <%= item.nama_program %>
+                    </div>
+                    <div class="flex items-center mb-2">
+                        <span class="font-semibold mr-2">Rating:</span>
+                        <div class="text-yellow-400 rating" data-rating="<%= item.rating %>">
+                            <% for(let i = 1; i <= 5; i++) { %>
+                                <i class="<%= i <= item.rating ? 'fas' : 'far' %> fa-star"></i>
+                            <% } %>
+                        </div>
+                    </div>
+                    <% if (item.saran) { %>
+                        <div class="mt-2">
+                            <h4 class="font-semibold text-sm">Saran & Masukan:</h4>
+                            <p class="text-sm text-gray-700 bg-gray-50 p-2 rounded-md saran-masukan"><%= item.saran %></p>
+                        </div>
+                    <% } %>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p class="text-center text-gray-500 py-8">Belum ada umpan balik untuk program Anda.</p>
+        <% } %>
+    </div>
+</div>
+
+<!-- Impor pustaka untuk membuat PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+    const exportBtn = document.getElementById('export-pdf-btn-pengurus');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const namaPusat = "<%= user.nama_pusat || 'Pusat Volunteer Anda' %>";
+            doc.setFontSize(18);
+            doc.text(`Laporan Umpan Balik - ${namaPusat}`, 14, 22);
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            doc.text(`Dokumen dibuat pada: ${new Date().toLocaleString('id-ID')}`, 14, 30);
+
+            const tableData = [];
+            const feedbackItems = document.querySelectorAll('.feedback-item');
+            
+            feedbackItems.forEach(item => {
+                const nama = item.querySelector('.nama-mahasiswa').innerText.trim();
+                const program = item.querySelector('.nama-program').innerText.replace('Untuk Program: ', '').trim();
+                const rating = item.querySelector('.rating').dataset.rating + ' Bintang';
+                const saran = item.querySelector('.saran-masukan')?.innerText || 'Tidak ada.';
+                
+                tableData.push([nama, program, rating, saran]);
+            });
+
+            doc.autoTable({
+                head: [['Nama Mahasiswa', 'Program', 'Rating', 'Saran & Masukan']],
+                body: tableData,
+                startY: 40,
+                theme: 'grid',
+                headStyles: { fillColor: [13, 148, 136] }, // Warna dark-teal
+            });
+
+            doc.save('laporan-umpan-balik-program.pdf');
+        });
+    }
+</script>

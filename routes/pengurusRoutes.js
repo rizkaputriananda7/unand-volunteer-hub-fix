@@ -1,50 +1,42 @@
-// routes/pengurusRoutes.js
-
 const express = require('express');
 const router = express.Router();
 const pengurusController = require('../controllers/pengurusController');
-// --- AWAL TAMBAHAN ---
-const authController = require('../controllers/authController'); // Impor authController
+const { authenticateToken, authorizeRole } = require('../utils/authUtils');
+const upload = require('../utils/uploadMiddleware');
 
-// Rute untuk menampilkan halaman login pengurus
-router.get('/login', authController.showPengurusLoginPage);
+// Semua rute pengurus dilindungi oleh otentikasi dan role 'pengurus'
+router.use(authenticateToken, authorizeRole('pengurus'));
 
-// Rute untuk menangani submit form login pengurus
-router.post('/login', authController.handlePengurusLogin);
-// --- AKHIR TAMBAHAN ---
-
-
-// Rute ini mengasumsikan semua logika program ada di pengurusController
-// Jika beberapa ada di programController, sesuaikan require di atas dan pemanggilan di bawah
-
-// Dashboard
+// Rute untuk setiap halaman pengurus
 router.get('/dashboard', pengurusController.showDashboard);
-
-// Manajemen Program (CRUD)
-router.get('/program/create', pengurusController.showCreateProgramForm);
-router.post('/program/create', pengurusController.handleCreateProgram);
-router.get('/program/:id/edit', pengurusController.showEditProgramForm);
-router.post('/program/:id/update', pengurusController.handleUpdateProgram);
-router.post('/program/:id/delete', pengurusController.handleDeleteProgram);
-
-// Manajemen Jadwal
-router.get('/program/:programId/jadwal', pengurusController.showJadwalPage);
-router.post('/program/:programId/jadwal/create', pengurusController.handleCreateJadwal);
-router.post('/program/:programId/jadwal/:jadwalId/delete', pengurusController.handleDeleteJadwal);
-
-// --- RUTE BARU UNTUK MANAJEMEN FAQ ---
-router.get('/faq', pengurusController.showFaqManagementPage);
-router.post('/faq/create', pengurusController.handleCreateFaq);
-router.post('/faq/:id/delete', pengurusController.handleDeleteFaq);
-// Rute untuk update FAQ bisa ditambahkan di sini nanti
-
-// Fitur Pengurus Lainnya (yang belum diimplementasi penuh)
+router.get('/program/buat', pengurusController.showCreateProgramForm);
+router.post('/program/buat', pengurusController.handleCreateProgram); // Menangani form submission
 router.get('/seleksi', pengurusController.showSelectionManagement);
-// router.get('/jadwal', pengurusController.showJadwalPage); // Duplikat, sudah ada di atas
-// router.post('/jadwal/create', pengurusController.handleCreateJadwal); // Duplikat, sudah ada di atas
+router.get('/validasi', pengurusController.showDocumentValidation);
+router.get('/analitik', pengurusController.showAnalytics);
+router.get('/jadwal', pengurusController.showJadwalPage);
 router.get('/komunikasi', pengurusController.showKomunikasiPage);
-router.get('/statistik', pengurusController.showStatistikPage);
+router.get('/seleksi', pengurusController.showSelectionManagement);
+router.post('/seleksi/:applicationId', pengurusController.updateSelectionStatus);
+router.get('/jadwal', pengurusController.showJadwalPage);
+router.post('/jadwal/tambah', pengurusController.handleCreateJadwal);
+router.get('/komunikasi', pengurusController.showKomunikasiPage);
+router.post('/komunikasi/kirim', pengurusController.handleKirimPengumuman);
+router.get('/umpan-balik', pengurusController.showFeedbackPage);
+router.get('/program/edit/:id', pengurusController.showEditProgramForm);
+router.post('/program/edit/:id', pengurusController.handleUpdateProgram);
+router.post('/program/delete/:id', pengurusController.handleDeleteProgram);
+router.get('/program', pengurusController.showProgramListPage);
+router.get('/jadwal/edit/:id', pengurusController.showEditJadwalForm);
+router.post('/jadwal/edit/:id', pengurusController.handleUpdateJadwal);
+router.post('/jadwal/delete/:id', pengurusController.handleDeleteJadwal);
+router.get('/validasi', pengurusController.showDocumentValidation);
+router.post('/validasi/update/:id', pengurusController.handleUpdateValidation);
+router.get('/konten', pengurusController.showKontenPage);
+router.get('/konten/tambah', pengurusController.showKontenForm);
+router.post('/konten/tambah', upload.single('gambar_konten'), pengurusController.handleCreateKonten);
+router.get('/konten/edit/:id', pengurusController.showEditKontenForm);
+router.post('/konten/edit/:id', upload.single('gambar_konten'), pengurusController.handleUpdateKonten);
+router.post('/konten/delete/:id', pengurusController.handleDeleteKonten);
 
-
-// Pastikan ini ada di baris paling akhir
 module.exports = router;

@@ -1,0 +1,82 @@
+<div class="card-container max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-6">Riwayat & Status Aplikasi</h2>
+
+    <!-- Notifikasi Sukses (jika ada) -->
+    <% if (typeof success_msg !== 'undefined' && success_msg) { %>
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg" role="alert">
+            <p class="font-bold">Pendaftaran Berhasil!</p>
+            <p><%= success_msg %></p>
+        </div>
+    <% } %>
+
+    <!-- Filter Status -->
+    <div class="mb-6">
+        <label for="status-filter" class="form-label">Filter berdasarkan status:</label>
+        <select id="status-filter" class="form-select">
+            <option value="semua">Tampilkan Semua</option>
+            <option value="diterima">Diterima</option>
+            <option value="ditolak">Ditolak</option>
+            <option value="wawancara">Wawancara</option>
+            <option value="ditinjau">Sedang Ditinjau</option>
+        </select>
+    </div>
+
+    <!-- Daftar Riwayat Aplikasi -->
+    <div class="space-y-4" id="riwayat-list">
+        <% if (aplikasi && aplikasi.length > 0) { %>
+            <% aplikasi.forEach(app => { %>
+                <% 
+                    let badgeClass = 'badge-pending';
+                    let iconClass = 'fa-hourglass-half';
+                    if (app.status === 'Diterima') { badgeClass = 'badge-accepted'; iconClass = 'fa-check-circle'; }
+                    if (app.status === 'Ditolak') { badgeClass = 'badge-rejected'; iconClass = 'fa-times-circle'; }
+                    if (app.status === 'Wawancara') { badgeClass = 'badge-review'; iconClass = 'fa-calendar-check'; }
+                %>
+                <div class="riwayat-item p-5 border rounded-lg bg-white shadow-sm flex items-start gap-4" data-status="<%= app.status.toLowerCase().replace(' ', '-') %>">
+                    <div class="text-2xl pt-1 <%= badgeClass.replace('badge-', 'text-') %>">
+                        <i class="fas <%= iconClass %>"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-semibold text-lg text-gray-800"><%= app.nama_program %></h3>
+                                <p class="text-xs text-gray-500"><%= app.nama_pusat %></p>
+                            </div>
+                            <span class="status-badge <%= badgeClass %>"><%= app.status %></span>
+                        </div>
+                        <div class="mt-3 pt-3 border-t flex justify-between items-center">
+                             <p class="text-xs text-gray-500">
+                                Dilamar pada: <%= new Date(app.tanggal_lamaran).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric'}) %>
+                            </p>
+                            <a href="/programs/<%= app.id %>" class="secondary-button py-1 px-3 text-xs">Lihat Detail Program</a>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="text-center py-10">
+                <i class="fas fa-file-circle-xmark text-4xl mb-3 text-gray-400"></i>
+                <p class="text-lg text-gray-500">Anda belum pernah melamar ke program manapun.</p>
+                <a href="/programs" class="primary-button mt-4">Cari Program Sekarang</a>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filter = document.getElementById('status-filter');
+        const items = document.querySelectorAll('.riwayat-item');
+
+        filter.addEventListener('change', function() {
+            const selectedStatus = this.value;
+            items.forEach(item => {
+                if (selectedStatus === 'semua' || item.dataset.status === selectedStatus) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>

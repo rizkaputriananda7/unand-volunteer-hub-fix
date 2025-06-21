@@ -1,0 +1,33 @@
+<div class="card-container max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-6">Program Volunteer Tersimpan</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% if (bookmarks && bookmarks.length > 0) { %>
+            <% bookmarks.forEach(program => { %>
+                <div class="program-card flex flex-col p-5 border rounded-lg bg-white shadow-md relative">
+                    <!-- Tombol Hapus Bookmark -->
+                    <form action="/mahasiswa/bookmark/remove" method="POST" class="absolute top-3 right-3 z-10">
+                        <input type="hidden" name="programId" value="<%= program.id %>">
+                        <button type="submit" title="Hapus dari daftar" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-bookmark text-2xl"></i>
+                        </button>
+                    </form>
+
+                    <span class="text-xs font-bold text-primary-teal bg-teal-50 px-2 py-1 rounded-full self-start mb-2"><%= program.nama_pusat %></span>
+                    <h3 class="program-title text-lg font-bold text-gray-800"><%= program.title %></h3>
+                    <p class="text-xs text-gray-500 mb-3">Pendaftaran dibuka hingga <%= new Date(program.pendaftaran_akhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long'}) %></p>
+                    <div class="flex-grow"></div>
+                    <div class="mt-4 pt-4 border-t">
+                        <a href="/programs/<%= program.id %>" class="secondary-button w-full text-center justify-center">Lihat Detail</a>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="col-span-full text-center text-gray-500 py-10">
+                <i class="far fa-bookmark text-4xl mb-3 text-gray-400"></i>
+                <p>Anda belum menyimpan program apa pun.</p>
+                <a href="/programs" class="primary-button mt-4">Jelajahi Program</a>
+            </div>
+        <% } %>
+    </div>
+</div>

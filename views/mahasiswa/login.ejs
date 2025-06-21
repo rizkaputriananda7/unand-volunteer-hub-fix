@@ -1,0 +1,27 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2 class="auth-title">Login Mahasiswa</h2>
+    <p class="auth-subtitle">Gunakan NIM dan password Anda untuk masuk.</p>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <span class="block sm:inline"><%= error %></span>
+      </div>
+    <% } %>
+    <form class="space-y-5" method="POST" action="/auth/login">
+      <input type="hidden" name="role" value="mahasiswa" />
+      <div>
+        <label for="nim" class="sr-only">NIM</label>
+        <input type="text" id="nim" name="nim" class="auth-input-field" placeholder="NIM Anda" required />
+      </div>
+      <div>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" id="password" name="password" class="auth-input-field" placeholder="Password" required />
+      </div>
+      <button type="submit" class="auth-button">Login</button>
+    </form>
+    <p class="text-sm mt-6 text-gray-600">
+      Belum punya akun?
+      <a href="/auth/register?role=mahasiswa" class="auth-link-text">Daftar disini</a>
+    </p>
+  </div>
+</div>

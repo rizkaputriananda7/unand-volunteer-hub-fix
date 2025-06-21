@@ -1,48 +1,95 @@
 const express = require('express');
 const path = require('path');
-const session = require('express-session');
-const db = require('./config/database'); // Anda akan memerlukan ini nanti saat beralih ke mysql2
+const cookieParser = require('cookie-parser');
+const expressLayouts = require('express-ejs-layouts');
+
+// Impor rute Anda
+const mainRoutes = require('./routes/index'); 
+const authRoutes = require('./routes/authRoutes');
+const mahasiswaRoutes = require('./routes/mahasiswaRoutes');
+const pengurusRoutes = require('./routes/pengurusRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const programRoutes = require('./routes/programRoutes');
+const PengumumanGlobal = require('./models/PengumumanGlobal');
+
 const app = express();
 
+// Konfigurasi EJS dan Layouts
+app.use(expressLayouts);
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'src/views'));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.urlencoded({ extended: true }));
+app.set('views', path.join(__dirname, 'views'));
+app.set('layout', 'layout'); // Menetapkan layout default
+
+// Middleware bawaan
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// --- KONFIGURASI SESI BARU ---
-app.use(session({
-    secret: 'ini-adalah-secret-key-yang-sangat-rahasia-ganti-nanti', // Ganti dengan secret acak
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Set ke true jika Anda menggunakan HTTPS
-}));
 
-// Menyimpan koneksi database di dalam aplikasi Express
-app.set('db', db);
+// Middleware ini berjalan di setiap request untuk menyediakan data 'user' ke semua view jika ada token yang valid.
+app.use(async (req, res, next) => {
+    const token = req.cookies.token;
+    res.locals.user = null; // Secara default, tidak ada pengguna yang login
 
-// Impor rute
-const adminRoutes = require('./routes/adminRoutes');
-const authRoutes =require('./routes/authRoutes');
-const pengurusRoutes = require('./routes/pengurusRoutes');
-const programRoutes = require('./routes/programRoutes');
-const registerRoutes = require('./routes/registerRoutes');
-const userRoutes = require('./routes/userRoutes');
+    if (token) {
+        const jwt = require('jsonwebtoken');
+        // Impor semua model peran
+        const Mahasiswa = require('./models/Mahasiswa');
+        const Pengurus = require('./models/Pengurus');
+        const Admin = require('./models/Admin');
 
-// --- AWAL TAMBAHAN ---
-// Rute untuk root path (/)
-// Akan mengarahkan pengguna ke halaman pemilihan peran
-app.get('/', (req, res) => {
-    res.redirect('/auth');
+        try {
+            // Verifikasi token untuk mendapatkan 'id' dan 'role'
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            let user;
+
+            // Cari pengguna di tabel yang benar berdasarkan peran dari token
+            switch (decoded.role) {
+                case 'mahasiswa':
+                    user = await Mahasiswa.findById(decoded.id);
+                    break;
+                case 'pengurus':
+                    user = await Pengurus.findById(decoded.id);
+                    break;
+                case 'admin':
+                    user = await Admin.findById(decoded.id);
+                    break;
+            }
+            
+            if (user) {
+                user.role = decoded.role; // Pastikan objek user memiliki properti role
+                res.locals.user = user;   // Sediakan objek user ke semua file EJS
+            }
+        } catch (err) {
+            // Jika token tidak valid (kadaluwarsa, dll), biarkan user tetap null.
+            console.log("Token tidak valid, melanjutkan sebagai guest.");
+        }
+    }
+    next(); // Lanjutkan ke middleware atau rute berikutnya
 });
-// --- AKHIR TAMBAHAN ---
+app.use(async (req, res, next) => {
+    // Ambil pengumuman aktif dan sediakan ke SEMUA halaman
+    try {
+        res.locals.activeGlobalAnnouncement = await PengumumanGlobal.findActive();
+    } catch (error) {
+        res.locals.activeGlobalAnnouncement = null;
+    }
+    next();
+});
 
-// Gunakan rute
-app.use('/admin', adminRoutes);
+// Penggunaan Rute
+app.use('/', mainRoutes);
 app.use('/auth', authRoutes);
+app.use('/mahasiswa', mahasiswaRoutes);
 app.use('/pengurus', pengurusRoutes);
-app.use('/program', programRoutes);
-app.use('/register', registerRoutes);
-app.use('/mahasiswa', userRoutes);
+app.use('/admin', adminRoutes);
+app.use('/programs', programRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Terjadi kesalahan pada server!');
+});
 
 module.exports = app;

@@ -1,0 +1,21 @@
+<div class="card-container max-w-3xl mx-auto">
+    <h2>Form Pendaftaran: Relawan Perpustakaan Digital</h2>
+    <p class="auth-subtitle">Lengkapi data berikut untuk mendaftar.</p>
+    <form class="space-y-4">
+        <div>
+            <label class="form-label" for="alasan_bergabung">Mengapa Anda tertarik bergabung?</label>
+            <textarea id="alasan_bergabung" class="form-textarea" rows="5" placeholder="Jelaskan motivasi Anda..."></textarea>
+        </div>
+        <div>
+            <label class="form-label" for="upload_cv">Unggah CV (PDF, maks 2MB)</label>
+            <input type="file" id="upload_cv" class="form-input">
+        </div>
+        <div class="flex items-center">
+            <input type="checkbox" id="agreement" class="h-4 w-4 rounded border-gray-300 text-primary-teal focus:ring-primary-teal">
+            <label for="agreement" class="ml-2 text-sm text-gray-600">Saya menyatakan data yang saya berikan adalah benar.</label>
+        </div>
+        <div class="flex justify-end pt-4 border-t">
+            <button type="submit" class="primary-button">Kirim Pendaftaran</button>
+        </div>
+    </form>
+</div>

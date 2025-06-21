@@ -1,0 +1,88 @@
+<div class="card-container max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-6">Jelajahi Kesempatan Volunteer</h2>
+
+    <!-- Form Filter dan Pencarian yang Disempurnakan -->
+    <form action="/programs" method="GET" class="mb-8 p-4 bg-gray-50 rounded-lg border">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+            <!-- Kolom Pencarian -->
+            <div class="md:col-span-2">
+                <label for="q" class="sr-only">Cari Program</label>
+                <input type="search" name="q" id="q" placeholder="Cari berdasarkan judul program..." class="form-input w-full" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+            </div>
+            <!-- Kolom Filter Pusat -->
+            <div>
+                 <label for="centerId" class="sr-only">Filter Pusat</label>
+                 <select name="centerId" id="centerId" class="form-select w-full">
+                    <option value="">Semua Pusat</option>
+                    <% centers.forEach(center => { %>
+                        <option value="<%= center.id %>" <%= selectedCenter == center.id ? 'selected' : '' %>>
+                            <%= center.nama_pusat %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+            <!-- Tombol Cari -->
+            <button type="submit" class="primary-button w-full justify-center">
+                <i class="fas fa-search mr-2"></i>Cari
+            </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+            <!-- Kolom Filter Kategori -->
+            <div>
+                 <label for="kategori" class="sr-only">Filter Kategori</label>
+                 <select name="kategori" id="kategori" class="form-select w-full">
+                    <option value="">Semua Kategori</option>
+                    <% ['Edukasi', 'Lingkungan', 'Sosial', 'Kesehatan', 'Teknologi', 'Lainnya'].forEach(kat => { %>
+                        <option value="<%= kat %>" <%= selectedKategori == kat ? 'selected' : '' %>><%= kat %></option>
+                    <% }); %>
+                </select>
+            </div>
+            <!-- Kolom Filter Status -->
+            <div>
+                <label for="statusPendaftaran" class="sr-only">Filter Status</label>
+                 <select name="statusPendaftaran" id="statusPendaftaran" class="form-select w-full">
+                    <option value="">Semua Status</option>
+                    <option value="terbuka" <%= selectedStatus == 'terbuka' ? 'selected' : '' %>>Masih Dibuka</option>
+                    <option value="ditutup" <%= selectedStatus == 'ditutup' ? 'selected' : '' %>>Sudah Ditutup</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% if (programs && programs.length > 0) { %>
+            <% programs.forEach(program => { %>
+                <div class="program-card flex flex-col p-5 border rounded-lg bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative">
+                    <form action="/mahasiswa/bookmark/<%= program.isBookmarked ? 'remove' : 'add' %>" method="POST" class="absolute top-3 right-3 z-10">
+                        <input type="hidden" name="programId" value="<%= program.id %>">
+                        <button type="submit" title="<%= program.isBookmarked ? 'Hapus dari Tersimpan' : 'Simpan Program' %>" class="text-2xl">
+                            <% if (program.isBookmarked) { %>
+                                <i class="fas fa-bookmark text-primary-teal hover:text-dark-teal"></i>
+                            <% } else { %>
+                                <i class="far fa-bookmark text-gray-400 hover:text-primary-teal"></i>
+                            <% } %>
+                        </button>
+                    </form>
+                    <span class="text-xs font-bold text-primary-teal bg-teal-50 px-2 py-1 rounded-full self-start mb-2"><%= program.nama_pusat %></span>
+                    <h3 class="program-title text-lg font-bold text-gray-800"><%= program.title %></h3>
+                    <p class="text-xs text-gray-500 mb-3">Pendaftaran hingga <%= new Date(program.pendaftaran_akhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long'}) %></p>
+                    <p class="program-description text-sm text-gray-600 flex-grow"><%= program.description.substring(0, 100) %>...</p>
+                    <div class="mt-4 pt-4 border-t">
+                        <a href="/programs/<%= program.id %>" class="secondary-button w-full text-center justify-center">Lihat Detail</a>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+           <div class="col-span-full text-center text-gray-500 py-10">
+                <i class="fas fa-search-minus text-4xl mb-3 text-gray-400"></i>
+                <% if (typeof searchQuery !== 'undefined' && searchQuery && searchQuery.trim() !== '') { %>
+                    <p class="text-lg">Program Tidak Ditemukan</p>
+                    <p>Tidak ada program yang cocok dengan kata kunci "<%= searchQuery %>". Coba gunakan kata kunci lain.</p>
+                <% } else { %>
+                    <p class="text-lg">Belum Ada Program Tersedia</p>
+                    <p>Saat ini belum ada program yang cocok dengan filter Anda. Silakan coba lagi nanti.</p>
+                <% } %>
+           </div>
+        <% } %>
+    </div>
+</div>

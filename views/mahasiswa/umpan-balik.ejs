@@ -1,0 +1,102 @@
+<div class="card-container max-w-3xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-6">
+        <i class="fas fa-comment-dots mr-2"></i>Berikan Umpan Balik
+    </h2>
+    <p class="auth-subtitle text-sm -mt-6 text-center">
+        Masukan Anda sangat berarti untuk membantu kami menjadi lebih baik.
+    </p>
+
+    <!-- Notifikasi jika ada -->
+    <% if (typeof success_msg !== 'undefined' && success_msg) { %>
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
+            <p class="font-bold">Terima Kasih!</p>
+            <p><%= success_msg %></p>
+        </div>
+    <% } %>
+     <% if (typeof error !== 'undefined' && error) { %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4 text-sm" role="alert">
+        <span class="block sm:inline"><%= error %></span>
+      </div>
+    <% } %>
+
+    <form action="/mahasiswa/umpan-balik" method="POST" class="space-y-6">
+        <div>
+            <label class="form-label">Bagaimana pengalaman pendaftaran Anda secara keseluruhan?</label>
+            <div class="flex items-center justify-center text-3xl text-gray-300" id="star-rating">
+                <% for(let i = 1; i <= 5; i++) { %>
+                    <i class="far fa-star cursor-pointer star" data-value="<%= i %>"></i>
+                <% } %>
+            </div>
+            <input type="hidden" name="rating" id="rating" value="" required>
+        </div>
+        
+        <div>
+            <label for="program_id" class="form-label">Umpan balik ini untuk program spesifik? (Opsional)</label>
+            <select id="program_id" name="program_id" class="form-select">
+                <option value="">-- Umum / Masalah Teknis --</option>
+                <!-- === BAGIAN YANG DIPERBAIKI === -->
+                <% if (programs && programs.length > 0) { %>
+                    <% for(let i = 0; i < programs.length; i++) { %>
+                        <option value="<%= programs[i].id %>"><%= programs[i].title %></option>
+                    <% } %>
+                <% } %>
+                <!-- ============================ -->
+            </select>
+        </div>
+
+        <div>
+            <label for="saran" class="form-label">Apa saran atau masukan Anda untuk kami?</label>
+            <textarea id="saran" name="saran" class="form-textarea" rows="4" placeholder="Saran Anda akan sangat membantu..."></textarea>
+        </div>
+        
+        <div>
+            <label for="masalah_teknis" class="form-label">Apakah Anda menemukan masalah teknis?</label>
+            <textarea id="masalah_teknis" name="masalah_teknis" class="form-textarea" rows="3" placeholder="Jika ya, jelaskan di sini (misal: tombol tidak berfungsi, halaman lambat, dll.)"></textarea>
+        </div>
+
+        <div class="flex justify-end pt-4 border-t">
+            <button type="submit" class="primary-button">
+                <i class="fas fa-paper-plane mr-2"></i>Kirim Umpan Balik
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .star.fas { color: #FBBF24; /* amber-400 */ }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating');
+
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                resetStars();
+                const currentValue = this.dataset.value;
+                for (let i = 0; i < currentValue; i++) {
+                    stars[i].classList.replace('far', 'fas');
+                }
+            });
+
+            star.addEventListener('mouseout', function() {
+                resetStars();
+                const selectedValue = ratingInput.value;
+                if (selectedValue) {
+                    for (let i = 0; i < selectedValue; i++) {
+                        stars[i].classList.replace('far', 'fas');
+                    }
+                }
+            });
+
+            star.addEventListener('click', function() {
+                ratingInput.value = this.dataset.value;
+            });
+        });
+
+        function resetStars() {
+            stars.forEach(s => s.classList.replace('fas', 'far'));
+        }
+    });
+</script>

@@ -1,18 +1,29 @@
-const mysql = require('mysql2'); // Baris 1: Pastikan ini adalah baris pertama
+const mysql = require('mysql2/promise');
+require('dotenv').config();
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '', // ganti sesuai password MySQL kamu
-  database: 'unand_volunteer_hub' // ganti sesuai database kamu
+// Membuat connection pool untuk efisiensi koneksi
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-connection.connect((err) => {
-  if (err) {
-    console.error('Koneksi MySQL gagal:', err.message);
-    process.exit(1); // Keluar jika terjadi error
-  }
-  console.log('Tersambung ke database MySQL');
-});
+// Fungsi untuk mengetes koneksi
+async function testConnection() {
+    try {
+        const connection = await pool.getConnection();
+        console.log('Koneksi ke database MySQL berhasil.');
+        connection.release(); // Melepaskan koneksi kembali ke pool
+    } catch (error) {
+        console.error('Error saat menghubungkan ke database:', error);
+    }
+}
 
-module.exports = connection.promise();
+// Panggil fungsi tes koneksi saat aplikasi pertama kali dijalankan
+testConnection();
+
+module.exports = pool;  

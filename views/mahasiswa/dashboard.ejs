@@ -1,0 +1,127 @@
+<div class="space-y-8">
+    <!-- Bagian Sambutan dan Statistik -->
+    <div class="card-container text-center">
+        <h2 class="text-3xl font-bold text-gray-800">Selamat Datang, <%= user.nama_lengkap %>!</h2>
+        <p class="auth-subtitle">Ini adalah ringkasan aktivitas volunteer Anda. Teruslah berkontribusi!</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mt-6">
+            <div class="stat-box p-4">
+                <div class="stat-icon icon-pendaftar"><i class="fas fa-file-alt"></i></div>
+                <div class="stat-content text-left">
+                    <p class="stat-value"><%= stats.totalAplikasi %></p>
+                    <p class="stat-label">Total Lamaran Terkirim</p>
+                </div>
+            </div>
+            <div class="stat-box p-4">
+                <div class="stat-icon icon-diterima"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-content text-left">
+                    <p class="stat-value"><%= stats.totalDiterima %></p>
+                    <p class="stat-label">Program Diterima</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-container p-6">
+        <h3 class="text-xl font-bold mb-4">Kabar Terbaru dari Pusat Volunteer</h3>
+        <% if (latestContent && latestContent.length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <% latestContent.forEach(item => { %>
+                    <div class="p-4 border rounded-lg bg-white hover:shadow-lg transition-shadow">
+                        <% if(item.gambar_konten) { %>
+                            <img src="/<%= item.gambar_konten %>" class="w-full h-32 object-cover rounded-md mb-3">
+                        <% } %>
+                        <span class="text-xs font-bold text-primary-teal"><%= item.nama_pusat %></span>
+                        <h4 class="font-bold text-gray-800 mt-1"><%= item.judul_konten %></h4>
+                        <p class="text-xs text-gray-500 mt-2"><%= item.isi_konten.substring(0, 80) %>...</p>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <p class="text-sm text-center text-gray-500 py-4">Belum ada kabar terbaru.</p>
+        <% } %>
+    </div>
+
+    <div class="card-container p-6">
+        <h3 class="text-xl font-bold mb-4 flex items-center">
+            <i class="fas fa-book-reader text-primary-teal mr-3"></i>
+            Papan Pengumuman
+        </h3>
+        <% if (libraryNews && libraryNews.length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <% libraryNews.forEach(program => { %>
+                    <div class="p-4 border rounded-lg bg-white hover:shadow-lg transition-shadow">
+                        <h4 class="font-bold text-gray-800"><%= program.title %></h4>
+                        <p class="text-xs text-gray-500 mt-1 mb-3">
+                            Pendaftaran hingga <%= new Date(program.pendaftaran_akhir).toLocaleDateString('id-ID', {day: 'numeric', month: 'long'}) %>
+                        </p>
+                        <a href="/programs/<%= program.id %>" class="secondary-button py-2 px-3 text-sm">Lihat Detail</a>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <p class="text-sm text-center text-gray-500 py-4">Saat ini tidak ada informasi volunteer terbaru dari perpustakaan.</p>
+        <% } %>
+    </div>
+
+    <!-- Dua Kolom: Kegiatan Mendatang dan Peran Aktif -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Kolom Kiri: Kegiatan Mendatang -->
+        <div class="lg:col-span-1">
+            <div class="card-container p-6 h-full">
+                <h3 class="text-xl font-bold mb-4">Kegiatan Mendatang</h3>
+                <div class="space-y-4">
+                    <% if (upcomingEvents && upcomingEvents.length > 0) { %>
+                        <% upcomingEvents.forEach(event => { %>
+                            <div class="p-3 border-l-4 border-primary-teal bg-teal-50 rounded-r-lg">
+                                <p class="font-semibold text-sm"><%= event.nama_acara %></p>
+                                <p class="text-xs text-gray-600"><%= event.nama_program %></p>
+                                <p class="text-xs text-primary-teal font-bold mt-1"><%= new Date(event.tanggal_acara).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' }) %></p>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-alt text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-500">Tidak ada kegiatan terjadwal untuk Anda saat ini.</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kolom Kanan: Peran Aktif & Akses Cepat -->
+        <div class="lg:col-span-2 space-y-8">
+            <div class="card-container p-6">
+                <h3 class="text-xl font-bold mb-4">Peran Volunteer Aktif Anda</h3>
+                <div class="space-y-3">
+                    <% if (activeRoles && activeRoles.length > 0) { %>
+                        <% activeRoles.forEach(role => { %>
+                            <div class="p-3 bg-white border rounded-lg flex justify-between items-center">
+                                <div>
+                                    <p class="font-semibold"><%= role.title %></p>
+                                    <p class="text-xs text-gray-500"><%= role.nama_pusat %></p>
+                                </div>
+                                <span class="status-badge badge-accepted">Aktif</span>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="text-center py-4">
+                             <i class="fas fa-user-times text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-center text-gray-500">Anda belum diterima di program manapun.</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Akses Cepat -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <a href="/programs" class="primary-button text-lg p-6 justify-center">
+                    <i class="fas fa-search mr-3"></i>Jelajahi Program
+                </a>
+                <a href="/mahasiswa/aplikasi" class="secondary-button text-lg p-6 justify-center">
+                    <i class="fas fa-history mr-3"></i>Lacak Aplikasi
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="card-container max-w-4xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-6">
+        <%= typeof konten !== 'undefined' ? 'Edit Konten' : 'Buat Konten Baru' %>
+    </h2>
+    <form 
+        action="<%= typeof konten !== 'undefined' ? '/pengurus/konten/edit/' + konten.id : '/pengurus/konten/tambah' %>" 
+        method="POST" 
+        enctype="multipart/form-data" 
+        class="space-y-5"
+    >
+        <div>
+            <label for="judul_konten" class="form-label">Judul Konten</label>
+            <input type="text" name="judul_konten" id="judul_konten" class="form-input" value="<%= typeof konten !== 'undefined' ? konten.judul_konten : '' %>" required>
+        </div>
+        <div>
+            <label for="isi_konten" class="form-label">Isi Konten</label>
+            <textarea name="isi_konten" id="isi_konten" class="form-textarea" rows="10" required><%= typeof konten !== 'undefined' ? konten.isi_konten : '' %></textarea>
+        </div>
+        <div>
+            <label for="gambar_konten" class="form-label">Gambar Header (Opsional)</label>
+            <input type="file" name="gambar_konten" id="gambar_konten" class="form-input">
+             <% if (typeof konten !== 'undefined' && konten.gambar_konten) { %>
+                <p class="text-xs text-gray-500 mt-2">Kosongkan jika tidak ingin mengubah gambar saat ini: <a href="/<%= konten.gambar_konten %>" target="_blank" class="text-primary-teal"><%= konten.gambar_konten.split('/').pop() %></a></p>
+            <% } %>
+        </div>
+        <div class="flex justify-end pt-4 border-t">
+            <a href="/pengurus/konten" class="secondary-button mr-3">Batal</a>
+            <button type="submit" class="primary-button"><i class="fas fa-save mr-2"></i>Simpan Konten</button>
+        </div>
+    </form>
+</div>

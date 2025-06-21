@@ -1,0 +1,65 @@
+<div class="card-container max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-8">Overview Proses Seleksi Global</h2>
+
+    <!-- Kotak Statistik Utama -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div class="stat-box">
+            <div class="stat-icon icon-program"><i class="fas fa-file-alt"></i></div>
+            <div class="stat-content">
+                <p class="stat-value"><%= data.stats.totalAplikasi %></p>
+                <p class="stat-label">Total Lamaran Masuk</p>
+            </div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon icon-diterima"><i class="fas fa-user-check"></i></div>
+            <div class="stat-content">
+                <p class="stat-value"><%= data.stats['Diterima'] || 0 %></p>
+                <p class="stat-label">Total Diterima</p>
+            </div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon" style="background: var(--accent-blue)"><i class="fas fa-hourglass-half"></i></div>
+            <div class="stat-content">
+                <p class="stat-value"><%= data.stats['Ditinjau'] || 0 %></p>
+                <p class="stat-label">Sedang Ditinjau</p>
+            </div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon" style="background: var(--accent-red)"><i class="fas fa-times-circle"></i></div>
+            <div class="stat-content">
+                <p class="stat-value"><%= data.stats['Ditolak'] || 0 %></p>
+                <p class="stat-label">Ditolak</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ringkasan Progres per Program -->
+    <div>
+        <h3 class="text-xl font-bold mb-4">Progres Seleksi per Program</h3>
+        <div class="space-y-4">
+            <% if (data.programSummaries && data.programSummaries.length > 0) { %>
+                <% data.programSummaries.forEach(program => { %>
+                    <% 
+                        // === LOGIKA YANG DIPERBAIKI ===
+                        // Pastikan nilai adalah angka dan default ke 0 jika null/undefined.
+                        const acceptedCount = Number(program.acceptedApplicants) || 0;
+                        const totalCount = Number(program.totalApplicants) || 0;
+                        // Perhitungan persentase yang aman dari pembagian dengan nol.
+                        const percentage = (totalCount > 0) ? (acceptedCount / totalCount) * 100 : 0;
+                    %>
+                    <div class="program-summary-card p-4 bg-white border rounded-lg">
+                        <h4 class="program-summary-title font-semibold"><%= program.title %></h4>
+                        <div class="progress-bar-container mt-2 mb-1">
+                            <div class="progress-bar-fill" style="width: <%= percentage.toFixed(0) %>%;"></div>
+                        </div>
+                        <p class="progress-text text-xs text-gray-600">
+                            <strong><%= acceptedCount %></strong> dari <strong><%= totalCount %></strong> pendaftar diterima (<%= percentage.toFixed(1) %>%)
+                        </p>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p class="text-center text-gray-500 py-6">Tidak ada data seleksi untuk ditampilkan.</p>
+            <% } %>
+        </div>
+    </div>
+</div>

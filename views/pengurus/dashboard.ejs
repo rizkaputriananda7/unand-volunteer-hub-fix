@@ -1,0 +1,47 @@
+<div class="space-y-8">
+    <!-- Bagian Sambutan -->
+    <div class="card-container text-center">
+        <h2 class="text-3xl font-bold text-gray-800">Selamat Datang, <%= user.nama_lengkap %>!</h2>
+        <p class="auth-subtitle">Anda mengelola program untuk <strong><%= user.nama_pusat %></strong>. Berikut adalah ringkasan aktivitas terkini.</p>
+    </div>
+
+    <!-- Kotak Statistik -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="stat-box"><div class="stat-icon icon-pendaftar"><i class="fas fa-users"></i></div><div class="stat-content"><p class="stat-value"><%= stats.totalPendaftar %></p><p class="stat-label">Total Pendaftar</p></div></div>
+        <div class="stat-box"><div class="stat-icon icon-diterima"><i class="fas fa-user-check"></i></div><div class="stat-content"><p class="stat-value"><%= stats.totalDiterima %></p><p class="stat-label">Volunteer Diterima</p></div></div>
+        <div class="stat-box"><div class="stat-icon icon-program"><i class="fas fa-tasks"></i></div><div class="stat-content"><p class="stat-value"><%= stats.programAktif %></p><p class="stat-label">Program Aktif</p></div></div>
+    </div>
+
+    <!-- Dua Kolom: Aktivitas Terbaru & Akses Cepat -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Kolom Aktivitas Terbaru -->
+        <div class="card-container p-6">
+            <h3 class="text-xl font-bold mb-4">Aktivitas Terbaru</h3>
+            <div class="space-y-3">
+                <% if (recentActivities && recentActivities.length > 0) { %>
+                    <% recentActivities.forEach(activity => { %>
+                        <div class="p-3 bg-gray-50 border-l-4 border-primary-teal rounded-r-lg">
+                            <p class="text-sm">
+                                <span class="font-semibold"><%= activity.nama_lengkap %></span>
+                                baru saja mendaftar ke program
+                                <span class="font-semibold text-primary-teal"><%= activity.nama_program %></span>.
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1"><%= new Date(activity.tanggal_lamaran).toLocaleString('id-ID') %></p>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="text-sm text-center text-gray-500 py-4">Belum ada aktivitas pendaftaran terbaru.</p>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Kolom Akses Cepat -->
+        <div class="card-container p-6 flex flex-col justify-center items-center">
+             <h3 class="text-xl font-bold mb-4">Akses Cepat</h3>
+             <div class="w-full space-y-3">
+                <a href="/pengurus/program/buat" class="primary-button text-base p-4 w-full justify-center"><i class="fas fa-plus-circle mr-3"></i>Buat Program Baru</a>
+                <a href="/pengurus/seleksi" class="secondary-button text-base p-4 w-full justify-center"><i class="fas fa-users-cog mr-3"></i>Manajemen Seleksi</a>
+             </div>
+        </div>
+    </div>
+</div>

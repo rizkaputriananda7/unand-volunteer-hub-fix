@@ -1,0 +1,84 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <span>Volunteer Hub</span>
+  </div>
+  <nav class="sidebar-nav-links">
+    <a
+      href="/mahasiswa/dashboard"
+      class="sidebar-nav-item <%= (active === 'dashboard') ? 'active' : '' %>"
+    >
+      <i class="fas fa-home"></i> <span>Dashboard</span>
+    </a>
+    <a
+      href="/programs"
+      class="sidebar-nav-item <%= (active === 'program') ? 'active' : '' %>"
+    >
+      <i class="fas fa-tasks"></i> <span>Lihat Program</span>
+    </a>
+    <a
+      href="/mahasiswa/aplikasi"
+      class="sidebar-nav-item <%= (active === 'aplikasi') ? 'active' : '' %>"
+    >
+      <i class="fas fa-clipboard-list"></i> <span>Status Aplikasi</span>
+    </a>
+    <a
+      href="/mahasiswa/bookmark"
+      class="sidebar-nav-item <%= (active === 'bookmark') ? 'active' : '' %>"
+    >
+      <i class="fas fa-bookmark"></i> <span>Program Tersimpan</span>
+    </a>
+    <a
+      href="/mahasiswa/kalender"
+      class="sidebar-nav-item <%= (active === 'kalender') ? 'active' : '' %>"
+    >
+      <i class="fas fa-calendar-alt"></i> <span>Kalender Kegiatan</span>
+    </a>
+    <a
+      href="/mahasiswa/notifikasi"
+      class="sidebar-nav-item <%= (active === 'notifikasi') ? 'active' : '' %>"
+    >
+      <i class="fas fa-bell"></i> <span>Notifikasi</span>
+    </a>
+    <a
+      href="/mahasiswa/dokumen"
+      class="sidebar-nav-item <%= (active === 'dokumen') ? 'active' : '' %>"
+    >
+      <i class="fas fa-file-alt"></i> <span>Dokumen Saya</span>
+    </a>
+    <a
+      href="/mahasiswa/bantuan-surat"
+      class="sidebar-nav-item <%= (active === 'bantuan-surat') ? 'active' : '' %>"
+    >
+      <i class="fas fa-magic"></i> <span>Bantuan Surat</span>
+    </a>
+    <a
+      href="/mahasiswa/umpan-balik"
+      class="sidebar-nav-item <%= (active === 'umpan-balik') ? 'active' : '' %>"
+    >
+      <i class="fas fa-comment-dots"></i> <span>Beri Umpan Balik</span>
+    </a>
+  </nav>
+  <div class="p-4 border-t" style="border-color: var(--border-color)">
+    <% if (user) { %>
+    <div class="text-xs mb-2">
+      <p class="font-semibold text-text-primary"><%= user.nama_lengkap %></p>
+      <p class="text-text-secondary capitalize"><%= user.role %></p>
+    </div>
+    <% } %>
+    <a
+      href="/mahasiswa/faq"
+      class="sidebar-nav-item <%= (active === 'faq') ? 'active' : '' %>"
+    >
+      <i class="fas fa-question-circle"></i> <span>Bantuan & FAQ</span>
+    </a>
+    <a
+      href="/mahasiswa/profil"
+      class="sidebar-nav-item <%= (active === 'profil') ? 'active' : '' %>"
+    >
+      <i class="fas fa-user-circle"></i> <span>Profil Saya</span>
+    </a>
+    <a href="/auth/logout" class="sidebar-nav-item sidebar-logout">
+      <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+    </a>
+  </div>
+</aside>

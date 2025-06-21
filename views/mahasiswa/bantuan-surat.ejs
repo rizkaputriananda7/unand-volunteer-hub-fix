@@ -1,0 +1,140 @@
+<div class="card-container max-w-4xl mx-auto">
+    <div class="text-center">
+        <h2 class="text-2xl font-bold mb-2">
+            <i class="fas fa-magic-wand-sparkles mr-2"></i>Asisten Surat Motivasi AI
+        </h2>
+        <p class="auth-subtitle text-sm -mt-2">
+            Dapatkan bantuan untuk menyempurnakan surat motivasi Anda agar lebih menonjol.
+        </p>
+    </div>
+
+    <div class="mt-6 space-y-5">
+        <div>
+            <label for="program-konteks" class="form-label">1. Pilih Konteks Program (Opsional)</label>
+            <select id="program-konteks" class="form-select">
+                <option value="">-- Konteks Umum --</option>
+                <% if(programs && programs.length > 0) { %>
+                    <% programs.forEach(program => { %>
+                        <option value="<%= program.title %>"><%= program.title %></option>
+                    <% }) %>
+                <% } %>
+            </select>
+            <p class="text-xs text-gray-500 mt-1">Memberikan konteks program akan membantu AI memberikan saran yang lebih relevan.</p>
+        </div>
+        <div>
+            <label for="draft-surat" class="form-label">2. Tulis Draf Surat Motivasi Anda</label>
+            <textarea id="draft-surat" class="form-textarea" rows="12" placeholder="Tuliskan draf surat Anda di sini..."></textarea>
+        </div>
+        <div class="text-center">
+            <button id="generate-btn" class="primary-button text-base py-3 px-6">
+                <i class="fas fa-rocket mr-2"></i>Perbaiki Surat Saya
+            </button>
+        </div>
+    </div>
+
+    <!-- Area untuk menampilkan hasil dari AI -->
+    <div id="hasil-ai-container" class="mt-8 border-t pt-6 hidden">
+        <h3 class="text-xl font-bold mb-4">Hasil dari AI ✨</h3>
+        <div id="loading-indicator" class="text-center py-4 hidden">
+            <i class="fas fa-spinner fa-spin text-2xl text-primary-teal"></i>
+            <p class="text-sm mt-2">AI sedang berpikir...</p>
+        </div>
+        <div id="hasil-ai-content" class="p-4 bg-gray-50 rounded-lg border whitespace-pre-wrap">
+            <!-- Hasil akan ditampilkan di sini -->
+        </div>
+        <div class="flex justify-end mt-4">
+            <button id="export-doc-btn" class="secondary-button hidden">
+                <i class="fas fa-file-word mr-2"></i>Ekspor ke .docx
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Impor pustaka untuk generate file .doc -->
+<script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<!-- Script yang menghubungkan ke API Gemini -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const generateBtn = document.getElementById('generate-btn');
+        const exportBtn = document.getElementById('export-doc-btn');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const hasilContainer = document.getElementById('hasil-ai-container');
+        const hasilContent = document.getElementById('hasil-ai-content');
+
+        generateBtn.addEventListener('click', async () => {
+            const programKonteks = document.getElementById('program-konteks').value;
+            const draftSurat = document.getElementById('draft-surat').value;
+
+            if (draftSurat.trim() === '') {
+                alert('Silakan tulis draf surat Anda terlebih dahulu.');
+                return;
+            }
+
+            // 1. Membangun Prompt untuk AI
+            let prompt = `Anda adalah seorang ahli HRD yang berpengalaman dalam menyeleksi volunteer. Perbaiki dan sempurnakan draf surat motivasi berikut ini. Buatlah agar terdengar lebih profesional, tulus, dan meyakinkan. Berikan hanya hasil akhirnya saja dalam format teks biasa tanpa judul atau pembukaan tambahan.\n\n`;
+            if(programKonteks) {
+                prompt += `Konteks Program: ${programKonteks}\n\n`;
+            }
+            prompt += `Draf dari pengguna:\n---\n${draftSurat}`;
+
+            // Tampilkan UI loading
+            hasilContainer.classList.remove('hidden');
+            loadingIndicator.classList.remove('hidden');
+            hasilContent.innerHTML = '';
+            exportBtn.classList.add('hidden');
+            
+            // 2. Persiapan Panggilan API
+            try {
+                // Biarkan string API Key kosong, sistem akan menanganinya
+                const apiKey = "AIzaSyDVo3uGC4EKGJwJa2v_TJsJ9GKxuswcPH4"; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                
+                const payload = {
+                    contents: [{
+                        parts: [{ text: prompt }]
+                    }]
+                };
+
+                // 3. Melakukan Panggilan API ke Gemini
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                // 4. Memproses dan Menampilkan Hasil
+                // Pastikan struktur respons benar sebelum mengaksesnya
+                if (result.candidates && result.candidates[0] && result.candidates[0].content) {
+                    const improvedText = result.candidates[0].content.parts[0].text;
+                    hasilContent.innerText = improvedText;
+                    exportBtn.classList.remove('hidden');
+                } else {
+                    throw new Error("Struktur respons dari API tidak valid.");
+                }
+
+            } catch (error) {
+                console.error("Error memanggil AI:", error);
+                hasilContent.innerText = "Maaf, terjadi kesalahan saat menghubungi AI. Silakan coba lagi nanti.";
+            } finally {
+                loadingIndicator.classList.add('hidden');
+            }
+        });
+
+        // Logika untuk tombol Ekspor
+        exportBtn.addEventListener('click', () => {
+            const content = hasilContent.innerText;
+            const contentHtml = `<p>${content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>')}</p>`;
+            
+            const converted = htmlDocx.asBlob(contentHtml);
+            saveAs(converted, 'Surat-Motivasi-Disempurnakan.docx');
+        });
+    });
+</script>

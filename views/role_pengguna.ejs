@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Peran | Unand Volunteer Hub</title>
+    <link href="/css/style.css" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-light">
+    <div class="auth-container">
+        <div class="auth-card text-center">
+            <h2 class="auth-title">Selamat Datang!</h2>
+            <p class="auth-subtitle">Pilih peran Anda untuk melanjutkan ke Unand Volunteer Hub.</p>
+            <div class="space-y-3">
+                
+                <a href="/auth/login?role=mahasiswa" role="button" class="role-button student-btn">
+                    <i class="fas fa-user-graduate"></i>
+                    <div class="text-left">
+                        <div class="font-semibold">Mahasiswa / Calon Volunteer</div>
+                        <div class="text-sm opacity-80">Daftar dan ikuti program volunteer.</div>
+                    </div>
+                </a>
+                
+                <a href="/auth/login?role=pengurus" role="button" class="role-button coordinator-btn">
+                    <i class="fas fa-users-cog"></i>
+                    <div class="text-left">
+                        <div class="font-semibold">Pengurus Pusat Volunteer</div>
+                        <div class="text-sm opacity-80">Kelola program dan koordinasi.</div>
+                    </div>
+                </a>
+                
+                <a href="/auth/login?role=admin" role="button" class="role-button admin-btn">
+                    <i class="fas fa-user-shield"></i>
+                    <div class="text-left">
+                        <div class="font-semibold">Admin Sistem</div>
+                        <div class="text-sm opacity-80">Administrasi sistem & data.</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

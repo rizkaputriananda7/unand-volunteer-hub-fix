@@ -1,0 +1,64 @@
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Kolom Form Pengiriman -->
+    <div class="lg:col-span-2">
+        <div class="card-container">
+            <h2 class="text-2xl font-bold text-center mb-6">
+                <i class="fas fa-paper-plane mr-2"></i>Kirim Pengumuman Baru
+            </h2>
+            <% if (typeof error !== 'undefined' && error) { %>
+              <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4 text-sm" role="alert">
+                <span class="block sm:inline"><%= error %></span>
+              </div>
+            <% } %>
+            <form action="/pengurus/komunikasi/kirim" method="POST" class="space-y-5">
+                <div>
+                    <label for="program_id" class="form-label">Target Program</label>
+                    <select id="program_id" name="program_id" class="form-select" required>
+                        <option value="" disabled selected>-- Pilih Program Tujuan --</option>
+                        <% if (programs && programs.length > 0) { %>
+                            <% programs.forEach(program => { %>
+                                <option value="<%= program.id %>"><%= program.title %></option>
+                            <% }) %>
+                        <% } else { %>
+                            <option disabled>Anda belum membuat program</option>
+                        <% } %>
+                    </select>
+                </div>
+                <div>
+                    <label for="subjek" class="form-label">Subjek Pengumuman</label>
+                    <input type="text" id="subjek" name="subjek" class="form-input" placeholder="Contoh: Jadwal Wawancara Minggu Depan" required>
+                </div>
+                <div>
+                    <label for="pesan" class="form-label">Isi Pesan</label>
+                    <textarea id="pesan" name="pesan" class="form-textarea" rows="6" placeholder="Tuliskan detail pengumuman di sini..." required></textarea>
+                </div>
+                <div class="flex justify-end pt-4 border-t">
+                    <button type="submit" class="primary-button" <%= (programs && programs.length > 0) ? '' : 'disabled' %>>
+                        <i class="fas fa-check mr-2"></i>Kirim ke Volunteer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Kolom Riwayat Pengumuman -->
+    <div>
+        <div class="card-container">
+            <h3 class="text-lg font-bold mb-4">Riwayat Pengumuman</h3>
+            <div class="space-y-3">
+                <% if (pengumuman && pengumuman.length > 0) { %>
+                    <% pengumuman.forEach(item => { %>
+                        <div class="log-item p-3 border rounded-md">
+                            <p class="font-semibold text-sm"><%= item.subjek %></p>
+                            <p class="text-xs text-gray-500">
+                                Untuk: <%= item.nama_program %> | <%= new Date(item.created_at).toLocaleString('id-ID') %>
+                            </p>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="text-center text-sm text-gray-500 py-4">Belum ada riwayat pengumuman.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
