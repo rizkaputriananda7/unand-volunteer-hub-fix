@@ -37,4 +37,7 @@ router.get('/program/:id', programController.getProgramDetail);
 // RUTE PENCARIAN & LIST PROGRAM UNTUK MAHASISWA
 router.get('/mahasiswa/program', require('../controllers/programController').searchProgramsForUser);
 
+// Rute untuk melihat detail sebuah program (akses mahasiswa)
+router.get('/mahasiswa/program/:id', programController.getProgramDetail);
+
 module.exports = router;
