@@ -58,7 +58,7 @@
 
     <!-- Tombol Aksi -->
     <div class="flex flex-col md:flex-row gap-3">
-        <form action="#" method="POST" class="flex-1">
+        <form action="/programs/<%= program.id %>/daftar" method="get" class="flex-1">
             <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 rounded transition">Daftar Program Ini</button>
         </form>
         <button id="bookmark-btn" class="w-full border border-gray-300 font-semibold py-2 rounded hover:bg-gray-100 transition flex-1 flex items-center justify-center <%= isBookmarked ? 'text-yellow-500 bg-yellow-50 border-yellow-400' : 'text-gray-700' %>">

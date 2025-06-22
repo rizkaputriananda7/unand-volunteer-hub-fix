@@ -1,9 +1,19 @@
 <div class="card-container max-w-4xl mx-auto text-center">
     <!-- Ikon dan Pesan Sukses -->
     <div class="mb-6">
-        <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
-        <h2 class="text-3xl font-bold">Pendaftaran Anda Telah Terkirim!</h2>
-        <p class="auth-subtitle mt-2">Terima kasih telah mendaftar. Lamaran Anda sedang kami proses.</p>
+        <% if (typeof errorMsg !== 'undefined' && errorMsg) { %>
+            <i class="fas fa-exclamation-circle text-6xl text-red-500 mb-4"></i>
+            <h2 class="text-3xl font-bold">Terjadi Kesalahan</h2>
+            <p class="auth-subtitle mt-2"><%= errorMsg %></p>
+        <% } else if (typeof sudahDaftar !== 'undefined' && sudahDaftar) { %>
+            <i class="fas fa-info-circle text-6xl text-yellow-500 mb-4"></i>
+            <h2 class="text-3xl font-bold">Anda Sudah Pernah Mendaftar</h2>
+            <p class="auth-subtitle mt-2">Anda sudah pernah mengirim pendaftaran untuk program ini. Silakan cek status aplikasi Anda.</p>
+        <% } else { %>
+            <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
+            <h2 class="text-3xl font-bold">Pendaftaran Anda Telah Terkirim!</h2>
+            <p class="auth-subtitle mt-2">Terima kasih telah mendaftar. Lamaran Anda sedang kami proses.</p>
+        <% } %>
     </div>
 
     <!-- Ringkasan Informasi -->
@@ -12,30 +22,31 @@
         <div>
             <h3 class="text-lg font-bold mb-3 border-b pb-2">Ringkasan Program</h3>
             <div class="space-y-2 text-sm">
-                <p><strong>Judul:</strong> <%= program.title %></p>
-                <p><strong>Pusat Volunteer:</strong> <%= program.nama_pusat %></p>
-                <p><strong>Tanggal Pelaksanaan:</strong> <%= new Date(program.tanggal_pelaksanaan).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+                <p><strong>Judul:</strong> <%= program?.title || '-' %></p>
+                <p><strong>Pusat Volunteer:</strong> <%= program?.nama_pusat || '-' %></p>
+                <p><strong>Tanggal Pelaksanaan:</strong> <%= program?.tanggal_pelaksanaan ? new Date(program.tanggal_pelaksanaan).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-' %></p>
             </div>
         </div>
         <!-- Ringkasan Pendaftar -->
         <div>
             <h3 class="text-lg font-bold mb-3 border-b pb-2">Data Pendaftar</h3>
             <div class="space-y-2 text-sm">
-                <p><strong>Nama:</strong> <%= user.nama_lengkap %></p>
-                <p><strong>NIM:</strong> <%= user.nim %></p>
-                <p><strong>Email:</strong> <%= user.email %></p>
+                <p><strong>Nama:</strong> <%= user?.nama_lengkap || '-' %></p>
+                <p><strong>NIM:</strong> <%= user?.nim || '-' %></p>
+                <p><strong>Email:</strong> <%= user?.email || '-' %></p>
             </div>
         </div>
     </div>
 
     <!-- Langkah Selanjutnya -->
+    <% if (!errorMsg) { %>
     <div class="mt-8 text-center">
         <h4 class="font-bold text-lg">Apa Langkah Selanjutnya?</h4>
         <p class="text-gray-600 mt-2">
             Status awal pendaftaran Anda adalah "Sedang Ditinjau". Anda dapat memantau semua pembaruan status, termasuk jadwal wawancara jika Anda lolos, melalui halaman "Status Aplikasi".
         </p>
     </div>
-    
+    <% } %>
     <!-- Tombol Aksi -->
     <div class="flex justify-center gap-4 mt-8 pt-6 border-t">
         <a href="/mahasiswa/aplikasi" class="primary-button text-base py-3 px-6">

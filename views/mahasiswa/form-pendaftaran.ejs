@@ -1,21 +1,51 @@
-<div class="card-container max-w-3xl mx-auto">
-    <h2>Form Pendaftaran: Relawan Perpustakaan Digital</h2>
-    <p class="auth-subtitle">Lengkapi data berikut untuk mendaftar.</p>
-    <form class="space-y-4">
-        <div>
-            <label class="form-label" for="alasan_bergabung">Mengapa Anda tertarik bergabung?</label>
-            <textarea id="alasan_bergabung" class="form-textarea" rows="5" placeholder="Jelaskan motivasi Anda..."></textarea>
+<div class="max-w-3xl mx-auto bg-white border rounded-xl shadow p-10 mt-8">
+    <h2 class="text-3xl font-bold text-center mb-2">Pendaftaran Program Volunteer</h2>
+    <p class="text-center text-lg text-gray-600 mb-8">Untuk Program: <span class="font-semibold"><%= program.title %></span></p>
+    <form class="space-y-6" method="POST" action="/programs/<%= program.id %>/apply" enctype="multipart/form-data">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block font-semibold mb-1">Nama Lengkap (Sesuai KTM)</label>
+                <input type="text" name="nama_lengkap" class="w-full border rounded px-3 py-2" required value="<%= user?.nama_lengkap || '' %>">
+            </div>
+            <div>
+                <label class="block font-semibold mb-1">NIM</label>
+                <input type="text" name="nim" class="w-full border rounded px-3 py-2" required value="<%= user?.nim || '' %>">
+            </div>
+            <div>
+                <label class="block font-semibold mb-1">Alamat Email Aktif</label>
+                <input type="email" name="email" class="w-full border rounded px-3 py-2" required value="<%= user?.email || '' %>">
+            </div>
+            <div>
+                <label class="block font-semibold mb-1">Nomor Telepon/WhatsApp</label>
+                <input type="text" name="telepon" class="w-full border rounded px-3 py-2" required value="<%= user?.telepon || '' %>">
+            </div>
         </div>
         <div>
-            <label class="form-label" for="upload_cv">Unggah CV (PDF, maks 2MB)</label>
-            <input type="file" id="upload_cv" class="form-input">
+            <label class="block font-semibold mb-1">Motivasi Mengikuti Program</label>
+            <textarea name="motivasi" class="w-full border rounded px-3 py-2 min-h-[100px]" placeholder="Jelaskan mengapa Anda tertarik..." required></textarea>
         </div>
-        <div class="flex items-center">
-            <input type="checkbox" id="agreement" class="h-4 w-4 rounded border-gray-300 text-primary-teal focus:ring-primary-teal">
-            <label for="agreement" class="ml-2 text-sm text-gray-600">Saya menyatakan data yang saya berikan adalah benar.</label>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+                <label class="block font-semibold mb-1">Unggah CV (PDF)</label>
+                <input type="file" name="cv" accept="application/pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-teal-100 file:text-teal-700">
+            </div>
+            <div>
+                <label class="block font-semibold mb-1">Unggah Transkrip Terakhir</label>
+                <input type="file" name="transkrip" accept="application/pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-teal-100 file:text-teal-700">
+            </div>
+            <div>
+                <label class="block font-semibold mb-1">Scan KTM (PDF/JPG/PNG)</label>
+                <input type="file" name="ktm" accept="application/pdf,image/jpeg,image/png" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-teal-100 file:text-teal-700">
+            </div>
         </div>
-        <div class="flex justify-end pt-4 border-t">
-            <button type="submit" class="primary-button">Kirim Pendaftaran</button>
+        <div class="flex items-center mt-4">
+            <input type="checkbox" name="persetujuan" id="persetujuan" class="mr-2" required>
+            <label for="persetujuan" class="text-sm">Saya menyatakan bahwa semua data yang saya isi adalah benar dan saya bersedia mengikuti seluruh ketentuan program volunteer ini.</label>
+        </div>
+        <div class="text-center mt-6">
+            <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-8 py-3 rounded transition text-lg flex items-center justify-center mx-auto">
+                <i class="fas fa-paper-plane mr-2"></i> Kirim Pendaftaran
+            </button>
         </div>
     </form>
 </div>

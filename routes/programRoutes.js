@@ -7,5 +7,6 @@ router.use(authenticateToken, authorizeRole('mahasiswa'));
 router.get('/', programController.showAllPrograms);
 router.get('/:id', programController.showProgramDetails);
 router.post('/:id/apply', programController.handleApplyToProgram);
+router.get('/:id/daftar', programController.showFormPendaftaran);
 
 module.exports = router;

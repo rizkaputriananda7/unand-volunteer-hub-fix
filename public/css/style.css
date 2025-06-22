@@ -1799,20 +1799,12 @@ body {
   inset: 0px;
 }
 
-.right-2{
-  right: 0.5rem;
-}
-
 .right-3{
   right: 0.75rem;
 }
 
 .top-0{
   top: 0px;
-}
-
-.top-1\/2{
-  top: 50%;
 }
 
 .top-3{
@@ -1985,8 +1977,8 @@ body {
   height: 8rem;
 }
 
-.h-4{
-  height: 1rem;
+.h-48{
+  height: 12rem;
 }
 
 .h-80{
@@ -1997,8 +1989,8 @@ body {
   height: 100%;
 }
 
-.h-48{
-  height: 12rem;
+.min-h-\[100px\]{
+  min-height: 100px;
 }
 
 .min-h-\[120px\]{
@@ -2019,10 +2011,6 @@ body {
 
 .w-32{
   width: 8rem;
-}
-
-.w-4{
-  width: 1rem;
 }
 
 .w-6{
@@ -2065,10 +2053,6 @@ body {
   max-width: 28rem;
 }
 
-.max-w-sm{
-  max-width: 24rem;
-}
-
 .flex-1{
   flex: 1 1 0%;
 }
@@ -2079,11 +2063,6 @@ body {
 
 .flex-grow{
   flex-grow: 1;
-}
-
-.-translate-y-1\/2{
-  --tw-translate-y: -50%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .transform{
@@ -2106,12 +2085,12 @@ body {
   list-style-position: inside;
 }
 
-.list-none{
-  list-style-type: none;
-}
-
 .list-disc{
   list-style-type: disc;
+}
+
+.list-none{
+  list-style-type: none;
 }
 
 .grid-cols-1{
@@ -2154,6 +2133,10 @@ body {
   gap: 0.5rem;
 }
 
+.gap-3{
+  gap: 0.75rem;
+}
+
 .gap-4{
   gap: 1rem;
 }
@@ -2164,10 +2147,6 @@ body {
 
 .gap-8{
   gap: 2rem;
-}
-
-.gap-3{
-  gap: 0.75rem;
 }
 
 .gap-x-6{
@@ -2291,10 +2270,6 @@ body {
   border-bottom-width: 1px;
 }
 
-.border-b-2{
-  border-bottom-width: 2px;
-}
-
 .border-l-4{
   border-left-width: 4px;
 }
@@ -2369,19 +2344,9 @@ body {
   background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1));
 }
 
-.bg-gray-100{
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
-}
-
 .bg-gray-50{
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
-}
-
-.bg-gray-600{
-  --tw-bg-opacity: 1;
-  background-color: rgb(75 85 99 / var(--tw-bg-opacity, 1));
 }
 
 .bg-green-100{
@@ -2413,6 +2378,11 @@ body {
   background-color: rgb(220 38 38 / var(--tw-bg-opacity, 1));
 }
 
+.bg-teal-100{
+  --tw-bg-opacity: 1;
+  background-color: rgb(204 251 241 / var(--tw-bg-opacity, 1));
+}
+
 .bg-teal-50{
   --tw-bg-opacity: 1;
   background-color: rgb(240 253 250 / var(--tw-bg-opacity, 1));
@@ -2424,6 +2394,11 @@ body {
 
 .bg-teal-50\/60{
   background-color: rgb(240 253 250 / 0.6);
+}
+
+.bg-teal-600{
+  --tw-bg-opacity: 1;
+  background-color: rgb(13 148 136 / var(--tw-bg-opacity, 1));
 }
 
 .bg-white{
@@ -2450,16 +2425,6 @@ body {
   background-color: rgb(234 179 8 / var(--tw-bg-opacity, 1));
 }
 
-.bg-teal-100{
-  --tw-bg-opacity: 1;
-  background-color: rgb(204 251 241 / var(--tw-bg-opacity, 1));
-}
-
-.bg-teal-600{
-  --tw-bg-opacity: 1;
-  background-color: rgb(13 148 136 / var(--tw-bg-opacity, 1));
-}
-
 .bg-opacity-50{
   --tw-bg-opacity: 0.5;
 }
@@ -2475,6 +2440,10 @@ body {
 
 .p-1{
   padding: 0.25rem;
+}
+
+.p-10{
+  padding: 2.5rem;
 }
 
 .p-2{
@@ -2524,6 +2493,11 @@ body {
 .px-6{
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+.px-8{
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .py-1{
@@ -2688,11 +2662,6 @@ body {
   color: rgb(59 130 246 / var(--tw-text-opacity, 1));
 }
 
-.text-blue-600{
-  --tw-text-opacity: 1;
-  color: rgb(37 99 235 / var(--tw-text-opacity, 1));
-}
-
 .text-blue-800{
   --tw-text-opacity: 1;
   color: rgb(30 64 175 / var(--tw-text-opacity, 1));
@@ -2742,11 +2711,6 @@ body {
   color: rgb(34 197 94 / var(--tw-text-opacity, 1));
 }
 
-.text-green-600{
-  --tw-text-opacity: 1;
-  color: rgb(22 163 74 / var(--tw-text-opacity, 1));
-}
-
 .text-green-700{
   --tw-text-opacity: 1;
   color: rgb(21 128 61 / var(--tw-text-opacity, 1));
@@ -2774,11 +2738,6 @@ body {
 .text-red-800{
   --tw-text-opacity: 1;
   color: rgb(153 27 27 / var(--tw-text-opacity, 1));
-}
-
-.text-sky-500{
-  --tw-text-opacity: 1;
-  color: rgb(14 165 233 / var(--tw-text-opacity, 1));
 }
 
 .text-text-primary{
@@ -2822,6 +2781,12 @@ body {
   opacity: 0.8;
 }
 
+.shadow{
+  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 .shadow-md{
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
@@ -2837,12 +2802,6 @@ body {
 .shadow-xl{
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow{
-  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -2886,26 +2845,55 @@ body {
   transition-duration: 150ms;
 }
 
-.transition-transform{
-  transition-property: transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
 .duration-300{
   transition-duration: 300ms;
 }
 
 /* 2. Deklarasikan semua variabel warna dan style Anda */
 
-.hover\:-translate-y-1:hover{
-  --tw-translate-y: -0.25rem;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+.file\:mr-4::file-selector-button{
+  margin-right: 1rem;
 }
 
-.hover\:scale-110:hover{
-  --tw-scale-x: 1.1;
-  --tw-scale-y: 1.1;
+.file\:rounded::file-selector-button{
+  border-radius: 0.25rem;
+}
+
+.file\:border-0::file-selector-button{
+  border-width: 0px;
+}
+
+.file\:bg-teal-100::file-selector-button{
+  --tw-bg-opacity: 1;
+  background-color: rgb(204 251 241 / var(--tw-bg-opacity, 1));
+}
+
+.file\:px-4::file-selector-button{
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.file\:py-2::file-selector-button{
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.file\:text-sm::file-selector-button{
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.file\:font-semibold::file-selector-button{
+  font-weight: 600;
+}
+
+.file\:text-teal-700::file-selector-button{
+  --tw-text-opacity: 1;
+  color: rgb(15 118 110 / var(--tw-text-opacity, 1));
+}
+
+.hover\:-translate-y-1:hover{
+  --tw-translate-y: -0.25rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -2923,11 +2911,6 @@ body {
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:bg-gray-700:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
-}
-
 .hover\:bg-green-600:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(22 163 74 / var(--tw-bg-opacity, 1));
@@ -2938,14 +2921,14 @@ body {
   background-color: rgb(185 28 28 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:bg-yellow-600:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(202 138 4 / var(--tw-bg-opacity, 1));
-}
-
 .hover\:bg-teal-700:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(15 118 110 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-yellow-600:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(202 138 4 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:text-dark-teal:hover{
@@ -2955,11 +2938,6 @@ body {
 .hover\:text-gray-800:hover{
   --tw-text-opacity: 1;
   color: rgb(31 41 55 / var(--tw-text-opacity, 1));
-}
-
-.hover\:text-gray-900:hover{
-  --tw-text-opacity: 1;
-  color: rgb(17 24 39 / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-primary-teal:hover{
@@ -2985,14 +2963,6 @@ body {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.focus\:ring-primary-teal:focus{
-  --tw-ring-color: var(--primary-teal);
-}
-
-.disabled\:opacity-60:disabled{
-  opacity: 0.6;
 }
 
 @media (min-width: 640px){
