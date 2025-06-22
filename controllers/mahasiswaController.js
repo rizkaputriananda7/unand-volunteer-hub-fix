@@ -397,4 +397,23 @@ exports.showFaqPage = async (req, res) => {
         res.status(500).send("Gagal memuat halaman FAQ.");
     }
 };
+// Toggle bookmark via AJAX
+exports.toggleBookmarkAjax = async (req, res) => {
+  try {
+    const mahasiswaId = req.user.id;
+    const programId = req.params.programId;
+    const { action } = req.body;
+
+    if (action === 'add') {
+      await Bookmark.add(mahasiswaId, programId);
+    } else if (action === 'remove') {
+      await Bookmark.remove(mahasiswaId, programId);
+    } else {
+      return res.status(400).json({ error: 'Aksi tidak valid.' });
+    }
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Terjadi kesalahan pada server!' });
+  }
+};
 

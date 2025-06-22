@@ -56,12 +56,20 @@ exports.showProgramDetails = async (req, res) => {
     // Cek apakah mahasiswa yang login sudah melamar program ini
     const hasApplied = await Aplikasi.hasApplied(req.user.id, program.id);
 
-    // Render view detail dengan data program dan status lamaran
+    // Cek apakah program sudah di-bookmark oleh mahasiswa
+    let isBookmarked = false;
+    if (req.user) {
+      const bookmarkedIds = await Bookmark.findBookmarkedProgramIds(req.user.id);
+      isBookmarked = bookmarkedIds.includes(program.id);
+    }
+
+    // Render view detail dengan data program, status lamaran, dan status bookmark
     res.render("mahasiswa/detail-program-volunteer", {
       title: program.title,
       active: "program",
       program: program,
       hasApplied: hasApplied,
+      isBookmarked: isBookmarked,
     });
   } catch (error) {
     console.error("Error menampilkan detail program:", error);

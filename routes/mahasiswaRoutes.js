@@ -48,6 +48,7 @@ router.post("/profil/password", mahasiswaController.handleUpdatePassword);
 router.get('/bookmark', mahasiswaController.showBookmarkPage);
 router.post('/bookmark/add', mahasiswaController.handleAddBookmark);
 router.post('/bookmark/remove', mahasiswaController.handleRemoveBookmark);
+router.post('/bookmark/:programId', mahasiswaController.toggleBookmarkAjax);
 router.get('/faq', mahasiswaController.showFaqPage);
 
 

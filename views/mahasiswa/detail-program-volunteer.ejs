@@ -1,128 +1,110 @@
-<div class="card-container max-w-5xl mx-auto">
-    <!-- Header Program -->
-    <div class="mb-6 text-center">
-        <span class="text-sm font-bold text-primary-teal bg-teal-50 px-3 py-1 rounded-full"><%= program.nama_pusat %></span>
-        <h2 id="program-title-for-share" class="text-4xl font-bold mt-3"><%= program.title %></h2>
-        <p class="text-md text-gray-500 mt-1">Dikoordinasi oleh: <%= program.coordinator_name %></p>
+<div class="max-w-2xl mx-auto bg-white border rounded-xl shadow p-8 mt-8">
+    <!-- Header -->
+    <h2 class="text-2xl font-bold text-gray-800 mb-1">Migas Center Unand</h2>
+    <p class="text-sm text-gray-500 mb-4">Penyelenggara: Pusat Migas Universitas Andalas</p>
+    <!-- Banner Gambar Program -->
+    <div class="w-full h-48 bg-teal-100 flex items-center justify-center rounded mb-6">
+        <span class="text-lg text-gray-500">Gambar Program Migas</span>
     </div>
 
-    <!-- Notifikasi -->
-    <% if (typeof success_msg !== 'undefined' && success_msg) { %>
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert"><p><%= success_msg %></p></div>
-    <% } %>
+    <!-- Deskripsi Program -->
+    <div class="mb-6">
+        <h4 class="font-semibold mb-2">Deskripsi Program</h4>
+        <p class="text-gray-700 text-sm">Program relawan di Migas Center Universitas Andalas bertujuan untuk melibatkan mahasiswa dalam kegiatan penelitian, pengelolaan data energi, serta edukasi mengenai industri migas dan energi terbarukan. Volunteer akan mendapatkan pengalaman langsung dalam lingkungan riset dan pengembangan, serta berkontribusi pada diseminasi informasi energi kepada masyarakat.</p>
+    </div>
 
-    <!-- Konten Utama: Detail dan Info Penting -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Kolom Kiri: Deskripsi -->
-        <div class="lg:col-span-2 space-y-8">
-            <div><h4 class="text-xl font-bold mb-2 border-b-2 border-primary-teal pb-2">Deskripsi Program</h4><p class="text-gray-700 whitespace-pre-wrap"><%= program.description %></p></div>
-            <div><h4 class="text-xl font-bold mb-2 border-b-2 border-primary-teal pb-2">Persyaratan</h4><p class="text-gray-700 whitespace-pre-wrap"><%= program.persyaratan %></p></div>
-            <div><h4 class="text-xl font-bold mb-2 border-b-2 border-primary-teal pb-2">Manfaat</h4><p class="text-gray-700 whitespace-pre-wrap"><%= program.manfaat %></p></div>
+    <!-- Persyaratan & Manfaat -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+            <h4 class="font-semibold mb-2">Persyaratan</h4>
+            <ul class="list-disc list-inside text-gray-700 text-sm space-y-1">
+                <li>Mahasiswa aktif Unand (minimal semester 4).</li>
+                <li>IPK minimal 3.00.</li>
+                <li>Memiliki minat di bidang energi dan riset.</li>
+                <li>Mampu bekerja dalam tim dan mandiri.</li>
+                <li>Bersedia mengikuti seluruh rangkaian program.</li>
+            </ul>
         </div>
+        <div>
+            <h4 class="font-semibold mb-2">Manfaat</h4>
+            <ul class="list-disc list-inside text-gray-700 text-sm space-y-1">
+                <li>Sertifikat partisipasi resmi.</li>
+                <li>Pengalaman riset dan pengelolaan proyek.</li>
+                <li>Jaringan dengan profesional di bidang energi.</li>
+                <li>Peningkatan kemampuan soft skills (komunikasi, analisis).</li>
+                <li>Potensi kredit SKS (tergantung kebijakan fakultas).</li>
+            </ul>
+        </div>
+    </div>
 
-        <!-- Kolom Kanan: Info Cepat dan Aksi -->
-        <div class="space-y-4 p-5 bg-gray-50 rounded-lg border self-start">
-            <h4 class="text-lg font-bold text-center mb-4">Informasi Penting</h4>
-            <div><h5 class="text-sm font-bold">Periode Pendaftaran</h5><p class="text-sm"><%= new Date(program.pendaftaran_mulai).toLocaleDateString('id-ID', {day:'numeric',month:'long'}) %> - <%= new Date(program.pendaftaran_akhir).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'}) %></p></div>
-            <div><h5 class="text-sm font-bold">Tanggal Pelaksanaan</h5><p class="text-sm"><%= new Date(program.tanggal_pelaksanaan).toLocaleDateString('id-ID', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'}) %></p></div>
-            <div><h5 class="text-sm font-bold">Kontak Narahubung</h5><p class="text-sm"><%= program.kontak_narahubung %></p></div>
-            
-            <!-- Tombol Aksi -->
-            <div class="pt-4 mt-4 border-t space-y-3">
-                <form action="/programs/<%= program.id %>/apply" method="POST">
-                    <button type="submit" class="primary-button w-full justify-center text-lg py-3" <%= hasApplied ? 'disabled' : '' %> style="opacity: <%= hasApplied ? 0.6 : 1 %>">
-                         <% if (hasApplied) { %><i class="fas fa-check mr-2"></i> Anda Sudah Mendaftar<% } else { %><i class="fas fa-paper-plane mr-2"></i> Daftar Sekarang<% } %>
-                    </button>
-                </form>
-                <!-- === TOMBOL BAGIKAN (BARU) === -->
-                <button id="share-button" class="secondary-button w-full justify-center text-lg py-3 bg-gray-600 hover:bg-gray-700">
-                    <i class="fas fa-share-alt mr-2"></i> Bagikan Program
-                </button>
+    <!-- Info Kuota, Durasi, Periode, Lokasi -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-sm">
+        <div class="flex items-center gap-2"><span class="font-semibold">Kuota:</span> <span>20 Peserta</span></div>
+        <div class="flex items-center gap-2"><span class="font-semibold">Durasi:</span> <span>12 Bulan</span></div>
+        <div class="flex items-center gap-2"><span class="font-semibold">Periode Pendaftaran:</span> <span>1 Juli - 30 Juli 2025</span></div>
+        <div class="flex items-center gap-2"><span class="font-semibold">Lokasi:</span> <span>Gedung Migas Center, Kampus Unand Limau Manis</span></div>
+    </div>
+
+    <!-- Kontak Koordinator -->
+    <div class="mb-6 border-t pt-4">
+        <h4 class="font-semibold mb-2 text-sm">Kontak Koordinator</h4>
+        <div class="flex flex-col gap-1 text-sm">
+            <div>Nama: <span class="font-medium">Dr. Eng. ABCDEF</span></div>
+            <div>WhatsApp: 
+                <a href="https://wa.me/6281234561234" target="_blank" class="text-primary-teal hover:underline">+62-8123-456789</a>
             </div>
         </div>
     </div>
-</div>
 
-<!-- === MODAL BAGIKAN (BARU) === -->
-<div id="share-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4">
-    <div class="bg-white rounded-xl shadow-xl w-full max-w-sm text-center">
-        <div class="p-4 border-b">
-            <h3 class="text-lg font-bold">Bagikan Program Ini</h3>
-        </div>
-        <div class="p-6">
-            <p class="text-sm text-gray-600 mb-4">Bantu sebarluaskan kesempatan berharga ini ke teman-temanmu!</p>
-            <div class="flex justify-center gap-4 text-4xl">
-                <a id="share-whatsapp" href="#" target="_blank" class="text-green-500 hover:scale-110 transition-transform"><i class="fab fa-whatsapp-square"></i></a>
-                <a id="share-twitter" href="#" target="_blank" class="text-sky-500 hover:scale-110 transition-transform"><i class="fab fa-twitter-square"></i></a>
-                <a id="share-facebook" href="#" target="_blank" class="text-blue-600 hover:scale-110 transition-transform"><i class="fab fa-facebook-square"></i></a>
-            </div>
-            <div class="mt-6">
-                <p class="text-xs text-gray-500 mb-1">Atau salin link:</p>
-                <div class="relative">
-                    <input type="text" id="share-link-input" class="form-input text-sm text-center bg-gray-100" readonly>
-                    <button id="copy-link-btn" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary-teal p-1">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-                <span id="copy-feedback" class="text-xs text-green-600 mt-1 hidden">Link disalin!</span>
-            </div>
-        </div>
-        <div class="bg-gray-50 p-3 text-right rounded-b-xl">
-             <button id="modal-close-btn" class="text-sm font-semibold text-gray-600 hover:text-gray-900 px-3 py-1">Tutup</button>
-        </div>
+    <!-- Tombol Aksi -->
+    <div class="flex flex-col md:flex-row gap-3">
+        <form action="#" method="POST" class="flex-1">
+            <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 rounded transition">Daftar Program Ini</button>
+        </form>
+        <button id="bookmark-btn" class="w-full border border-gray-300 font-semibold py-2 rounded hover:bg-gray-100 transition flex-1 flex items-center justify-center <%= isBookmarked ? 'text-yellow-500 bg-yellow-50 border-yellow-400' : 'text-gray-700' %>">
+            <i id="bookmark-icon" class="far fa-bookmark mr-2 <%= isBookmarked ? 'fas text-yellow-500' : '' %>"></i> 
+            <span><%= isBookmarked ? 'Tersimpan' : 'Bookmark Program' %></span>
+        </button>
     </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const shareButton = document.getElementById('share-button');
-    const shareModal = document.getElementById('share-modal');
-    const closeModalBtn = document.getElementById('modal-close-btn');
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bookmarkBtn = document.getElementById('bookmark-btn');
+        const bookmarkIcon = document.getElementById('bookmark-icon');
+        let isBookmarked = "<%= isBookmarked ? 'true' : 'false' %>" === "true";
+        const programId = '<%= program.id || '' %>';
 
-    if (shareButton) {
-        shareButton.addEventListener('click', () => {
-            const programUrl = window.location.href;
-            const programTitle = document.getElementById('program-title-for-share').innerText;
-            const shareText = `Yuk, ikut program volunteer "${programTitle}"! Lihat detailnya di sini:`;
-
-            // Atur link untuk setiap tombol media sosial
-            document.getElementById('share-whatsapp').href = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + programUrl)}`;
-            document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(programUrl)}&text=${encodeURIComponent(shareText)}`;
-            document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(programUrl)}`;
-            
-            // Tampilkan URL di input field
-            const shareLinkInput = document.getElementById('share-link-input');
-            shareLinkInput.value = programUrl;
-
-            shareModal.classList.remove('hidden');
+        bookmarkBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            try {
+                const res = await fetch(`/mahasiswa/bookmark/${programId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: isBookmarked ? 'remove' : 'add' })
+                });
+                if (res.ok) {
+                    isBookmarked = !isBookmarked;
+                    // Ubah tampilan icon dan warna
+                    if (isBookmarked) {
+                        bookmarkBtn.classList.add('text-yellow-500', 'bg-yellow-50', 'border-yellow-400');
+                        bookmarkBtn.classList.remove('text-gray-700');
+                        bookmarkIcon.classList.add('fas', 'text-yellow-500');
+                        bookmarkIcon.classList.remove('far');
+                        bookmarkBtn.querySelector('span').textContent = 'Tersimpan';
+                    } else {
+                        bookmarkBtn.classList.remove('text-yellow-500', 'bg-yellow-50', 'border-yellow-400');
+                        bookmarkBtn.classList.add('text-gray-700');
+                        bookmarkIcon.classList.remove('fas', 'text-yellow-500');
+                        bookmarkIcon.classList.add('far');
+                        bookmarkBtn.querySelector('span').textContent = 'Bookmark Program';
+                    }
+                } else {
+                    alert('Gagal memperbarui bookmark.');
+                }
+            } catch (err) {
+                alert('Terjadi kesalahan.');
+            }
         });
-    }
-
-    // Fungsi untuk menutup modal
-    function closeModal() {
-        shareModal.classList.add('hidden');
-    }
-    
-    closeModalBtn.addEventListener('click', closeModal);
-    shareModal.addEventListener('click', (e) => {
-        if (e.target === shareModal) {
-            closeModal();
-        }
     });
-
-    // Fungsi untuk menyalin link
-    const copyLinkBtn = document.getElementById('copy-link-btn');
-    copyLinkBtn.addEventListener('click', () => {
-        const linkInput = document.getElementById('share-link-input');
-        linkInput.select();
-        document.execCommand('copy');
-
-        // Berikan umpan balik visual
-        const copyFeedback = document.getElementById('copy-feedback');
-        copyFeedback.classList.remove('hidden');
-        setTimeout(() => {
-            copyFeedback.classList.add('hidden');
-        }, 2000);
-    });
-});
-</script>
+    </script>
+</div>
