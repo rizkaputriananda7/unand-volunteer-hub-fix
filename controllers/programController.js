@@ -7,18 +7,18 @@ const upload = require('../utils/uploadMiddleware');
 // Menampilkan semua program dengan filter lengkap
 exports.showAllPrograms = async (req, res) => {
   try {
-    // Ambil semua parameter filter dari query URL
-    const { centerId, q: searchTerm, kategori, statusPendaftaran } = req.query;
+    // PERBAIKAN 1: Baca 'status' dari req.query, bukan 'statusPendaftaran'
+    const { centerId, q: searchTerm, kategori, status } = req.query;
 
     const filters = {
       centerId,
       searchTerm,
       kategori,
-      statusPendaftaran,
+      status: status, // Sekarang variabel 'status' berisi nilai yang benar ('tutup')
     };
 
     const [programs, centers, bookmarkedIds] = await Promise.all([
-      Program.findAll(filters), // Kirim semua filter ke model
+      Program.findAll(filters),
       VolunteerCenter.findAll(),
       req.user ? Bookmark.findBookmarkedProgramIds(req.user.id) : []
     ]);
@@ -33,10 +33,10 @@ exports.showAllPrograms = async (req, res) => {
       active: "program",
       programs: programsWithBookmarkStatus,
       centers,
-      // Kirim kembali nilai filter ke view agar dropdown tetap pada pilihan pengguna
       selectedCenter: centerId,
       selectedKategori: kategori,
-      selectedStatus: statusPendaftaran,
+      // PERBAIKAN 2: Kirim 'status' agar dropdown tetap menampilkan 'Telah Ditutup'
+      selectedStatus: status, 
       searchQuery: searchTerm,
     });
   } catch (error) {

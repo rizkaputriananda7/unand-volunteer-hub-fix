@@ -118,51 +118,61 @@ class Program {
     return rows;
   }
   
-  static async findAll(filters = {}) {
-    // Fungsi 'user' tidak lagi diperlukan di sini
+ // GANTI SELURUH FUNGSI findAll DENGAN VERSI DEBUG INI
+static async findAll(filters = {}) {
+    // ---- LOG DEBUG 1: Lihat filter yang masuk ----
+    console.log("===== Filter yang diterima oleh Model =====");
+    console.log(filters);
+
     let sql = `
         SELECT p.*, vc.nama_pusat, 
                (SELECT COUNT(*) FROM aplikasi WHERE program_id = p.id) as jumlah_pendaftar
         FROM programs p
         JOIN volunteer_centers vc ON p.volunteer_center_id = vc.id
-        WHERE p.status = 'Aktif'
     `;
     const params = [];
+    let whereConditions = [];
 
-    // Filter Status Ketersediaan
     if (filters.status === "tersedia") {
-      sql += " AND (p.quota IS NULL OR p.quota > (SELECT COUNT(*) FROM aplikasi WHERE program_id = p.id)) AND p.pendaftaran_akhir >= CURDATE()";
+      whereConditions.push("p.status = 'Aktif'");
+      whereConditions.push("(p.quota IS NULL OR p.quota > (SELECT COUNT(*) FROM aplikasi WHERE program_id = p.id))");
+      whereConditions.push("p.pendaftaran_akhir >= CURDATE()");
     } else if (filters.status === "penuh") {
-      sql += " AND p.quota IS NOT NULL AND p.quota <= (SELECT COUNT(*) FROM aplikasi WHERE program_id = p.id) AND p.pendaftaran_akhir >= CURDATE()";
+      whereConditions.push("p.status = 'Aktif'");
+      whereConditions.push("p.quota IS NOT NULL AND p.quota <= (SELECT COUNT(*) FROM aplikasi WHERE program_id = p.id)");
+      whereConditions.push("p.pendaftaran_akhir >= CURDATE()");
     } else if (filters.status === "tutup") {
-      sql += " AND p.pendaftaran_akhir < CURDATE()";
+      whereConditions.push("p.pendaftaran_akhir < CURDATE()");
+    } else {
+      whereConditions.push("p.status = 'Aktif'");
     }
 
-    // Filter Pusat Volunteer
     if (filters.centerId) {
-      sql += " AND p.volunteer_center_id = ?";
+      whereConditions.push("p.volunteer_center_id = ?");
       params.push(filters.centerId);
     }
-    
-    // Filter Kategori (jika ada)
     if (filters.kategori) {
-      sql += " AND p.kategori = ?";
+      whereConditions.push("p.kategori = ?");
       params.push(filters.kategori);
     }
-    
-    // Filter Pencarian
     if (filters.searchTerm && filters.searchTerm.trim() !== "") {
-      sql += " AND p.title LIKE ?";
+      whereConditions.push("p.title LIKE ?");
       params.push(`%${filters.searchTerm}%`);
     }
 
-    // Logika untuk filter mahasiswa dan aturan khusus sudah dihapus
+    if (whereConditions.length > 0) {
+      sql += " WHERE " + whereConditions.join(" AND ");
+    }
     
     sql += " ORDER BY p.pendaftaran_mulai DESC";
 
+    // ---- LOG DEBUG 2: Lihat query SQL final ----
+    console.log("===== Query SQL yang Dijalankan =====");
+    console.log(sql);
+
     const [rows] = await db.execute(sql, params);
     return rows;
-  }
+}
 
   static async findById(id) {
     const sql = `
