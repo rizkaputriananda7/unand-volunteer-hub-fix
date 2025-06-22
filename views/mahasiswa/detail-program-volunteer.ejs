@@ -1,114 +1,185 @@
-<div class="bg-white max-w-6xl mx-auto rounded-xl shadow-lg overflow-hidden">
-    <!-- Header dengan Penyelenggara -->
-    <div class="p-4 bg-gray-50 border-b">
-        <p class="text-sm text-gray-600">Penyelenggara: <strong class="text-primary-teal"><%= program.nama_pusat %></strong></p>
+<!-- File: views/mahasiswa/detail-program-volunteer.ejs -->
+
+<div class="card-container max-w-4xl mx-auto">
+    <!-- Header Program -->
+    <div class="border-b border-gray-200 pb-4 mb-6">
+        <span class="text-sm font-semibold text-primary-teal"><%= program.nama_pusat %></span>
+        <h2 class="text-4xl font-bold text-gray-800 mt-1"><%= program.title %></h2>
+        <p class="text-lg text-gray-500 mt-2"><%= program.location %></p>
     </div>
 
-    <div class="p-6 md:p-8">
-        <!-- Gambar Program (Placeholder) -->
-        <div class="w-full h-64 bg-teal-100 rounded-lg flex items-center justify-center mb-6">
-            <p class="text-gray-400">Gambar Program <%= program.title %></p>
+    <!-- Konten Utama Program -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Kolom Kiri (Konten Deskriptif) -->
+        <div class="md:col-span-2 space-y-6">
+            <div>
+                <h3 class="font-bold text-lg text-gray-700 mb-2">Deskripsi Program</h3>
+                <p class="text-text-secondary leading-relaxed"><%- program.description.replace(/\n/g, '<br>') %></p>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-gray-700 mb-2">Manfaat yang Diperoleh</h3>
+                <p class="text-text-secondary leading-relaxed"><%- program.manfaat.replace(/\n/g, '<br>') %></p>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-gray-700 mb-2">Persyaratan</h3>
+                <p class="text-text-secondary leading-relaxed"><%- program.persyaratan.replace(/\n/g, '<br>') %></p>
+            </div>
         </div>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Kolom Kiri: Deskripsi & Detail -->
-            <div class="lg:col-span-2 space-y-8">
-                <div>
-                    <h2 class="text-3xl font-bold text-gray-800"><%= program.title %></h2>
-                    <p class="text-gray-600 mt-2"><%= program.description %></p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <!-- Kolom Kanan (Info Cepat & Aksi) -->
+        <div class="md:col-span-1 space-y-4">
+            <div class="bg-teal-50/60 p-4 rounded-xl border border-primary-teal/20">
+                <div class="space-y-3">
                     <div>
-                        <h3 class="font-bold text-lg mb-2">Persyaratan</h3>
-                        <ul class="list-disc list-inside text-gray-700 space-y-1 text-sm">
-                            <% program.persyaratan.split('\n').forEach(item => { if(item) { %>
-                                <li><%= item %></li>
-                            <% }}) %>
-                        </ul>
+                        <p class="text-xs font-bold text-dark-teal">TANGGAL PELAKSANAAN</p>
+                        <p class="font-semibold text-gray-700"><%= new Date(program.tanggal_pelaksanaan).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+                    </div>
+                     <div>
+                        <p class="text-xs font-bold text-dark-teal">PENDAFTARAN</p>
+                        <p class="font-semibold text-gray-700"><%= new Date(program.pendaftaran_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) %> - <%= new Date(program.pendaftaran_akhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %></p>
                     </div>
                     <div>
-                        <h3 class="font-bold text-lg mb-2">Manfaat</h3>
-                        <ul class="list-disc list-inside text-gray-700 space-y-1 text-sm">
-                             <% program.manfaat.split('\n').forEach(item => { if(item) { %>
-                                <li><%= item %></li>
-                            <% }}) %>
-                        </ul>
+                        <p class="text-xs font-bold text-dark-teal">KUOTA & DURASI</p>
+                        <p class="font-semibold text-gray-700"><%= program.quota %> Peserta, <%= program.durasi %></p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-dark-teal">NARAHUBUNG</p>
+                        <p class="font-semibold text-gray-700"><%= program.kontak_narahubung %></p>
                     </div>
                 </div>
             </div>
-
-            <!-- Kolom Kanan: Info Cepat & Aksi -->
-            <div class="lg:col-span-1 space-y-4">
-                <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-users text-blue-500 text-xl"></i>
-                        <div>
-                            <p class="text-xs font-bold">Kuota</p>
-                            <p class="text-sm"><%= program.quota %> Peserta</p>
-                        </div>
-                    </div>
-                </div>
-                 <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-calendar-alt text-yellow-500 text-xl"></i>
-                        <div>
-                            <p class="text-xs font-bold">Periode Pendaftaran</p>
-                            <p class="text-sm"><%= new Date(program.pendaftaran_mulai).toLocaleDateString('id-ID') %> - <%= new Date(program.pendaftaran_akhir).toLocaleDateString('id-ID') %></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-clock text-green-500 text-xl"></i>
-                        <div>
-                            <p class="text-xs font-bold">Durasi</p>
-                            <p class="text-sm"><%= program.durasi %></p>
-                        </div>
-                    </div>
-                </div>
-                 <div class="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-map-marker-alt text-purple-500 text-xl"></i>
-                        <div>
-                            <p class="text-xs font-bold">Lokasi</p>
-                            <p class="text-sm"><%= program.location %></p>
-                        </div>
-                    </div>
-                </div>
-                 <div class="p-4 bg-gray-100 border border-gray-200 rounded-lg">
-                    <h4 class="font-bold text-sm mb-1">Kontak Koordinator</h4>
-                    <% if (program.kontak_narahubung) { %>
-                        <a href="https://wa.me/<%= program.kontak_narahubung.replace(/[^0-9]/g, '').replace(/^0/, '62') %>" target="_blank" class="text-green-600 font-bold underline flex items-center gap-2">
-                            <i class="fab fa-whatsapp"></i> <%= program.kontak_narahubung %>
-                        </a>
-                    <% } else { %>
-                        <p class="text-sm text-gray-500">Tidak tersedia</p>
-                    <% } %>
-                </div>
-
-                <!-- Tombol Aksi -->
-                <div class="pt-4 space-y-2">
-                     <% if (hasApplied) { %>
-                         <button type="button" class="primary-button w-full justify-center py-3" disabled style="opacity: 0.7; cursor: not-allowed;">
-                            <i class="fas fa-check mr-2"></i> Anda Sudah Mendaftar
-                        </button>
-                    <% } else { %>
-                        <a href="/programs/<%= program.id %>/daftar" class="primary-button w-full justify-center py-3 text-center">
-                             <i class="fas fa-paper-plane mr-2"></i> Daftar Program Ini
-                        </a>
-                    <% } %>
-                    <form action="/mahasiswa/bookmark/<%= program.isBookmarked ? 'remove' : 'add' %>" method="POST">
+            
+            <!-- Tombol Aksi -->
+            <div class="space-y-3 pt-2">
+                <% if (hasApplied) { %>
+                    <button class="w-full primary-button opacity-50 cursor-not-allowed" disabled>
+                        <i class="fas fa-check-circle mr-2"></i>Anda Sudah Mendaftar
+                    </button>
+                <% } else { %>
+                    <a href="/programs/<%= program.id %>/daftar" class="block w-full text-center primary-button">
+                        <i class="fas fa-paper-plane mr-2"></i>Daftar Sekarang
+                    </a>
+                <% } %>
+                
+                <div class="flex items-center space-x-3">
+                    <form action="/mahasiswa/bookmark/<%= isBookmarked ? 'remove' : 'add' %>" method="POST" class="w-full">
                         <input type="hidden" name="programId" value="<%= program.id %>">
-                        <button type="submit" class="secondary-button w-full justify-center py-3 bg-white border border-gray-300 text-gray-700 hover:bg-gray-100">
-                            <% if (program.isBookmarked) { %>
-                                <i class="fas fa-bookmark text-primary-teal mr-2"></i> Hapus dari Favorit
-                            <% } else { %>
-                                <i class="far fa-bookmark mr-2"></i> Simpan ke Favorit
-                            <% } %>
+                        <button type="submit" class="w-full secondary-button" style="background: #f1f5f9; color: var(--text-primary); box-shadow: none;">
+                            <i class="mr-2 <%= isBookmarked ? 'fas fa-bookmark text-primary-teal' : 'far fa-bookmark' %>"></i>
+                            <%= isBookmarked ? 'Disimpan' : 'Simpan' %>
                         </button>
                     </form>
+
+                    <!-- FITUR BARU: Tombol Bagikan -->
+                    <button onclick="openShareModal()" class="w-full secondary-button" style="background: #f1f5f9; color: var(--text-primary); box-shadow: none;">
+                        <i class="fas fa-share-alt mr-2"></i>
+                        Bagikan
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- FITUR BARU: Modal untuk Berbagi -->
+<div id="share-modal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 hidden transition-opacity duration-300">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-sm transform transition-transform duration-300 scale-95 p-6">
+        <!-- Header Modal -->
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-text-primary">Bagikan Program Ini</h3>
+            <button onclick="closeShareModal()" class="text-gray-400 hover:text-gray-700">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- Konten Modal -->
+        <div class="space-y-3">
+            <p class="text-sm text-text-secondary text-center mb-4">Ajak temanmu untuk bergabung dalam program "<%= program.title %>"!</p>
+            
+            <!-- PERBAIKAN: Hapus definisi programUrl, dan gunakan variabel dari controller -->
+            <% const shareText = `Yuk, ikut program volunteer "${program.title}" di Unand Volunteer Hub! Cek info lengkapnya di sini: ${programUrl}`; %>
+
+            <a href="https://api.whatsapp.com/send?text=<%= encodeURIComponent(shareText) %>" target="_blank" class="flex items-center w-full p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <i class="fab fa-whatsapp text-2xl text-green-500 mr-4"></i>
+                <span class="font-semibold text-text-primary">Bagikan via WhatsApp</span>
+            </a>
+            <a href="https://t.me/share/url?url=<%= encodeURIComponent(programUrl) %>&text=<%= encodeURIComponent(shareText) %>" target="_blank" class="flex items-center w-full p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <i class="fab fa-telegram-plane text-2xl text-blue-500 mr-4"></i>
+                <span class="font-semibold text-text-primary">Bagikan via Telegram</span>
+            </a>
+             <a href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(programUrl) %>&text=<%= encodeURIComponent(shareText) %>" target="_blank" class="flex items-center w-full p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <i class="fab fa-twitter text-2xl text-sky-500 mr-4"></i>
+                <span class="font-semibold text-text-primary">Bagikan via Twitter/X</span>
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(programUrl) %>" target="_blank" class="flex items-center w-full p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <i class="fab fa-facebook text-2xl text-blue-800 mr-4"></i>
+                <span class="font-semibold text-text-primary">Bagikan via Facebook</span>
+            </a>
+            
+            <div class="relative flex items-center mt-4">
+                <input type="text" id="share-link-input" value="<%= programUrl %>" class="form-input pr-24" readonly>
+                <button id="copy-link-btn" onclick="copyLink()" class="absolute right-1 top-1/2 -translate-y-1/2 px-4 py-2 text-sm font-semibold text-primary-teal bg-teal-100 hover:bg-teal-200 rounded-lg transition-colors">
+                    Salin
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FITUR BARU: Script untuk Modal Berbagi -->
+<script>
+    const shareModal = document.getElementById('share-modal');
+    const shareLinkInput = document.getElementById('share-link-input');
+    const copyLinkBtn = document.getElementById('copy-link-btn');
+
+    function openShareModal() {
+        if (!shareModal) return;
+        shareModal.classList.remove('hidden');
+        setTimeout(() => {
+            shareModal.classList.remove('opacity-0');
+            shareModal.querySelector('.transform').classList.remove('scale-95');
+        }, 10);
+    }
+
+    function closeShareModal() {
+        if (!shareModal) return;
+        shareModal.classList.add('opacity-0');
+        shareModal.querySelector('.transform').classList.add('scale-95');
+        setTimeout(() => {
+            shareModal.classList.add('hidden');
+        }, 300);
+    }
+
+    function copyLink() {
+        shareLinkInput.select();
+        shareLinkInput.setSelectionRange(0, 99999); // For mobile devices
+        
+        try {
+            // Menggunakan document.execCommand sebagai fallback
+            var successful = document.execCommand('copy');
+            var msg = successful ? 'berhasil' : 'gagal';
+            console.log('Fallback: Penyalinan link ' + msg);
+
+            copyLinkBtn.textContent = 'Disalin!';
+            copyLinkBtn.style.backgroundColor = '#14b8a6'; // a darker teal
+            copyLinkBtn.style.color = 'white';
+
+            setTimeout(() => {
+                copyLinkBtn.textContent = 'Salin';
+                copyLinkBtn.style.backgroundColor = '';
+                copyLinkBtn.style.color = '';
+            }, 2000);
+            
+        } catch (err) {
+            console.error('Gagal menyalin link:', err);
+            alert('Oops, tidak dapat menyalin link secara otomatis.');
+        }
+    }
+
+    // Menutup modal jika user mengklik di luar area konten
+    shareModal.addEventListener('click', function(event) {
+        if (event.target === shareModal) {
+            closeShareModal();
+        }
+    });
+</script>
