@@ -100,13 +100,14 @@ exports.handleApplyToProgram = async (req, res) => {
     try {
         const programId = req.params.id;
         const mahasiswaId = req.user.id;
-
+        // Debug log untuk file upload
+        console.log('FILES:', req.files);
+        console.log('BODY:', req.body);
         // Cek lagi untuk mencegah pendaftaran ganda jika pengguna mencoba-coba
         const hasApplied = await Aplikasi.hasApplied(mahasiswaId, programId);
         if (hasApplied) {
             return res.redirect(`/programs/${programId}`);
         }
-
         // Siapkan data untuk disimpan di database
         const applicationData = {
             mahasiswaId: mahasiswaId,
@@ -114,24 +115,22 @@ exports.handleApplyToProgram = async (req, res) => {
             motivasi: req.body.motivasi,
             files: req.files // Objek req.files dari middleware multer
         };
-
         // Buat entri aplikasi baru di database
         await Aplikasi.create(applicationData);
-
         // Ambil kembali detail program untuk ditampilkan di halaman konfirmasi
         const program = await Program.findById(programId);
-
         // Render halaman konfirmasi dengan data yang diperlukan
         res.render("mahasiswa/konfirmasi-pendaftaran", {
             title: "Pendaftaran Berhasil",
             active: "program",
             program: program,
-            // 'user' sudah tersedia secara global dari middleware di app.js
+            errorMsg: null, // pastikan errorMsg selalu ada
+            sudahDaftar: false, // default
+            user: res.locals.user // pastikan user dikirim ke view
         });
     } catch (error) {
         console.error("Error saat mendaftar program:", error);
-        // Jika terjadi error, sebaiknya arahkan kembali ke form dengan pesan error
-        res.status(500).send("Gagal memproses pendaftaran Anda. Silakan coba lagi.");
+        res.status(500).send("Gagal memproses pendaftaran Anda. Silakan cek kembali file yang diupload dan pastikan format serta ukuran sudah benar.");
     }
 };
 

@@ -77,7 +77,13 @@
                 </div>
                  <div class="p-4 bg-gray-100 border border-gray-200 rounded-lg">
                     <h4 class="font-bold text-sm mb-1">Kontak Koordinator</h4>
-                    <p class="text-sm"><%= program.kontak_narahubung %></p>
+                    <% if (program.kontak_narahubung) { %>
+                        <a href="https://wa.me/<%= program.kontak_narahubung.replace(/[^0-9]/g, '').replace(/^0/, '62') %>" target="_blank" class="text-green-600 font-bold underline flex items-center gap-2">
+                            <i class="fab fa-whatsapp"></i> <%= program.kontak_narahubung %>
+                        </a>
+                    <% } else { %>
+                        <p class="text-sm text-gray-500">Tidak tersedia</p>
+                    <% } %>
                 </div>
 
                 <!-- Tombol Aksi -->
