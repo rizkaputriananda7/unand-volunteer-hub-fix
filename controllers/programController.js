@@ -8,19 +8,20 @@ const upload = require('../utils/uploadMiddleware');
 exports.showAllPrograms = async (req, res) => {
   try {
     // Ambil semua parameter filter dari query URL
-    const { centerId, q: searchTerm, kategori, statusPendaftaran } = req.query;
+    const { centerId, q: searchTerm, kategori, status, mahasiswa } = req.query;
 
     const filters = {
       centerId,
       searchTerm,
       kategori,
-      statusPendaftaran,
+      status, // Filter status baru
+      mahasiswa // Filter mahasiswa baru
     };
 
     const [programs, centers, bookmarkedIds] = await Promise.all([
-      Program.findAll(filters), // Kirim semua filter ke model
+      Program.findAll(filters, req.user), // Kirim filter dan data user ke model
       VolunteerCenter.findAll(),
-      Bookmark.findBookmarkedProgramIds(req.user.id),
+      req.user ? Bookmark.findBookmarkedProgramIds(req.user.id) : []
     ]);
 
     const programsWithBookmarkStatus = programs.map((program) => ({
@@ -36,7 +37,8 @@ exports.showAllPrograms = async (req, res) => {
       // Kirim kembali nilai filter ke view agar dropdown tetap pada pilihan pengguna
       selectedCenter: centerId,
       selectedKategori: kategori,
-      selectedStatus: statusPendaftaran,
+      selectedStatus: status,
+      selectedMahasiswa: mahasiswa,
       searchQuery: searchTerm,
     });
   } catch (error) {

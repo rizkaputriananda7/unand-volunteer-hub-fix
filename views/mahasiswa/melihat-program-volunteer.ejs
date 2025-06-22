@@ -1,88 +1,99 @@
-<div class="card-container max-w-6xl mx-auto">
-    <h2 class="text-2xl font-bold text-center mb-6">Jelajahi Kesempatan Volunteer</h2>
+<%- contentFor('body') %>
 
-    <!-- Form Filter dan Pencarian yang Disempurnakan -->
-    <form action="/programs" method="GET" class="mb-8 p-4 bg-gray-50 rounded-lg border">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-            <!-- Kolom Pencarian -->
-            <div class="md:col-span-2">
-                <label for="q" class="sr-only">Cari Program</label>
-                <input type="search" name="q" id="q" placeholder="Cari berdasarkan judul program..." class="form-input w-full" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
-            </div>
-            <!-- Kolom Filter Pusat -->
+<div class="container mx-auto p-4 md:p-8">
+    <h1 class="text-3xl md:text-4xl font-bold text-center text-text-primary mb-2">Jelajahi Program Volunteer</h1>
+    <p class="text-center text-text-secondary mb-8 max-w-2xl mx-auto">Temukan kesempatan berharga untuk berkontribusi dan mengembangkan diri Anda melalui berbagai program kami.</p>
+
+    <!-- Filter Section -->
+    <div class="card-container mb-8">
+        <form action="/programs" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+            
+            <!-- Filter Pencarian -->
             <div>
-                 <label for="centerId" class="sr-only">Filter Pusat</label>
-                 <select name="centerId" id="centerId" class="form-select w-full">
+                <label for="search" class="form-label"><i class="fas fa-search"></i> Cari Program</label>
+                <input type="text" id="search" name="q" value="<%= locals.searchQuery || '' %>" class="form-input" placeholder="Nama program...">
+            </div>
+
+            <!-- Filter Pusat Volunteer -->
+            <div>
+                <label for="center" class="form-label"><i class="fas fa-university"></i> Pusat Volunteer</label>
+                <select id="center" name="centerId" class="form-select">
                     <option value="">Semua Pusat</option>
-                    <% centers.forEach(center => { %>
-                        <option value="<%= center.id %>" <%= selectedCenter == center.id ? 'selected' : '' %>>
-                            <%= center.nama_pusat %>
-                        </option>
-                    <% }); %>
+                    <% if (locals.centers && locals.centers.length > 0) { %>
+                        <% locals.centers.forEach(center => { %>
+                            <option value="<%= center.id %>" <%= locals.selectedCenter == center.id ? 'selected' : '' %>>
+                                <%= center.nama_pusat %>
+                            </option>
+                        <% }); %>
+                    <% } %>
                 </select>
             </div>
-            <!-- Tombol Cari -->
-            <button type="submit" class="primary-button w-full justify-center">
-                <i class="fas fa-search mr-2"></i>Cari
-            </button>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-            <!-- Kolom Filter Kategori -->
+            
+            <!-- Filter Status Ketersediaan -->
             <div>
-                 <label for="kategori" class="sr-only">Filter Kategori</label>
-                 <select name="kategori" id="kategori" class="form-select w-full">
-                    <option value="">Semua Kategori</option>
-                    <% ['Edukasi', 'Lingkungan', 'Sosial', 'Kesehatan', 'Teknologi', 'Lainnya'].forEach(kat => { %>
-                        <option value="<%= kat %>" <%= selectedKategori == kat ? 'selected' : '' %>><%= kat %></option>
-                    <% }); %>
-                </select>
-            </div>
-            <!-- Kolom Filter Status -->
-            <div>
-                <label for="statusPendaftaran" class="sr-only">Filter Status</label>
-                 <select name="statusPendaftaran" id="statusPendaftaran" class="form-select w-full">
+                <label for="status" class="form-label"><i class="fas fa-check-circle"></i> Status Pendaftaran</label>
+                <select id="status" name="status" class="form-select">
                     <option value="">Semua Status</option>
-                    <option value="terbuka" <%= selectedStatus == 'terbuka' ? 'selected' : '' %>>Masih Dibuka</option>
-                    <option value="ditutup" <%= selectedStatus == 'ditutup' ? 'selected' : '' %>>Sudah Ditutup</option>
+                    <option value="tersedia" <%= locals.selectedStatus === 'tersedia' ? 'selected' : '' %>>Tersedia</option>
+                    <option value="penuh" <%= locals.selectedStatus === 'penuh' ? 'selected' : '' %>>Penuh</option>
+                    <option value="tutup" <%= locals.selectedStatus === 'tutup' ? 'selected' : '' %>>Telah Ditutup</option>
                 </select>
             </div>
-        </div>
-    </form>
 
+            <!-- Filter Persyaratan Mahasiswa -->
+            <div>
+                <label for="mahasiswa" class="form-label"><i class="fas fa-user-graduate"></i> Persyaratan Mahasiswa</label>
+                <select id="mahasiswa" name="mahasiswa" class="form-select">
+                    <option value="">Semua Mahasiswa</option>
+                    <option value="mahasiswa_feb" <%= locals.selectedMahasiswa === 'mahasiswa_feb' ? 'selected' : '' %>>Khusus Mahasiswa FEB</option>
+                    <option value="penerima_beasiswa_bi" <%= locals.selectedMahasiswa === 'penerima_beasiswa_bi' ? 'selected' : '' %>>Khusus Penerima Beasiswa BI</option>
+                </select>
+            </div>
+
+            <!-- Tombol Filter -->
+            <div class="sm:col-span-2 lg:col-span-4 flex justify-end mt-4">
+                <button type="submit" class="primary-button w-full sm:w-auto">
+                    <i class="fas fa-filter mr-2"></i> Terapkan Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Daftar Program -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <% if (programs && programs.length > 0) { %>
+        <% if (programs.length > 0) { %>
             <% programs.forEach(program => { %>
-                <div class="program-card flex flex-col p-5 border rounded-lg bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative">
-                    <form action="/mahasiswa/bookmark/<%= program.isBookmarked ? 'remove' : 'add' %>" method="POST" class="absolute top-3 right-3 z-10">
-                        <input type="hidden" name="programId" value="<%= program.id %>">
-                        <button type="submit" title="<%= program.isBookmarked ? 'Hapus dari Tersimpan' : 'Simpan Program' %>" class="text-2xl">
-                            <% if (program.isBookmarked) { %>
-                                <i class="fas fa-bookmark text-primary-teal hover:text-dark-teal"></i>
-                            <% } else { %>
-                                <i class="far fa-bookmark text-gray-400 hover:text-primary-teal"></i>
-                            <% } %>
-                        </button>
-                    </form>
-                    <span class="text-xs font-bold text-primary-teal bg-teal-50 px-2 py-1 rounded-full self-start mb-2"><%= program.nama_pusat %></span>
-                    <h3 class="program-title text-lg font-bold text-gray-800"><%= program.title %></h3>
-                    <p class="text-xs text-gray-500 mb-3">Pendaftaran hingga <%= new Date(program.pendaftaran_akhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long'}) %></p>
-                    <p class="program-description text-sm text-gray-600 flex-grow"><%= program.description.substring(0, 100) %>...</p>
-                    <div class="mt-4 pt-4 border-t">
-                        <a href="/programs/<%= program.id %>" class="secondary-button w-full text-center justify-center">Lihat Detail</a>
+                <div class="program-card flex flex-col justify-between">
+                    <div>
+                        <h4 class="program-title"><%= program.title %></h4>
+                        <p class="program-meta">
+                            <i class="fas fa-university text-text-secondary"></i> <%= program.nama_pusat %>
+                        </p>
+                        <p class="program-description mb-4">
+                            <%- program.description.substring(0, 120) %>...
+                        </p>
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <a href="/programs/<%= program.id %>" class="detail-button">Lihat Detail</a>
+                        <!-- Status Pendaftaran -->
+                        <% 
+                        const isTutup = new Date(program.pendaftaran_akhir) < new Date();
+                        const isPenuh = program.quota && program.jumlah_pendaftar >= program.quota;
+                        %>
+                        <% if (isTutup) { %>
+                            <span class="status-badge badge-closed">Ditutup</span>
+                        <% } else if (isPenuh) { %>
+                            <span class="status-badge badge-rejected">Penuh</span>
+                        <% } else { %>
+                            <span class="status-badge badge-accepted">Tersedia</span>
+                        <% } %>
                     </div>
                 </div>
-            <% }) %>
+            <% }); %>
         <% } else { %>
-           <div class="col-span-full text-center text-gray-500 py-10">
-                <i class="fas fa-search-minus text-4xl mb-3 text-gray-400"></i>
-                <% if (typeof searchQuery !== 'undefined' && searchQuery && searchQuery.trim() !== '') { %>
-                    <p class="text-lg">Program Tidak Ditemukan</p>
-                    <p>Tidak ada program yang cocok dengan kata kunci "<%= searchQuery %>". Coba gunakan kata kunci lain.</p>
-                <% } else { %>
-                    <p class="text-lg">Belum Ada Program Tersedia</p>
-                    <p>Saat ini belum ada program yang cocok dengan filter Anda. Silakan coba lagi nanti.</p>
-                <% } %>
-           </div>
+            <div class="col-span-full text-center py-10">
+                <p class="text-text-secondary">Tidak ada program yang cocok dengan filter Anda.</p>
+            </div>
         <% } %>
     </div>
 </div>
