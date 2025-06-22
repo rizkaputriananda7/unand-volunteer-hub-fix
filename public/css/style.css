@@ -3091,10 +3091,6 @@ body {
 }
 
 @media (min-width: 640px){
-  .sm\:col-span-2{
-    grid-column: span 2 / span 2;
-  }
-
   .sm\:ml-3{
     margin-left: 0.75rem;
   }
@@ -3184,10 +3180,6 @@ body {
 
   .lg\:col-span-2{
     grid-column: span 2 / span 2;
-  }
-
-  .lg\:col-span-4{
-    grid-column: span 4 / span 4;
   }
 
   .lg\:grid-cols-2{

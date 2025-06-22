@@ -11,27 +11,52 @@ const VolunteerCenter = require("../models/VolunteerCenter");
 const Konten = require('../models/Konten');
 const bcrypt = require('bcryptjs');
 const Mahasiswa = require("../models/Mahasiswa");
+const PengumumanGlobal = require("../models/PengumumanGlobal");
 
+// GANTI SELURUH FUNGSI showDashboard DENGAN KODE INI
 exports.showDashboard = async (req, res) => {
     try {
         const mahasiswaId = req.user.id;
         
-        // --- PERUBAHAN DI SINI ---
-        // Mengubah `Konten.findLatest(4)` menjadi `Konten.findAll()` untuk mengambil semua konten.
-        // Juga mengubah nama variabel dari `latestContent` menjadi `allContent` agar lebih deskriptif.
         const [
             activeRoles, 
             upcomingEvents, 
             stats, 
-            announcements,
+            programAnnouncements,
+            globalAnnouncements,
             allContent 
         ] = await Promise.all([
             Aplikasi.findActiveRolesByMahasiswa(mahasiswaId),
             Jadwal.findUpcomingForMahasiswa(mahasiswaId),
             Aplikasi.getStatsForMahasiswa(mahasiswaId),
             Pengumuman.findForMahasiswa(mahasiswaId),
-            Konten.findAll() // Mengambil semua konten
+            PengumumanGlobal.findAll(),
+            Konten.findAll()
         ]);
+
+        // Format pengumuman spesifik program
+        const formattedProgramAnn = programAnnouncements.map(p => ({
+            subjek: p.subjek,
+            pesan: p.pesan,
+            created_at: p.created_at,
+            nama_program: p.nama_program, // <-- Perbaikan: Hapus teks "Program: " dari sini
+            isGlobal: false
+        }));
+
+        // Format pengumuman global
+        const formattedGlobalAnn = globalAnnouncements.map(g => ({
+            subjek: g.subjek,
+            pesan: g.pesan,
+            created_at: g.created_at,
+            nama_program: "UMUM", // Label untuk pengumuman global
+            isGlobal: true
+        }));
+
+        const allAnnouncements = [...formattedProgramAnn, ...formattedGlobalAnn]
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        // LANGKAH DEBUG: Tampilkan data final di konsol server
+        console.log("Data Pengumuman yang Dikirim ke View:", allAnnouncements);
 
         res.render("mahasiswa/dashboard", {
             title: "Dashboard Volunteer",
@@ -39,8 +64,8 @@ exports.showDashboard = async (req, res) => {
             activeRoles,
             upcomingEvents,
             stats,
-            announcements,
-            allContent // Mengirim semua konten ke view
+            announcements: allAnnouncements,
+            allContent
         });
     } catch (error) {
         console.error("Error memuat dashboard mahasiswa:", error);
