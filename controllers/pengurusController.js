@@ -398,20 +398,44 @@ exports.showKontenPage = async (req, res) => {
 exports.showKontenForm = (req, res) => {
     res.render('pengurus/form-konten', {
         title: 'Buat Konten Baru',
-        active: 'konten'
+        active: 'konten',
+        error: null,
+        item: {} // Kirim objek kosong untuk form baru
     });
 };
 
 // FUNGSI BARU: Menangani pembuatan konten
 exports.handleCreateKonten = async (req, res) => {
     try {
+        // --- PERBAIKAN: Validasi input ---
+        const { judul_konten, isi_konten } = req.body;
+        if (!judul_konten || !isi_konten || judul_konten.trim() === '' || isi_konten.trim() === '') {
+            // Jika validasi gagal, render kembali form dengan pesan error dan data yang sudah diisi
+            return res.status(400).render('pengurus/form-konten', {
+                title: 'Gagal Membuat Konten',
+                active: 'konten',
+                error: 'Judul dan Isi Konten tidak boleh kosong.',
+                item: { judul_konten, isi_konten } // Kirim kembali data yang sudah diinput
+            });
+        }
+        // --- Akhir Perbaikan ---
+
         if (req.file) {
             req.body.gambar_konten = req.file.path.replace(/\\/g, '/').replace('public/', '');
         }
         await Konten.create(req.body, req.user.id, req.user.volunteer_center_id);
         res.redirect('/pengurus/konten');
-    } catch (error) { res.status(500).send("Gagal membuat konten."); }
+    } catch (error) { 
+        // Tangani error lain (misal: error database)
+        res.status(500).render('pengurus/form-konten', {
+            title: 'Gagal Membuat Konten',
+            active: 'konten',
+            error: 'Terjadi kesalahan pada server, silakan coba lagi.',
+            item: req.body
+        });
+    }
 };
+
 
 // FUNGSI BARU: Menampilkan form untuk mengedit konten
 exports.showEditKontenForm = async (req, res) => {
@@ -423,7 +447,8 @@ exports.showEditKontenForm = async (req, res) => {
         res.render('pengurus/form-konten', {
             title: 'Edit Konten',
             active: 'konten',
-            konten
+            item: konten, // gunakan 'item' agar konsisten dengan form create
+            error: null
         });
     } catch (error) { res.status(500).send("Error memuat halaman edit."); }
 };
@@ -431,12 +456,33 @@ exports.showEditKontenForm = async (req, res) => {
 // FUNGSI BARU: Menangani pembaruan konten
 exports.handleUpdateKonten = async (req, res) => {
     try {
+         // --- PERBAIKAN: Validasi input juga untuk update ---
+        const { judul_konten, isi_konten } = req.body;
+        if (!judul_konten || !isi_konten || judul_konten.trim() === '' || isi_konten.trim() === '') {
+            req.body.id = req.params.id; // pastikan id tetap ada untuk form
+            return res.status(400).render('pengurus/form-konten', {
+                title: 'Gagal Memperbarui Konten',
+                active: 'konten',
+                error: 'Judul dan Isi Konten tidak boleh kosong.',
+                item: req.body
+            });
+        }
+        // --- Akhir Perbaikan ---
+
         if (req.file) {
             req.body.gambar_konten = req.file.path.replace(/\\/g, '/').replace('public/', '');
         }
         await Konten.update(req.params.id, req.body);
         res.redirect('/pengurus/konten');
-    } catch (error) { res.status(500).send("Gagal memperbarui konten."); }
+    } catch (error) { 
+        req.body.id = req.params.id;
+        res.status(500).render('pengurus/form-konten', {
+            title: 'Gagal Memperbarui Konten',
+            active: 'konten',
+            error: 'Terjadi kesalahan pada server, silakan coba lagi.',
+            item: req.body
+        });
+    }
 };
 
 // FUNGSI BARU: Menangani penghapusan konten
