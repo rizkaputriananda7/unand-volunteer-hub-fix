@@ -4,13 +4,13 @@
         <h2 class="text-2xl font-bold">Statistik Pusat Volunteer Anda</h2>
         <% if (stats.totalPendaftar > 0) { %>
             <button id="export-pdf-btn" class="secondary-button">
-                <i class="fas fa-file-pdf mr-2"></i>Ekspor ke PDF
+                <i class="fas fa-file-pdf mr-2"></i>Ekspor Laporan PDF
             </button>
         <% } %>
     </div>
     
     <!-- Kotak Statistik dengan Atribut Data -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <div id="stats-section" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <div class="stat-box" data-label="Total Pendaftar" data-value="<%= stats.totalPendaftar %>">
             <div class="stat-icon icon-pendaftar"><i class="fas fa-users"></i></div>
             <div class="stat-content"><p class="stat-value"><%= stats.totalPendaftar %></p><p class="stat-label">Total Pendaftar</p></div>
@@ -43,15 +43,41 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- Script yang sudah diperbarui -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const chartCanvas = document.getElementById('distribusiChart');
-        let distribusiData = []; // Variabel untuk menyimpan data grafik
+        let distribusiData = [];
+        let myChart = null; // Variabel untuk menyimpan instance grafik
 
         if (chartCanvas) {
             try {
                 distribusiData = JSON.parse(chartCanvas.dataset.chartData);
-                // ... (kode untuk membuat grafik tetap sama)
+                if (distribusiData.length > 0) {
+                    // Simpan instance grafik ke variabel myChart
+                    myChart = new Chart(chartCanvas.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: distribusiData.map(item => item.title),
+                            datasets: [{
+                                label: 'Jumlah Pendaftar',
+                                data: distribusiData.map(item => item.jumlahPendaftar),
+                                backgroundColor: 'rgba(32, 178, 170, 0.6)',
+                                borderColor: 'rgba(32, 178, 170, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            animation: {
+                                // Pastikan animasi selesai sebelum gambar diambil untuk PDF
+                                onComplete: () => { console.log('Chart animation complete'); }
+                            },
+                            responsive: true, maintainAspectRatio: false,
+                            scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } } },
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
             } catch (e) { console.error("Gagal membuat grafik:", e); }
         }
 
@@ -59,7 +85,7 @@
         if (exportBtn) {
             exportBtn.addEventListener('click', function() {
                 const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
+                const doc = new jsPDF('p', 'mm', 'a4'); // potrait, milimeter, A4
                 const namaPusat = "<%= user.nama_pusat || 'Pusat Volunteer' %>";
 
                 // Judul Dokumen
@@ -69,29 +95,38 @@
                 doc.setTextColor(100);
                 doc.text(`Dokumen dibuat pada: ${new Date().toLocaleString('id-ID')}`, 14, 30);
                 
-                // === BAGIAN YANG DIPERBAIKI ===
-                // Tabel 1: Mengambil data dari atribut data-* di Stat Box
+                // Tabel 1: Statistik Utama
                 const statRows = [];
                 document.querySelectorAll('.stat-box').forEach(box => {
                     statRows.push([box.dataset.label, box.dataset.value]);
                 });
-
                 doc.autoTable({
                     head: [['Kategori Statistik', 'Jumlah']],
                     body: statRows,
-                    startY: 40, theme: 'striped', headStyles: { fillColor: [22, 160, 133] }
+                    startY: 40, theme: 'striped'
                 });
 
-                // Tabel 2: Mengambil data langsung dari variabel JavaScript
-                if (distribusiData.length > 0) {
-                    const programData = distribusiData.map(item => [item.title, item.jumlahPendaftar]);
-                    doc.autoTable({
-                        head: [['Nama Program', 'Jumlah Pendaftar']],
-                        body: programData,
-                        startY: doc.lastAutoTable.finalY + 10, theme: 'grid', headStyles: { fillColor: [44, 62, 80] }
-                    });
+                // === BAGIAN BARU: MENAMBAHKAN GAMBAR GRAFIK ===
+                if (myChart) {
+                    const chartImage = myChart.toBase64Image();
+                    doc.addPage(); // Tambahkan halaman baru untuk grafik dan data detail
+                    doc.setFontSize(14);
+                    doc.text('Grafik Distribusi Pendaftar per Program', 14, 20);
+                    // Parameter: gambar, format, x, y, lebar, tinggi
+                    doc.addImage(chartImage, 'PNG', 14, 30, 180, 90);
+
+                     // Tabel 2: Data Detail Grafik
+                    if (distribusiData.length > 0) {
+                        const programData = distribusiData.map(item => [item.title, item.jumlahPendaftar]);
+                        doc.autoTable({
+                            head: [['Nama Program', 'Jumlah Pendaftar']],
+                            body: programData,
+                            startY: 130, // Posisikan di bawah gambar grafik
+                            theme: 'grid'
+                        });
+                    }
                 }
-                // ============================
+                // ===========================================
 
                 doc.save(`laporan-statistik-${namaPusat.replace(/ /g, '_')}.pdf`);
             });
