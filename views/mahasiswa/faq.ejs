@@ -1,91 +1,165 @@
-<div class="card-container max-w-4xl mx-auto">
-    <h2 class="text-2xl font-bold text-center mb-4">
-        <i class="fas fa-question-circle mr-2"></i>Frequently Asked Questions (FAQ)
-    </h2>
-    <p class="auth-subtitle text-sm -mt-2 text-center mb-6">
-        Temukan jawaban untuk pertanyaan yang paling sering diajukan.
-    </p>
+<style>
+    /* Menambahkan ikon panah sederhana untuk akordeon */
+    .faq-question {
+        list-style: none; /* Menghilangkan panah default dari tag <summary> */
+    }
+    .faq-question::-webkit-details-marker {
+        display: none; /* Menghilangkan panah default di Chrome/Safari */
+    }
+    .faq-question::after {
+        content: '▼';
+        font-size: 0.9em;
+        color: var(--primary-teal);
+        transition: transform 0.2s ease-in-out;
+    }
+    details[open] > summary.faq-question::after {
+        transform: rotate(180deg);
+    }
+</style>
 
-    <!-- Kotak Pencarian -->
-    <div class="mb-8">
-        <input type="search" id="faq-search" class="form-input text-base" placeholder="Ketik untuk mencari pertanyaan...">
-    </div>
+<div class="max-w-4xl mx-auto py-8 px-4">
+    <div class="card-container">
+        <h2 class="text-3xl font-bold text-center mb-8 text-dark-teal">
+            Frequently Asked Questions (FAQ)
+        </h2>
 
-    <!-- Kontainer Accordion FAQ -->
-    <div id="faq-container" class="space-y-4">
-        <% if (Object.keys(faqsByCategory).length > 0) { %>
-            <% Object.keys(faqsByCategory).forEach(category => { %>
-                <div class="faq-category-group">
-                    <h3 class="text-xl font-bold text-primary-teal mb-3"><%= category %></h3>
-                    <div class="space-y-2">
-                        <% faqsByCategory[category].forEach(faq => { %>
-                            <div class="faq-item border rounded-lg bg-white overflow-hidden">
-                                <button class="faq-question w-full text-left p-4 flex justify-between items-center hover:bg-gray-50">
-                                    <span class="font-semibold text-gray-800"><%= faq.pertanyaan %></span>
-                                    <i class="fas fa-chevron-down transition-transform"></i>
-                                </button>
-                                <div class="faq-answer p-4 bg-gray-50 border-t" style="display: none;">
-                                    <p class="text-gray-700 whitespace-pre-wrap"><%= faq.jawaban %></p>
-                                </div>
-                            </div>
-                        <% }) %>
-                    </div>
+        <div class="space-y-3">
+
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Bagaimana cara saya mendaftar sebagai volunteer?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Pertama, Anda perlu membuat akun dengan peran sebagai "Mahasiswa". Setelah login, Anda dapat menjelajahi program yang tersedia di menu "Lihat Program" dan mendaftar langsung pada program yang Anda minati.</p>
                 </div>
-            <% }) %>
-        <% } else { %>
-            <p class="text-center text-gray-500 py-10">Belum ada pertanyaan yang ditambahkan ke FAQ.</p>
-        <% } %>
-        <p id="no-results-message" class="text-center text-gray-500 py-10 hidden">Tidak ada pertanyaan yang cocok dengan pencarian Anda.</p>
+            </details>
+
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Dokumen apa saja yang umumnya diperlukan untuk mendaftar?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Persyaratan dokumen dapat bervariasi, namun umumnya Anda akan diminta mengunggah CV dan Transkrip Nilai terakhir. Pastikan dokumen Anda dalam format PDF, JPG, atau PNG dengan ukuran maksimal 2MB.</p>
+                </div>
+            </details>
+
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Bagaimana cara saya melihat status pendaftaran saya?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Anda dapat melihat status semua pendaftaran Anda (apakah 'Ditinjau', 'Wawancara', 'Diterima', atau 'Ditolak') di halaman "Status Aplikasi" pada dashboard Anda.</p>
+                </div>
+            </details>
+
+             <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Apakah saya bisa mendaftar di lebih dari satu program secara bersamaan?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Ya, Anda bisa mendaftar ke beberapa program volunteer secara bersamaan. Silakan kelola semua pendaftaran Anda melalui halaman "Status Aplikasi".</p>
+                </div>
+            </details>
+
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Apa fungsi dari fitur "Program Tersimpan" (Bookmark)?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Fitur ini memungkinkan Anda untuk menyimpan program-program yang Anda minati. Anda bisa melihat daftar program yang sudah ditandai di halaman "Program Tersimpan" untuk diakses kembali dengan mudah nanti.</p>
+                </div>
+            </details>
+            
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Saya sudah dinyatakan 'Diterima'. Apa langkah selanjutnya?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Selamat! Anda akan segera dihubungi oleh narahubung dari program terkait untuk koordinasi lebih lanjut. Pantau juga menu "Notifikasi" dan "Kalender Kegiatan" untuk jadwal penting seperti briefing atau tanggal mulai kegiatan.</p>
+                </div>
+            </details>
+
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Untuk apa menu 'Kalender Kegiatan'?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Menu Kalender menampilkan semua jadwal penting yang terkait dengan program yang Anda ikuti atau lamar, seperti jadwal wawancara, briefing, atau tanggal mulai kegiatan. Ini membantu Anda agar tidak ketinggalan informasi penting.</p>
+                </div>
+            </details>
+            
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Mengapa penting untuk melengkapi profil saya?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Data pada profil Anda, terutama nama lengkap dan kontak, akan digunakan oleh panitia program untuk proses seleksi dan komunikasi. Profil yang tidak lengkap dapat menghambat proses pendaftaran Anda.</p>
+                </div>
+            </details>
+            
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Apakah saya bisa menggunakan dokumen yang sama untuk program yang berbeda?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Tentu saja. Semua dokumen yang Anda unggah melalui menu "Dokumen Saya" akan tersimpan di akun Anda dan dapat digunakan kembali untuk mendaftar ke beberapa program berbeda tanpa perlu mengunggah ulang.</p>
+                </div>
+            </details>
+            
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Bagaimana cara kerja fitur 'Bantuan Surat Motivasi'?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Fitur ini adalah asisten berbasis AI. Anda dapat memilih salah satu program yang pernah Anda lamar, dan asisten AI akan membantu memberikan ide dan kerangka tulisan untuk surat motivasi yang sesuai dengan deskripsi program tersebut.</p>
+                </div>
+            </details>
+            
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Jenis notifikasi apa saja yang akan saya terima?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Anda akan menerima notifikasi untuk pengumuman penting dari panitia program serta pengingat otomatis dari sistem untuk tenggat waktu pendaftaran yang akan datang. Periksa halaman "Notifikasi" secara berkala.</p>
+                </div>
+            </details>
+
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Saya lupa kata sandi akun. Apa yang harus saya lakukan?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Untuk saat ini, fitur reset kata sandi otomatis belum tersedia. Silakan hubungi Admin UPT Perpustakaan secara langsung untuk mendapatkan bantuan pengaturan ulang kata sandi Anda.</p>
+                </div>
+            </details>
+
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Mengapa saya tidak bisa mengunggah dokumen?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Pastikan file yang Anda unggah sesuai format yang diizinkan (PDF, JPG, PNG) dan ukurannya tidak melebihi 2MB. Jika masalah berlanjut, coba periksa koneksi internet Anda atau hubungi admin.</p>
+                </div>
+            </details>
+
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Kepada siapa saya harus memberikan umpan balik (feedback)?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Kami sangat menghargai masukan Anda. Silakan gunakan menu "Beri Umpan Balik" yang tersedia di sidebar untuk memberikan saran atau melaporkan kendala terkait pengalaman Anda menggunakan aplikasi ini.</p>
+                </div>
+            </details>
+            
+            <details class="bg-teal-50/50 rounded-lg transition-shadow hover:shadow-md">
+                <summary class="faq-question font-semibold p-5 cursor-pointer flex justify-between items-center text-text-primary">
+                    Apa perbedaan program di tiap pusat volunteer?
+                </summary>
+                <div class="px-5 pb-4 border-t border-gray-200 text-text-secondary">
+                    <p class="mt-3">Setiap pusat volunteer (seperti American Corner, Migas Center, dll.) memiliki fokus dan jenis kegiatan yang berbeda. Sangat disarankan untuk membaca deskripsi program secara detail untuk menemukan kegiatan yang paling sesuai dengan minat dan keahlian Anda.</p>
+                </div>
+            </details>
+
+        </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const faqItems = document.querySelectorAll('.faq-item');
-        const searchInput = document.getElementById('faq-search');
-        const noResultsMessage = document.getElementById('no-results-message');
-
-        // Logika untuk Accordion
-        faqItems.forEach(item => {
-            const questionButton = item.querySelector('.faq-question');
-            const answerDiv = item.querySelector('.faq-answer');
-            const icon = questionButton.querySelector('i');
-
-            questionButton.addEventListener('click', () => {
-                const isVisible = answerDiv.style.display === 'block';
-                answerDiv.style.display = isVisible ? 'none' : 'block';
-                icon.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
-            });
-        });
-
-        // Logika untuk Pencarian
-        searchInput.addEventListener('keyup', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            let visibleCount = 0;
-
-            document.querySelectorAll('.faq-category-group').forEach(group => {
-                let questionsInCategory = group.querySelectorAll('.faq-item');
-                let visibleInCategory = 0;
-
-                questionsInCategory.forEach(item => {
-                    const questionText = item.querySelector('.faq-question span').textContent.toLowerCase();
-                    const answerText = item.querySelector('.faq-answer p').textContent.toLowerCase();
-                    
-                    if (questionText.includes(searchTerm) || answerText.includes(searchTerm)) {
-                        item.style.display = 'block';
-                        visibleInCategory++;
-                        visibleCount++;
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-
-                // Sembunyikan judul kategori jika tidak ada pertanyaan yang cocok di dalamnya
-                group.style.display = visibleInCategory > 0 ? 'block' : 'none';
-            });
-            
-            // Tampilkan pesan "tidak ada hasil" jika diperlukan
-            noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
-        });
-    });
-</script>

@@ -42,27 +42,28 @@
         <% } %>
     </div>
 
-    <div class="card-container p-6">
-        <h3 class="text-xl font-bold mb-4 flex items-center">
-            <i class="fas fa-book-reader text-primary-teal mr-3"></i>
-            Papan Pengumuman
-        </h3>
-        <% if (libraryNews && libraryNews.length > 0) { %>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <% libraryNews.forEach(program => { %>
-                    <div class="p-4 border rounded-lg bg-white hover:shadow-lg transition-shadow">
-                        <h4 class="font-bold text-gray-800"><%= program.title %></h4>
-                        <p class="text-xs text-gray-500 mt-1 mb-3">
-                            Pendaftaran hingga <%= new Date(program.pendaftaran_akhir).toLocaleDateString('id-ID', {day: 'numeric', month: 'long'}) %>
-                        </p>
-                        <a href="/programs/<%= program.id %>" class="secondary-button py-2 px-3 text-sm">Lihat Detail</a>
+  <div class="card-container p-6">
+    <h3 class="text-xl font-bold mb-4 flex items-center">
+        <i class="fas fa-bullhorn text-primary-teal mr-3"></i>
+        Papan Pengumuman
+    </h3>
+    
+    <% if (announcements && announcements.length > 0) { %>
+        <div class="space-y-4">
+            <% announcements.slice(0, 3).forEach(item => { %> 
+                <div class="p-4 border-l-4 rounded-r-lg bg-teal-50/60" style="border-color: var(--primary-teal);">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="font-bold text-text-primary"><%= item.subjek %></p>
+                        <span class="text-xs text-text-secondary">Program: <%= item.nama_program %></span>
                     </div>
-                <% }) %>
-            </div>
-        <% } else { %>
-            <p class="text-sm text-center text-gray-500 py-4">Saat ini tidak ada informasi volunteer terbaru dari perpustakaan.</p>
-        <% } %>
-    </div>
+                    <p class="text-sm text-text-secondary"><%= item.pesan %></p>
+                </div>
+            <% }) %>
+        </div>
+    <% } else { %>
+        <p class="text-sm text-center text-gray-500 py-4">Saat ini tidak ada pengumuman untuk Anda.</p>
+    <% } %>
+</div>
 
     <!-- Dua Kolom: Kegiatan Mendatang dan Peran Aktif -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -1040,4 +1040,47 @@ body {
     background-position: 100% 50%;
   }
 }
+/* Tambahkan kode ini di bagian paling bawah file src/input.css */
+
+@media print {
+  /* Sembunyikan semua elemen yang tidak perlu dicetak */
+  .sidebar, 
+  header.sticky, 
+  .global-announcement,
+  .no-print { /* Kelas ini kita gunakan pada tombol cetak */
+    display: none !important;
+  }
+
+  /* Pastikan konten utama menggunakan seluruh lebar halaman cetak */
+  main.flex-1 {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Mengatur agar body tidak menggunakan flexbox saat mencetak, ini penting */
+  body {
+    display: block !important;
+    background: none !important;
+  }
+
+  /* Menghindari card terpotong di antara halaman */
+  .card-container {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #e5e7eb; /* Beri border tipis agar tetap terlihat */
+    margin-bottom: 1rem;
+  }
+
+  /* Memastikan grafik (jika Anda menggunakan <canvas>) menyesuaikan ukuran */
+  canvas {
+    max-width: 100% !important;
+  }
+
+  /* Mengatur ulang link agar teksnya terlihat jelas saat dicetak */
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
 }

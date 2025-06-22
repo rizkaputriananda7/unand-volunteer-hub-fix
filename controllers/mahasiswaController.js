@@ -9,6 +9,7 @@ const Bookmark = require("../models/Bookmark");
 const Faq = require("../models/Faq");
 const VolunteerCenter = require("../models/VolunteerCenter");
 const Konten = require('../models/Konten');
+const bcrypt = require('bcryptjs');
 
 exports.showDashboard = async (req, res) => {
     try {
@@ -17,13 +18,13 @@ exports.showDashboard = async (req, res) => {
             activeRoles, 
             upcomingEvents, 
             stats, 
-            libraryNews, 
+            announcements, // Variabel diubah dari 'libraryNews' menjadi 'announcements'
             latestContent
         ] = await Promise.all([
             Aplikasi.findActiveRolesByMahasiswa(mahasiswaId),
             Jadwal.findUpcomingForMahasiswa(mahasiswaId),
             Aplikasi.getStatsForMahasiswa(mahasiswaId),
-            Program.findLatestByCenterName("UPT Perpustakaan", 2),
+            Pengumuman.findForMahasiswa(mahasiswaId), // <-- INI BAGIAN YANG DIPERBAIKI
             Konten.findLatest(4)
         ]);
 
@@ -33,7 +34,7 @@ exports.showDashboard = async (req, res) => {
             activeRoles,
             upcomingEvents,
             stats,
-            libraryNews,
+            announcements, // Variabel yang dikirim ke view juga diubah
             latestContent
         });
     } catch (error) {
@@ -373,26 +374,27 @@ exports.showKalender = async (req, res) => {
   }
 };
 exports.showFaqPage = async (req, res) => {
-  try {
-    const faqs = await Faq.findAll();
+    try {
+        // --- PERCOBAAN UNTUK DEBUGGING ---
+        // Kita tambahkan variabel-variabel ini dengan nilai default/kosong
+        // karena kemungkinan file layout.ejs membutuhkannya.
+        const dummyDataForLayout = {
+            stats: { totalAplikasi: 0, totalDiterima: 0 },
+            upcomingEvents: [],
+            activeRoles: [],
+            libraryNews: [],
+            latestContent: []
+        };
+        // ------------------------------------
 
-    // Mengelompokkan FAQ berdasarkan kategori
-    const faqsByCategory = faqs.reduce((acc, faq) => {
-      const category = faq.kategori || "Umum";
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(faq);
-      return acc;
-    }, {});
-
-    res.render("mahasiswa/faq", {
-      title: "FAQ & Bantuan",
-      active: "faq",
-      faqsByCategory: faqsByCategory,
-    });
-  } catch (error) {
-    console.error("Error memuat halaman FAQ:", error);
-    res.status(500).send("Gagal memuat halaman FAQ.");
-  }
+        res.render('mahasiswa/faq', {
+            title: 'FAQ & Bantuan',
+            active: 'faq',
+            ...dummyDataForLayout // Menyertakan semua data kosong ke view
+        });
+    } catch (error) {
+        console.error("Error merender halaman FAQ:", error);
+        res.status(500).send("Gagal memuat halaman FAQ.");
+    }
 };
+

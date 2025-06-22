@@ -1657,6 +1657,58 @@ body {
   }
 }
 
+/* Tambahkan kode ini di bagian paling bawah file src/input.css */
+
+@media print {
+  /* Sembunyikan semua elemen yang tidak perlu dicetak */
+
+  .sidebar, 
+  header.sticky, 
+  .global-announcement,
+  .no-print {
+    /* Kelas ini kita gunakan pada tombol cetak */
+    display: none !important;
+  }
+
+  /* Pastikan konten utama menggunakan seluruh lebar halaman cetak */
+
+  main.flex-1 {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Mengatur agar body tidak menggunakan flexbox saat mencetak, ini penting */
+
+  body {
+    display: block !important;
+    background: none !important;
+  }
+
+  /* Menghindari card terpotong di antara halaman */
+
+  .card-container {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+    /* Beri border tipis agar tetap terlihat */
+    margin-bottom: 1rem;
+  }
+
+  /* Memastikan grafik (jika Anda menggunakan <canvas>) menyesuaikan ukuran */
+
+  canvas {
+    max-width: 100% !important;
+  }
+
+  /* Mengatur ulang link agar teksnya terlihat jelas saat dicetak */
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
 .\!container{
   width: 100% !important;
 }
@@ -2167,10 +2219,6 @@ body {
   align-self: flex-end;
 }
 
-.overflow-hidden{
-  overflow: hidden;
-}
-
 .overflow-y-auto{
   overflow-y: auto;
 }
@@ -2246,6 +2294,11 @@ body {
 .border-blue-500{
   --tw-border-opacity: 1;
   border-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
+}
+
+.border-gray-200{
+  --tw-border-opacity: 1;
+  border-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
 }
 
 .border-gray-300{
@@ -2349,6 +2402,14 @@ body {
   background-color: rgb(240 253 250 / var(--tw-bg-opacity, 1));
 }
 
+.bg-teal-50\/50{
+  background-color: rgb(240 253 250 / 0.5);
+}
+
+.bg-teal-50\/60{
+  background-color: rgb(240 253 250 / 0.6);
+}
+
 .bg-white{
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
@@ -2425,6 +2486,11 @@ body {
   padding-right: 1rem;
 }
 
+.px-5{
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
 .px-6{
   padding-left: 1.5rem;
   padding-right: 1.5rem;
@@ -2472,6 +2538,10 @@ body {
 
 .pb-2{
   padding-bottom: 0.5rem;
+}
+
+.pb-4{
+  padding-bottom: 1rem;
 }
 
 .pl-6{
@@ -2596,6 +2666,10 @@ body {
 .text-blue-800{
   --tw-text-opacity: 1;
   color: rgb(30 64 175 / var(--tw-text-opacity, 1));
+}
+
+.text-dark-teal{
+  color: var(--dark-teal);
 }
 
 .text-gray-300{
@@ -2863,6 +2937,12 @@ body {
 .hover\:shadow-lg:hover{
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.hover\:shadow-md:hover{
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
