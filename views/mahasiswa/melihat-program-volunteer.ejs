@@ -6,16 +6,16 @@
 
     <!-- Filter Section -->
     <div class="card-container mb-8">
-        <form action="/programs" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+        <form action="/programs" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
             
             <!-- Filter Pencarian -->
-            <div>
+            <div class="lg:col-span-1">
                 <label for="search" class="form-label"><i class="fas fa-search"></i> Cari Program</label>
                 <input type="text" id="search" name="q" value="<%= locals.searchQuery || '' %>" class="form-input" placeholder="Nama program...">
             </div>
 
             <!-- Filter Pusat Volunteer -->
-            <div>
+            <div class="lg:col-span-1">
                 <label for="center" class="form-label"><i class="fas fa-university"></i> Pusat Volunteer</label>
                 <select id="center" name="centerId" class="form-select">
                     <option value="">Semua Pusat</option>
@@ -30,7 +30,7 @@
             </div>
             
             <!-- Filter Status Ketersediaan -->
-            <div>
+            <div class="lg:col-span-1">
                 <label for="status" class="form-label"><i class="fas fa-check-circle"></i> Status Pendaftaran</label>
                 <select id="status" name="status" class="form-select">
                     <option value="">Semua Status</option>
@@ -40,18 +40,8 @@
                 </select>
             </div>
 
-            <!-- Filter Persyaratan Mahasiswa -->
-            <div>
-                <label for="mahasiswa" class="form-label"><i class="fas fa-user-graduate"></i> Persyaratan Mahasiswa</label>
-                <select id="mahasiswa" name="mahasiswa" class="form-select">
-                    <option value="">Semua Mahasiswa</option>
-                    <option value="mahasiswa_feb" <%= locals.selectedMahasiswa === 'mahasiswa_feb' ? 'selected' : '' %>>Khusus Mahasiswa FEB</option>
-                    <option value="penerima_beasiswa_bi" <%= locals.selectedMahasiswa === 'penerima_beasiswa_bi' ? 'selected' : '' %>>Khusus Penerima Beasiswa BI</option>
-                </select>
-            </div>
-
             <!-- Tombol Filter -->
-            <div class="sm:col-span-2 lg:col-span-4 flex justify-end mt-4">
+            <div class="col-span-full flex justify-end mt-4">
                 <button type="submit" class="primary-button w-full sm:w-auto">
                     <i class="fas fa-filter mr-2"></i> Terapkan Filter
                 </button>
@@ -78,7 +68,7 @@
                         <!-- Status Pendaftaran -->
                         <% 
                         const isTutup = new Date(program.pendaftaran_akhir) < new Date();
-                        const isPenuh = program.quota && program.jumlah_pendaftar >= program.quota;
+                        const isPenuh = program.quota != null && program.jumlah_pendaftar >= program.quota;
                         %>
                         <% if (isTutup) { %>
                             <span class="status-badge badge-closed">Ditutup</span>

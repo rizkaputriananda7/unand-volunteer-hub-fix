@@ -7,19 +7,19 @@ const upload = require('../utils/uploadMiddleware');
 // Menampilkan semua program dengan filter lengkap
 exports.showAllPrograms = async (req, res) => {
   try {
-    // Ambil semua parameter filter dari query URL
-    const { centerId, q: searchTerm, kategori, status, mahasiswa } = req.query;
+    // Parameter 'mahasiswa' dihapus dari sini
+    const { centerId, q: searchTerm, kategori, status } = req.query;
 
     const filters = {
       centerId,
       searchTerm,
       kategori,
-      status, // Filter status baru
-      mahasiswa // Filter mahasiswa baru
+      status, 
     };
 
     const [programs, centers, bookmarkedIds] = await Promise.all([
-      Program.findAll(filters, req.user), // Kirim filter dan data user ke model
+      // Pemanggilan ke findAll sekarang lebih sederhana, tanpa 'req.user'
+      Program.findAll(filters), 
       VolunteerCenter.findAll(),
       req.user ? Bookmark.findBookmarkedProgramIds(req.user.id) : []
     ]);
@@ -29,16 +29,15 @@ exports.showAllPrograms = async (req, res) => {
       isBookmarked: bookmarkedIds.includes(program.id),
     }));
 
+    // Nilai 'selectedMahasiswa' dihapus dari data yang dikirim ke view
     res.render("mahasiswa/melihat-program-volunteer", {
       title: "Jelajahi Program",
       active: "program",
       programs: programsWithBookmarkStatus,
       centers,
-      // Kirim kembali nilai filter ke view agar dropdown tetap pada pilihan pengguna
       selectedCenter: centerId,
       selectedKategori: kategori,
       selectedStatus: status,
-      selectedMahasiswa: mahasiswa,
       searchQuery: searchTerm,
     });
   } catch (error) {
@@ -47,26 +46,20 @@ exports.showAllPrograms = async (req, res) => {
   }
 };
 
-// Menampilkan halaman detail dari satu program
+
+// ... (Fungsi lainnya tetap sama) ...
 exports.showProgramDetails = async (req, res) => {
   try {
     const program = await Program.findById(req.params.id);
     if (!program) {
-      // Jika program dengan ID tersebut tidak ada, tampilkan halaman 404
       return res.status(404).send("Program tidak ditemukan.");
     }
-
-    // Cek apakah mahasiswa yang login sudah melamar program ini
     const hasApplied = await Aplikasi.hasApplied(req.user.id, program.id);
-
-    // Cek apakah program sudah di-bookmark oleh mahasiswa
     let isBookmarked = false;
     if (req.user) {
       const bookmarkedIds = await Bookmark.findBookmarkedProgramIds(req.user.id);
       isBookmarked = bookmarkedIds.includes(program.id);
     }
-
-    // Render view detail dengan data program, status lamaran, dan status bookmark
     res.render("mahasiswa/detail-program-volunteer", {
       title: program.title,
       active: "program",
@@ -80,7 +73,6 @@ exports.showProgramDetails = async (req, res) => {
   }
 };
 
-// Menampilkan form pendaftaran
 exports.showAplikasiForm = async (req, res) => {
     try {
         const program = await Program.findById(req.params.id);
@@ -97,38 +89,31 @@ exports.showAplikasiForm = async (req, res) => {
     } catch (error) { res.status(500).send("Gagal memuat halaman pendaftaran."); }
 };
 
-// Menangani pengiriman form dan menampilkan halaman konfirmasi
 exports.handleApplyToProgram = async (req, res) => {
     try {
         const programId = req.params.id;
         const mahasiswaId = req.user.id;
-        // Debug log untuk file upload
         console.log('FILES:', req.files);
         console.log('BODY:', req.body);
-        // Cek lagi untuk mencegah pendaftaran ganda jika pengguna mencoba-coba
         const hasApplied = await Aplikasi.hasApplied(mahasiswaId, programId);
         if (hasApplied) {
             return res.redirect(`/programs/${programId}`);
         }
-        // Siapkan data untuk disimpan di database
         const applicationData = {
             mahasiswaId: mahasiswaId,
             programId: programId,
             motivasi: req.body.motivasi,
-            files: req.files // Objek req.files dari middleware multer
+            files: req.files
         };
-        // Buat entri aplikasi baru di database
         await Aplikasi.create(applicationData);
-        // Ambil kembali detail program untuk ditampilkan di halaman konfirmasi
         const program = await Program.findById(programId);
-        // Render halaman konfirmasi dengan data yang diperlukan
         res.render("mahasiswa/konfirmasi-pendaftaran", {
             title: "Pendaftaran Berhasil",
             active: "program",
             program: program,
-            errorMsg: null, // pastikan errorMsg selalu ada
-            sudahDaftar: false, // default
-            user: res.locals.user // pastikan user dikirim ke view
+            errorMsg: null,
+            sudahDaftar: false,
+            user: res.locals.user
         });
     } catch (error) {
         console.error("Error saat mendaftar program:", error);
@@ -136,14 +121,12 @@ exports.handleApplyToProgram = async (req, res) => {
     }
 };
 
-// Menampilkan form pendaftaran volunteer
 exports.showFormPendaftaran = async (req, res) => {
   try {
     const program = await Program.findById(req.params.id);
     if (!program) {
       return res.status(404).send("Program tidak ditemukan.");
     }
-    // Data user bisa diambil dari res.locals.user jika sudah login
     const user = res.locals.user || {};
     res.render("mahasiswa/form-pendaftaran", {
       title: `Pendaftaran Program Volunteer`,
