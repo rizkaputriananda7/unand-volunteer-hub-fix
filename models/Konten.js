@@ -32,6 +32,21 @@ class Konten {
     }
     
     /**
+     * FUNGSI BARU: Mengambil semua konten dari semua pusat untuk ditampilkan di dashboard mahasiswa.
+     * Tidak ada batasan jumlah (LIMIT).
+     */
+    static async findAll() {
+        const sql = `
+            SELECT k.*, vc.nama_pusat
+            FROM konten k
+            JOIN volunteer_centers vc ON k.volunteer_center_id = vc.id
+            ORDER BY k.created_at DESC
+        `;
+        const [rows] = await db.execute(sql);
+        return rows;
+    }
+
+    /**
      * Mengambil beberapa konten terbaru dari semua pusat untuk ditampilkan di dashboard mahasiswa.
      */
     static async findLatest(limit = 4) {

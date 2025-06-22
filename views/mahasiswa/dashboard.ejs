@@ -22,18 +22,36 @@
         </div>
     </div>
 
+    <!-- Bagian Kabar Terbaru -->
     <div class="card-container p-6">
         <h3 class="text-xl font-bold mb-4">Kabar Terbaru dari Pusat Volunteer</h3>
-        <% if (latestContent && latestContent.length > 0) { %>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <% latestContent.forEach(item => { %>
-                    <div class="p-4 border rounded-lg bg-white hover:shadow-lg transition-shadow">
+        <% if (allContent && allContent.length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <% allContent.forEach(item => { %>
+                    <!-- Kartu Konten (bisa diklik) -->
+                    <!-- PERBAIKAN: Menggunakan data attributes untuk menyimpan data -->
+                    <div 
+                        class="p-4 border rounded-lg bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col"
+                        onclick="showContentModal(this)"
+                        data-title="<%- item.judul_konten %>"
+                        data-center="<%- item.nama_pusat %>"
+                        data-date="<%= new Date(item.created_at).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' }) %>"
+                        data-image-url="<%= item.gambar_konten ? `/${item.gambar_konten}` : '' %>"
+                    >
                         <% if(item.gambar_konten) { %>
-                            <img src="/<%= item.gambar_konten %>" class="w-full h-32 object-cover rounded-md mb-3">
+                            <img src="/<%= item.gambar_konten %>" class="w-full h-40 object-cover rounded-md mb-3" alt="Gambar Konten">
+                        <% } else { %>
+                            <div class="w-full h-40 bg-gray-100 rounded-md mb-3 flex items-center justify-center">
+                                <i class="fas fa-newspaper text-4xl text-gray-300"></i>
+                            </div>
                         <% } %>
-                        <span class="text-xs font-bold text-primary-teal"><%= item.nama_pusat %></span>
-                        <h4 class="font-bold text-gray-800 mt-1"><%= item.judul_konten %></h4>
-                        <p class="text-xs text-gray-500 mt-2"><%= item.isi_konten.substring(0, 80) %>...</p>
+                        <div class="flex-grow">
+                             <span class="text-xs font-bold text-primary-teal"><%= item.nama_pusat %></span>
+                            <h4 class="font-bold text-gray-800 mt-1"><%= item.judul_konten %></h4>
+                            <p class="text-sm text-gray-600 mt-2"><%= item.isi_konten.substring(0, 100) %>...</p>
+                        </div>
+                        <!-- PERBAIKAN: Menyimpan konten lengkap di div tersembunyi untuk menjaga format -->
+                        <div class="full-content hidden"><%- item.isi_konten %></div>
                     </div>
                 <% }) %>
             </div>
@@ -41,6 +59,7 @@
             <p class="text-sm text-center text-gray-500 py-4">Belum ada kabar terbaru.</p>
         <% } %>
     </div>
+
 
   <div class="card-container p-6">
     <h3 class="text-xl font-bold mb-4 flex items-center">
@@ -126,3 +145,81 @@
         </div>
     </div>
 </div>
+
+<!-- Modal untuk Menampilkan Konten Penuh -->
+<div id="content-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden transition-opacity duration-300">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col transform transition-transform duration-300 scale-95">
+        <!-- Header Modal -->
+        <div class="p-4 border-b flex justify-between items-center">
+            <h3 id="modal-title" class="text-lg font-bold text-text-primary"></h3>
+            <button onclick="hideContentModal()" class="text-gray-500 hover:text-gray-800">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- Konten Modal -->
+        <div class="p-6 overflow-y-auto">
+            <img id="modal-image" src="" alt="Gambar Konten" class="w-full h-64 object-cover rounded-lg mb-4 hidden">
+            <div class="flex items-center space-x-4 mb-4 text-sm text-gray-500">
+                <span id="modal-center"></span>
+                <span>&bull;</span>
+                <span id="modal-date"></span>
+            </div>
+            <div id="modal-content" class="text-text-secondary whitespace-pre-wrap leading-relaxed"></div>
+        </div>
+    </div>
+</div>
+
+<!-- PERBAIKAN: Memperbarui fungsi JavaScript untuk membaca dari data attributes -->
+<script>
+    const modal = document.getElementById('content-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalCenter = document.getElementById('modal-center');
+    const modalDate = document.getElementById('modal-date');
+    const modalImage = document.getElementById('modal-image');
+    const modalContent = document.getElementById('modal-content');
+
+    function showContentModal(cardElement) {
+        const dataset = cardElement.dataset;
+        const title = dataset.title;
+        const center = dataset.center;
+        const date = dataset.date;
+        const imageUrl = dataset.imageUrl;
+        // Mengambil konten dari div tersembunyi dan mengganti newline dengan <br>
+        const content = cardElement.querySelector('.full-content').innerText.replace(/\n/g, '<br>');
+
+        modalTitle.innerText = title;
+        modalCenter.innerText = center;
+        modalDate.innerText = date;
+        modalContent.innerHTML = content;
+
+        if (imageUrl) {
+            modalImage.src = imageUrl;
+            modalImage.classList.remove('hidden');
+        } else {
+            modalImage.classList.add('hidden');
+        }
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.add('opacity-100');
+            modal.querySelector('.transform').classList.remove('scale-95');
+        }, 10);
+    }
+
+    function hideContentModal() {
+        modal.classList.add('opacity-0');
+        modal.querySelector('.transform').classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('opacity-0'); // Reset opacity for next show
+        }, 300);
+    }
+
+    // Menutup modal jika user mengklik di luar area konten
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            hideContentModal();
+        }
+    });
+</script>

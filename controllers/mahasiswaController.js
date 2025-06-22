@@ -15,18 +15,22 @@ const Mahasiswa = require("../models/Mahasiswa");
 exports.showDashboard = async (req, res) => {
     try {
         const mahasiswaId = req.user.id;
+        
+        // --- PERUBAHAN DI SINI ---
+        // Mengubah `Konten.findLatest(4)` menjadi `Konten.findAll()` untuk mengambil semua konten.
+        // Juga mengubah nama variabel dari `latestContent` menjadi `allContent` agar lebih deskriptif.
         const [
             activeRoles, 
             upcomingEvents, 
             stats, 
-            announcements, // Variabel diubah dari 'libraryNews' menjadi 'announcements'
-            latestContent
+            announcements,
+            allContent 
         ] = await Promise.all([
             Aplikasi.findActiveRolesByMahasiswa(mahasiswaId),
             Jadwal.findUpcomingForMahasiswa(mahasiswaId),
             Aplikasi.getStatsForMahasiswa(mahasiswaId),
-            Pengumuman.findForMahasiswa(mahasiswaId), // <-- INI BAGIAN YANG DIPERBAIKI
-            Konten.findLatest(4)
+            Pengumuman.findForMahasiswa(mahasiswaId),
+            Konten.findAll() // Mengambil semua konten
         ]);
 
         res.render("mahasiswa/dashboard", {
@@ -35,8 +39,8 @@ exports.showDashboard = async (req, res) => {
             activeRoles,
             upcomingEvents,
             stats,
-            announcements, // Variabel yang dikirim ke view juga diubah
-            latestContent
+            announcements,
+            allContent // Mengirim semua konten ke view
         });
     } catch (error) {
         console.error("Error memuat dashboard mahasiswa:", error);
@@ -430,4 +434,3 @@ exports.toggleBookmarkAjax = async (req, res) => {
     res.status(500).json({ error: 'Terjadi kesalahan pada server!' });
   }
 };
-
