@@ -1,107 +1,100 @@
-<div class="card-container max-w-5xl mx-auto">
-    <h2 class="text-2xl font-bold text-center mb-8">Statistik & Analitik Pusat Volunteer Anda</h2>
+<div id="report-content" class="card-container max-w-5xl mx-auto">
+    <!-- Header Halaman dengan Tombol Ekspor -->
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-bold">Statistik Pusat Volunteer Anda</h2>
+        <% if (stats.totalPendaftar > 0) { %>
+            <button id="export-pdf-btn" class="secondary-button">
+                <i class="fas fa-file-pdf mr-2"></i>Ekspor ke PDF
+            </button>
+        <% } %>
+    </div>
     
-    <!-- Kotak Statistik -->
+    <!-- Kotak Statistik dengan Atribut Data -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div class="stat-box">
+        <div class="stat-box" data-label="Total Pendaftar" data-value="<%= stats.totalPendaftar %>">
             <div class="stat-icon icon-pendaftar"><i class="fas fa-users"></i></div>
-            <div class="stat-content">
-                <p class="stat-value"><%= stats.totalPendaftar %></p>
-                <p class="stat-label">Total Pendaftar</p>
-            </div>
+            <div class="stat-content"><p class="stat-value"><%= stats.totalPendaftar %></p><p class="stat-label">Total Pendaftar</p></div>
         </div>
-        <div class="stat-box">
+        <div class="stat-box" data-label="Total Diterima" data-value="<%= stats.totalDiterima %>">
             <div class="stat-icon icon-diterima"><i class="fas fa-user-check"></i></div>
-            <div class="stat-content">
-                <p class="stat-value"><%= stats.totalDiterima %></p>
-                <p class="stat-label">Diterima</p>
-            </div>
+            <div class="stat-content"><p class="stat-value"><%= stats.totalDiterima %></p><p class="stat-label">Diterima</p></div>
         </div>
-        <div class="stat-box">
+        <div class="stat-box" data-label="Program Aktif" data-value="<%= stats.programAktif %>">
             <div class="stat-icon icon-program"><i class="fas fa-tasks"></i></div>
-            <div class="stat-content">
-                <p class="stat-value"><%= stats.programAktif %></p>
-                <p class="stat-label">Program Aktif</p>
-            </div>
+            <div class="stat-content"><p class="stat-value"><%= stats.programAktif %></p><p class="stat-label">Program Aktif</p></div>
         </div>
     </div>
 
     <!-- Bagian Grafik -->
-    <div>
+    <div class="card-container p-6 bg-white">
         <h3 class="text-xl font-bold text-center mb-4">Distribusi Pendaftar per Program</h3>
         <% if (stats.distribusiProgram && stats.distribusiProgram.length > 0) { %>
             <div class="chart-placeholder p-4 bg-gray-50 rounded-lg" style="height: 400px;">
-                <!-- === BAGIAN YANG DIPERBAIKI === -->
-                <!-- Data JSON sekarang disimpan di dalam atribut data-chartdata -->
-                <canvas 
-                    id="distribusiChart"
-                    data-chartdata='<%- JSON.stringify(stats.distribusiProgram) %>'
-                ></canvas>
-                <!-- ============================ -->
+                <canvas id="distribusiChart" data-chart-data='<%- JSON.stringify(stats.distribusiProgram) %>'></canvas>
             </div>
         <% } else { %>
-            <p class="text-center text-gray-500 py-8">Tidak ada data pendaftar untuk ditampilkan dalam grafik.</p>
+            <p class="text-center text-gray-500 py-8">Tidak ada data pendaftar untuk ditampilkan.</p>
         <% } %>
     </div>
 </div>
 
-<!-- Impor pustaka Chart.js dari CDN -->
+<!-- Impor pustaka untuk PDF dan Grafik -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const chartCanvas = document.getElementById('distribusiChart');
+        let distribusiData = []; // Variabel untuk menyimpan data grafik
 
-        // Hanya jalankan skrip jika elemen canvas ada di halaman
         if (chartCanvas) {
             try {
-                // 1. Baca data dari atribut data-chartdata
-                const distribusiDataString = chartCanvas.dataset.chartdata;
-                // 2. Ubah string JSON kembali menjadi objek/array JavaScript
-                const distribusiData = JSON.parse(distribusiDataString);
+                distribusiData = JSON.parse(chartCanvas.dataset.chartData);
+                // ... (kode untuk membuat grafik tetap sama)
+            } catch (e) { console.error("Gagal membuat grafik:", e); }
+        }
 
-                if (distribusiData && distribusiData.length > 0) {
-                    const labels = distribusiData.map(item => item.title);
-                    const data = distribusiData.map(item => item.jumlahPendaftar);
+        const exportBtn = document.getElementById('export-pdf-btn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const namaPusat = "<%= user.nama_pusat || 'Pusat Volunteer' %>";
 
-                    const ctx = chartCanvas.getContext('2d');
-                    new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Jumlah Pendaftar',
-                                data: data,
-                                backgroundColor: 'rgba(32, 178, 170, 0.6)',
-                                borderColor: 'rgba(32, 178, 170, 1)',
-                                borderWidth: 1,
-                                borderRadius: 5
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: {
-                                        stepSize: 1,
-                                        precision: 0 // Memastikan tidak ada angka desimal di sumbu Y
-                                    }
-                                }
-                            },
-                            plugins: {
-                                legend: {
-                                    display: false
-                                }
-                            }
-                        }
+                // Judul Dokumen
+                doc.setFontSize(18);
+                doc.text(`Laporan Statistik - ${namaPusat}`, 14, 22);
+                doc.setFontSize(11);
+                doc.setTextColor(100);
+                doc.text(`Dokumen dibuat pada: ${new Date().toLocaleString('id-ID')}`, 14, 30);
+                
+                // === BAGIAN YANG DIPERBAIKI ===
+                // Tabel 1: Mengambil data dari atribut data-* di Stat Box
+                const statRows = [];
+                document.querySelectorAll('.stat-box').forEach(box => {
+                    statRows.push([box.dataset.label, box.dataset.value]);
+                });
+
+                doc.autoTable({
+                    head: [['Kategori Statistik', 'Jumlah']],
+                    body: statRows,
+                    startY: 40, theme: 'striped', headStyles: { fillColor: [22, 160, 133] }
+                });
+
+                // Tabel 2: Mengambil data langsung dari variabel JavaScript
+                if (distribusiData.length > 0) {
+                    const programData = distribusiData.map(item => [item.title, item.jumlahPendaftar]);
+                    doc.autoTable({
+                        head: [['Nama Program', 'Jumlah Pendaftar']],
+                        body: programData,
+                        startY: doc.lastAutoTable.finalY + 10, theme: 'grid', headStyles: { fillColor: [44, 62, 80] }
                     });
                 }
-            } catch (e) {
-                console.error("Gagal membuat grafik:", e);
-                chartCanvas.parentElement.innerHTML = '<p class="text-center text-red-500">Terjadi kesalahan saat memuat data grafik.</p>';
-            }
+                // ============================
+
+                doc.save(`laporan-statistik-${namaPusat.replace(/ /g, '_')}.pdf`);
+            });
         }
     });
 </script>

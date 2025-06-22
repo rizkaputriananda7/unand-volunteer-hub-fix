@@ -1,110 +1,108 @@
-<div class="max-w-2xl mx-auto bg-white border rounded-xl shadow p-8 mt-8">
-    <!-- Header -->
-    <h2 class="text-2xl font-bold text-gray-800 mb-1">Migas Center Unand</h2>
-    <p class="text-sm text-gray-500 mb-4">Penyelenggara: Pusat Migas Universitas Andalas</p>
-    <!-- Banner Gambar Program -->
-    <div class="w-full h-48 bg-teal-100 flex items-center justify-center rounded mb-6">
-        <span class="text-lg text-gray-500">Gambar Program Migas</span>
+<div class="bg-white max-w-6xl mx-auto rounded-xl shadow-lg overflow-hidden">
+    <!-- Header dengan Penyelenggara -->
+    <div class="p-4 bg-gray-50 border-b">
+        <p class="text-sm text-gray-600">Penyelenggara: <strong class="text-primary-teal"><%= program.nama_pusat %></strong></p>
     </div>
 
-    <!-- Deskripsi Program -->
-    <div class="mb-6">
-        <h4 class="font-semibold mb-2">Deskripsi Program</h4>
-        <p class="text-gray-700 text-sm">Program relawan di Migas Center Universitas Andalas bertujuan untuk melibatkan mahasiswa dalam kegiatan penelitian, pengelolaan data energi, serta edukasi mengenai industri migas dan energi terbarukan. Volunteer akan mendapatkan pengalaman langsung dalam lingkungan riset dan pengembangan, serta berkontribusi pada diseminasi informasi energi kepada masyarakat.</p>
-    </div>
-
-    <!-- Persyaratan & Manfaat -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div>
-            <h4 class="font-semibold mb-2">Persyaratan</h4>
-            <ul class="list-disc list-inside text-gray-700 text-sm space-y-1">
-                <li>Mahasiswa aktif Unand (minimal semester 4).</li>
-                <li>IPK minimal 3.00.</li>
-                <li>Memiliki minat di bidang energi dan riset.</li>
-                <li>Mampu bekerja dalam tim dan mandiri.</li>
-                <li>Bersedia mengikuti seluruh rangkaian program.</li>
-            </ul>
+    <div class="p-6 md:p-8">
+        <!-- Gambar Program (Placeholder) -->
+        <div class="w-full h-64 bg-teal-100 rounded-lg flex items-center justify-center mb-6">
+            <p class="text-gray-400">Gambar Program <%= program.title %></p>
         </div>
-        <div>
-            <h4 class="font-semibold mb-2">Manfaat</h4>
-            <ul class="list-disc list-inside text-gray-700 text-sm space-y-1">
-                <li>Sertifikat partisipasi resmi.</li>
-                <li>Pengalaman riset dan pengelolaan proyek.</li>
-                <li>Jaringan dengan profesional di bidang energi.</li>
-                <li>Peningkatan kemampuan soft skills (komunikasi, analisis).</li>
-                <li>Potensi kredit SKS (tergantung kebijakan fakultas).</li>
-            </ul>
-        </div>
-    </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Kolom Kiri: Deskripsi & Detail -->
+            <div class="lg:col-span-2 space-y-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800"><%= program.title %></h2>
+                    <p class="text-gray-600 mt-2"><%= program.description %></p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Persyaratan</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1 text-sm">
+                            <% program.persyaratan.split('\n').forEach(item => { if(item) { %>
+                                <li><%= item %></li>
+                            <% }}) %>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Manfaat</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1 text-sm">
+                             <% program.manfaat.split('\n').forEach(item => { if(item) { %>
+                                <li><%= item %></li>
+                            <% }}) %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Info Kuota, Durasi, Periode, Lokasi -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-sm">
-        <div class="flex items-center gap-2"><span class="font-semibold">Kuota:</span> <span>20 Peserta</span></div>
-        <div class="flex items-center gap-2"><span class="font-semibold">Durasi:</span> <span>12 Bulan</span></div>
-        <div class="flex items-center gap-2"><span class="font-semibold">Periode Pendaftaran:</span> <span>1 Juli - 30 Juli 2025</span></div>
-        <div class="flex items-center gap-2"><span class="font-semibold">Lokasi:</span> <span>Gedung Migas Center, Kampus Unand Limau Manis</span></div>
-    </div>
+            <!-- Kolom Kanan: Info Cepat & Aksi -->
+            <div class="lg:col-span-1 space-y-4">
+                <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-users text-blue-500 text-xl"></i>
+                        <div>
+                            <p class="text-xs font-bold">Kuota</p>
+                            <p class="text-sm"><%= program.quota %> Peserta</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-calendar-alt text-yellow-500 text-xl"></i>
+                        <div>
+                            <p class="text-xs font-bold">Periode Pendaftaran</p>
+                            <p class="text-sm"><%= new Date(program.pendaftaran_mulai).toLocaleDateString('id-ID') %> - <%= new Date(program.pendaftaran_akhir).toLocaleDateString('id-ID') %></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-clock text-green-500 text-xl"></i>
+                        <div>
+                            <p class="text-xs font-bold">Durasi</p>
+                            <p class="text-sm"><%= program.durasi %></p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-map-marker-alt text-purple-500 text-xl"></i>
+                        <div>
+                            <p class="text-xs font-bold">Lokasi</p>
+                            <p class="text-sm"><%= program.location %></p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="p-4 bg-gray-100 border border-gray-200 rounded-lg">
+                    <h4 class="font-bold text-sm mb-1">Kontak Koordinator</h4>
+                    <p class="text-sm"><%= program.kontak_narahubung %></p>
+                </div>
 
-    <!-- Kontak Koordinator -->
-    <div class="mb-6 border-t pt-4">
-        <h4 class="font-semibold mb-2 text-sm">Kontak Koordinator</h4>
-        <div class="flex flex-col gap-1 text-sm">
-            <div>Nama: <span class="font-medium">Dr. Eng. ABCDEF</span></div>
-            <div>WhatsApp: 
-                <a href="https://wa.me/6281234561234" target="_blank" class="text-primary-teal hover:underline">+62-8123-456789</a>
+                <!-- Tombol Aksi -->
+                <div class="pt-4 space-y-2">
+                     <% if (hasApplied) { %>
+                         <button type="button" class="primary-button w-full justify-center py-3" disabled style="opacity: 0.7; cursor: not-allowed;">
+                            <i class="fas fa-check mr-2"></i> Anda Sudah Mendaftar
+                        </button>
+                    <% } else { %>
+                        <a href="/programs/<%= program.id %>/daftar" class="primary-button w-full justify-center py-3 text-center">
+                             <i class="fas fa-paper-plane mr-2"></i> Daftar Program Ini
+                        </a>
+                    <% } %>
+                    <form action="/mahasiswa/bookmark/<%= program.isBookmarked ? 'remove' : 'add' %>" method="POST">
+                        <input type="hidden" name="programId" value="<%= program.id %>">
+                        <button type="submit" class="secondary-button w-full justify-center py-3 bg-white border border-gray-300 text-gray-700 hover:bg-gray-100">
+                            <% if (program.isBookmarked) { %>
+                                <i class="fas fa-bookmark text-primary-teal mr-2"></i> Hapus dari Favorit
+                            <% } else { %>
+                                <i class="far fa-bookmark mr-2"></i> Simpan ke Favorit
+                            <% } %>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Tombol Aksi -->
-    <div class="flex flex-col md:flex-row gap-3">
-        <form action="/programs/<%= program.id %>/daftar" method="get" class="flex-1">
-            <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 rounded transition">Daftar Program Ini</button>
-        </form>
-        <button id="bookmark-btn" class="w-full border border-gray-300 font-semibold py-2 rounded hover:bg-gray-100 transition flex-1 flex items-center justify-center <%= isBookmarked ? 'text-yellow-500 bg-yellow-50 border-yellow-400' : 'text-gray-700' %>">
-            <i id="bookmark-icon" class="far fa-bookmark mr-2 <%= isBookmarked ? 'fas text-yellow-500' : '' %>"></i> 
-            <span><%= isBookmarked ? 'Tersimpan' : 'Bookmark Program' %></span>
-        </button>
-    </div>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const bookmarkBtn = document.getElementById('bookmark-btn');
-        const bookmarkIcon = document.getElementById('bookmark-icon');
-        let isBookmarked = "<%= isBookmarked ? 'true' : 'false' %>" === "true";
-        const programId = '<%= program.id || '' %>';
-
-        bookmarkBtn.addEventListener('click', async function(e) {
-            e.preventDefault();
-            try {
-                const res = await fetch(`/mahasiswa/bookmark/${programId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: isBookmarked ? 'remove' : 'add' })
-                });
-                if (res.ok) {
-                    isBookmarked = !isBookmarked;
-                    // Ubah tampilan icon dan warna
-                    if (isBookmarked) {
-                        bookmarkBtn.classList.add('text-yellow-500', 'bg-yellow-50', 'border-yellow-400');
-                        bookmarkBtn.classList.remove('text-gray-700');
-                        bookmarkIcon.classList.add('fas', 'text-yellow-500');
-                        bookmarkIcon.classList.remove('far');
-                        bookmarkBtn.querySelector('span').textContent = 'Tersimpan';
-                    } else {
-                        bookmarkBtn.classList.remove('text-yellow-500', 'bg-yellow-50', 'border-yellow-400');
-                        bookmarkBtn.classList.add('text-gray-700');
-                        bookmarkIcon.classList.remove('fas', 'text-yellow-500');
-                        bookmarkIcon.classList.add('far');
-                        bookmarkBtn.querySelector('span').textContent = 'Bookmark Program';
-                    }
-                } else {
-                    alert('Gagal memperbarui bookmark.');
-                }
-            } catch (err) {
-                alert('Terjadi kesalahan.');
-            }
-        });
-    });
-    </script>
 </div>

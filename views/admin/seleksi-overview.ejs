@@ -1,56 +1,46 @@
 <div class="card-container max-w-6xl mx-auto">
-    <h2 class="text-2xl font-bold text-center mb-8">Overview Proses Seleksi Global</h2>
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-bold">Overview Proses Seleksi Global</h2>
+        <% if (data.stats.totalAplikasi > 0) { %>
+            <button id="export-pdf-btn" class="secondary-button">
+                <i class="fas fa-file-pdf mr-2"></i>Ekspor Laporan PDF
+            </button>
+        <% } %>
+    </div>
 
-    <!-- Kotak Statistik Utama -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div class="stat-box">
+    <div id="stats-section" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div class="stat-box" data-label="Total Lamaran Masuk" data-value="<%= data.stats.totalAplikasi %>">
             <div class="stat-icon icon-program"><i class="fas fa-file-alt"></i></div>
-            <div class="stat-content">
-                <p class="stat-value"><%= data.stats.totalAplikasi %></p>
-                <p class="stat-label">Total Lamaran Masuk</p>
-            </div>
+            <div class="stat-content"><p class="stat-value"><%= data.stats.totalAplikasi %></p><p class="stat-label">Total Lamaran Masuk</p></div>
         </div>
-        <div class="stat-box">
+        <div class="stat-box" data-label="Total Diterima" data-value="<%= data.stats['Diterima'] || 0 %>">
             <div class="stat-icon icon-diterima"><i class="fas fa-user-check"></i></div>
-            <div class="stat-content">
-                <p class="stat-value"><%= data.stats['Diterima'] || 0 %></p>
-                <p class="stat-label">Total Diterima</p>
-            </div>
+            <div class="stat-content"><p class="stat-value"><%= data.stats['Diterima'] || 0 %></p><p class="stat-label">Total Diterima</p></div>
         </div>
-        <div class="stat-box">
+        <div class="stat-box" data-label="Sedang Ditinjau" data-value="<%= data.stats['Ditinjau'] || 0 %>">
             <div class="stat-icon" style="background: var(--accent-blue)"><i class="fas fa-hourglass-half"></i></div>
-            <div class="stat-content">
-                <p class="stat-value"><%= data.stats['Ditinjau'] || 0 %></p>
-                <p class="stat-label">Sedang Ditinjau</p>
-            </div>
+            <div class="stat-content"><p class="stat-value"><%= data.stats['Ditinjau'] || 0 %></p><p class="stat-label">Sedang Ditinjau</p></div>
         </div>
-        <div class="stat-box">
+        <div class="stat-box" data-label="Ditolak" data-value="<%= data.stats['Ditolak'] || 0 %>">
             <div class="stat-icon" style="background: var(--accent-red)"><i class="fas fa-times-circle"></i></div>
-            <div class="stat-content">
-                <p class="stat-value"><%= data.stats['Ditolak'] || 0 %></p>
-                <p class="stat-label">Ditolak</p>
-            </div>
+            <div class="stat-content"><p class="stat-value"><%= data.stats['Ditolak'] || 0 %></p><p class="stat-label">Ditolak</p></div>
         </div>
     </div>
 
-    <!-- Ringkasan Progres per Program -->
     <div>
         <h3 class="text-xl font-bold mb-4">Progres Seleksi per Program</h3>
         <div class="space-y-4">
             <% if (data.programSummaries && data.programSummaries.length > 0) { %>
                 <% data.programSummaries.forEach(program => { %>
                     <% 
-                        // === LOGIKA YANG DIPERBAIKI ===
-                        // Pastikan nilai adalah angka dan default ke 0 jika null/undefined.
                         const acceptedCount = Number(program.acceptedApplicants) || 0;
                         const totalCount = Number(program.totalApplicants) || 0;
-                        // Perhitungan persentase yang aman dari pembagian dengan nol.
                         const percentage = (totalCount > 0) ? (acceptedCount / totalCount) * 100 : 0;
                     %>
                     <div class="program-summary-card p-4 bg-white border rounded-lg">
                         <h4 class="program-summary-title font-semibold"><%= program.title %></h4>
-                        <div class="progress-bar-container mt-2 mb-1">
-                            <div class="progress-bar-fill" style="width: <%= percentage.toFixed(0) %>%;"></div>
+                        <div class="progress-bar-container mt-2 mb-1 bg-gray-200 rounded-full h-2.5">
+                            <div class="progress-bar-fill bg-primary-teal h-2.5 rounded-full" style="width: <%= percentage.toFixed(0) %>%;"></div>
                         </div>
                         <p class="progress-text text-xs text-gray-600">
                             <strong><%= acceptedCount %></strong> dari <strong><%= totalCount %></strong> pendaftar diterima (<%= percentage.toFixed(1) %>%)
@@ -63,3 +53,49 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+    const exportBtn = document.getElementById('export-pdf-btn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text('Laporan Overview Seleksi Global', 14, 22);
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            doc.text(`Dokumen dibuat pada: ${new Date().toLocaleString('id-ID')}`, 14, 30);
+            
+            const statData = [];
+            document.querySelectorAll('#stats-section .stat-box').forEach(box => {
+                statData.push([ box.dataset.label, box.dataset.value ]);
+            });
+
+            doc.autoTable({
+                head: [['Kategori Statistik', 'Jumlah']],
+                body: statData,
+                startY: 40, theme: 'striped', headStyles: { fillColor: [22, 160, 133] },
+            });
+
+            const programData = [];
+            document.querySelectorAll('.program-summary-card').forEach(row => {
+                programData.push([
+                    row.querySelector('.program-summary-title').innerText,
+                    row.querySelector('.progress-text').innerText.trim()
+                ]);
+            });
+
+            doc.autoTable({
+                head: [['Nama Program', 'Detail Pendaftar']],
+                body: programData,
+                startY: doc.lastAutoTable.finalY + 10, theme: 'grid', headStyles: { fillColor: [44, 62, 80] },
+            });
+
+            doc.save('laporan-overview-seleksi.pdf');
+        });
+    }
+</script>

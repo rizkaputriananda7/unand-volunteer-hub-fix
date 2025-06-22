@@ -14,7 +14,6 @@
 
     <form action="/pengurus/program/buat" method="POST" class="space-y-6 mt-6">
         
-        <!-- Informasi Dasar -->
         <fieldset class="border-t pt-4">
             <legend class="text-lg font-semibold px-2">Informasi Dasar</legend>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4 mt-4">
@@ -37,7 +36,6 @@
             </div>
         </fieldset>
 
-        <!-- Jadwal -->
         <fieldset class="border-t pt-4">
             <legend class="text-lg font-semibold px-2">Jadwal & Durasi</legend>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mt-4">
@@ -56,7 +54,6 @@
             </div>
         </fieldset>
         
-        <!-- Detail Tambahan -->
         <fieldset class="border-t pt-4">
             <legend class="text-lg font-semibold px-2">Detail Tambahan</legend>
              <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mt-4">
@@ -86,3 +83,55 @@
         </div>
     </form>
 </div>
+
+<!-- === SCRIPT BARU UNTUK VALIDASI TANGGAL === -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const startDateInput = document.getElementById('pendaftaran_mulai');
+        const endDateInput = document.getElementById('pendaftaran_akhir');
+        const executionDateInput = document.getElementById('tanggal_pelaksanaan');
+
+        // Fungsi untuk mendapatkan tanggal hari ini dalam format YYYY-MM-DD
+        const getTodayString = () => {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        const todayStr = getTodayString();
+
+        // 1. Atur tanggal minimum untuk "Pendaftaran Dibuka" adalah hari ini.
+        startDateInput.min = todayStr;
+
+        // 2. Jika tanggal mulai diubah, sesuaikan tanggal minimum untuk field lainnya.
+        startDateInput.addEventListener('change', () => {
+            const startDateValue = startDateInput.value;
+            if (startDateValue) {
+                // Tanggal akhir pendaftaran & pelaksanaan tidak boleh sebelum tanggal mulai
+                endDateInput.min = startDateValue;
+                executionDateInput.min = startDateValue;
+
+                // Kosongkan field jika tanggalnya menjadi tidak valid
+                if (endDateInput.value && endDateInput.value < startDateValue) {
+                    endDateInput.value = '';
+                }
+                if (executionDateInput.value && executionDateInput.value < startDateValue) {
+                    executionDateInput.value = '';
+                }
+            }
+        });
+
+        // 3. (Opsional) Pastikan tanggal pelaksanaan tidak sebelum pendaftaran berakhir.
+        endDateInput.addEventListener('change', () => {
+            const endDateValue = endDateInput.value;
+            if (endDateValue) {
+                executionDateInput.min = endDateValue;
+                if (executionDateInput.value && executionDateInput.value < endDateValue) {
+                    executionDateInput.value = '';
+                }
+            }
+        });
+    });
+</script>

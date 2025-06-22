@@ -2,6 +2,7 @@ const Program = require("../models/Program");
 const VolunteerCenter = require("../models/VolunteerCenter");
 const Aplikasi = require("../models/Aplikasi");
 const Bookmark = require("../models/Bookmark");
+const upload = require('../utils/uploadMiddleware');
 
 // Menampilkan semua program dengan filter lengkap
 exports.showAllPrograms = async (req, res) => {
@@ -77,59 +78,61 @@ exports.showProgramDetails = async (req, res) => {
   }
 };
 
+// Menampilkan form pendaftaran
+exports.showAplikasiForm = async (req, res) => {
+    try {
+        const program = await Program.findById(req.params.id);
+        if (!program) return res.status(404).send('Program tidak ditemukan.');
+        
+        const hasApplied = await Aplikasi.hasApplied(req.user.id, program.id);
+        if (hasApplied) return res.redirect(`/programs/${program.id}`);
+        
+        res.render('mahasiswa/form-pendaftaran', {
+            title: `Daftar: ${program.title}`,
+            active: 'program',
+            program
+        });
+    } catch (error) { res.status(500).send("Gagal memuat halaman pendaftaran."); }
+};
+
+// Menangani pengiriman form dan menampilkan halaman konfirmasi
 exports.handleApplyToProgram = async (req, res) => {
-  try {
-    const programId = req.params.id;
-    const mahasiswaId = req.user?.id;
+    try {
+        const programId = req.params.id;
+        const mahasiswaId = req.user.id;
 
-    // Cek lagi untuk mencegah pendaftaran ganda
-    const hasApplied = await Aplikasi.hasApplied(mahasiswaId, programId);
-    if (hasApplied) {
-      // Jika sudah mendaftar, tetap render halaman konfirmasi dengan pesan khusus
-      const program = await Program.findById(programId);
-      return res.render("mahasiswa/konfirmasi-pendaftaran", {
-        title: "Pendaftaran Sudah Pernah Dilakukan",
-        active: "program",
-        program: program,
-        user: res.locals.user || { nama_lengkap: '-', nim: '-', email: '-' },
-        sudahDaftar: true,
-        errorMsg: null
-      });
+        // Cek lagi untuk mencegah pendaftaran ganda jika pengguna mencoba-coba
+        const hasApplied = await Aplikasi.hasApplied(mahasiswaId, programId);
+        if (hasApplied) {
+            return res.redirect(`/programs/${programId}`);
+        }
+
+        // Siapkan data untuk disimpan di database
+        const applicationData = {
+            mahasiswaId: mahasiswaId,
+            programId: programId,
+            motivasi: req.body.motivasi,
+            files: req.files // Objek req.files dari middleware multer
+        };
+
+        // Buat entri aplikasi baru di database
+        await Aplikasi.create(applicationData);
+
+        // Ambil kembali detail program untuk ditampilkan di halaman konfirmasi
+        const program = await Program.findById(programId);
+
+        // Render halaman konfirmasi dengan data yang diperlukan
+        res.render("mahasiswa/konfirmasi-pendaftaran", {
+            title: "Pendaftaran Berhasil",
+            active: "program",
+            program: program,
+            // 'user' sudah tersedia secara global dari middleware di app.js
+        });
+    } catch (error) {
+        console.error("Error saat mendaftar program:", error);
+        // Jika terjadi error, sebaiknya arahkan kembali ke form dengan pesan error
+        res.status(500).send("Gagal memproses pendaftaran Anda. Silakan coba lagi.");
     }
-
-    // Buat entri aplikasi baru di database
-    await Aplikasi.create(mahasiswaId, programId, req.body);
-
-    // Ambil kembali detail program yang baru dilamar untuk ditampilkan di halaman konfirmasi
-    const program = await Program.findById(programId);
-
-    // Ambil data pendaftar dari form (req.body), fallback ke profil jika kosong
-    const pendaftar = {
-      nama_lengkap: req.body.nama_lengkap || (res.locals.user?.nama_lengkap || '-'),
-      nim: req.body.nim || (res.locals.user?.nim || '-'),
-      email: req.body.email || (res.locals.user?.email || '-')
-    };
-
-    // Render halaman konfirmasi dengan data yang diperlukan
-    res.render("mahasiswa/konfirmasi-pendaftaran", {
-      title: "Pendaftaran Berhasil",
-      active: "program",
-      program: program,
-      user: pendaftar,
-      sudahDaftar: false,
-      errorMsg: null
-    });
-  } catch (error) {
-    console.error("Error saat mendaftar program:", error);
-    res.status(500).render("mahasiswa/konfirmasi-pendaftaran", {
-      title: "Terjadi Kesalahan",
-      active: "program",
-      program: {},
-      user: res.locals.user || { nama_lengkap: '-', nim: '-', email: '-' },
-      errorMsg: "Gagal mendaftar ke program. Silakan coba lagi nanti.",
-      sudahDaftar: false
-    });
-  }
 };
 
 // Menampilkan form pendaftaran volunteer

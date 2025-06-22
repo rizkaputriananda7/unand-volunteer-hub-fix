@@ -41,12 +41,23 @@ class Aplikasi {
   /**
    * Fungsi untuk mahasiswa melamar ke sebuah program.
    */
-  static async create(mahasiswaId, programId) {
-    const sql =
-      "INSERT INTO aplikasi (mahasiswa_id, program_id, status) VALUES (?, ?, 'Ditinjau')";
-    const [result] = await db.execute(sql, [mahasiswaId, programId]);
-    return result.insertId;
-  }
+  static async create(data) {
+        const { mahasiswaId, programId, motivasi, files } = data;
+        
+        const sql = `
+            INSERT INTO aplikasi 
+            (mahasiswa_id, program_id, status, motivasi, cv_path, transkrip_path, ktm_path) 
+            VALUES (?, ?, 'Ditinjau', ?, ?, ?, ?)
+        `;
+        
+        // Ambil path file atau default ke NULL jika tidak ada
+        const cvPath = files.cv ? files.cv[0].path.replace(/\\/g, '/').replace('public/', '') : null;
+        const transkripPath = files.transkrip ? files.transkrip[0].path.replace(/\\/g, '/').replace('public/', '') : null;
+        const ktmPath = files.ktm ? files.ktm[0].path.replace(/\\/g, '/').replace('public/', '') : null;
+
+        const [result] = await db.execute(sql, [mahasiswaId, programId, motivasi, cvPath, transkripPath, ktmPath]);
+        return result.insertId;
+    }
 
   /**
    * Mengecek apakah seorang mahasiswa sudah melamar ke program tertentu.
@@ -154,6 +165,34 @@ class Aplikasi {
         `;
         const [rows] = await db.execute(sql, [centerId, limit]);
         return rows;
+    }
+    static async findDetailsById(applicationId) {
+        const appSql = `
+            SELECT 
+                a.*, 
+                m.nama_lengkap, m.nim, m.email, m.nomor_hp,
+                p.title AS nama_program
+            FROM aplikasi a
+            JOIN mahasiswa m ON a.mahasiswa_id = m.id
+            JOIN programs p ON a.program_id = p.id
+            WHERE a.id = ?
+        `;
+        const [appRows] = await db.execute(appSql, [applicationId]);
+        if (appRows.length === 0) return null;
+
+        const applicationDetails = appRows[0];
+
+        // Ambil semua dokumen yang relevan untuk mahasiswa ini
+        // (Dokumen umum DAN dokumen spesifik untuk pusat volunteer program ini)
+        const docsSql = `
+            SELECT * FROM dokumen_mahasiswa 
+            WHERE mahasiswa_id = ? 
+            AND (volunteer_center_id IS NULL OR volunteer_center_id = (SELECT volunteer_center_id FROM programs WHERE id = ?))
+        `;
+        const [docRows] = await db.execute(docsSql, [applicationDetails.mahasiswa_id, applicationDetails.program_id]);
+        
+        applicationDetails.dokumen = docRows;
+        return applicationDetails;
     }
 }
 

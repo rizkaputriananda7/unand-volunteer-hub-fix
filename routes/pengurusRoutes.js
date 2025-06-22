@@ -18,6 +18,8 @@ router.get('/jadwal', pengurusController.showJadwalPage);
 router.get('/komunikasi', pengurusController.showKomunikasiPage);
 router.get('/seleksi', pengurusController.showSelectionManagement);
 router.post('/seleksi/:applicationId', pengurusController.updateSelectionStatus);
+router.get('/seleksi/detail/:id', pengurusController.getApplicationDetails);
+router.post('/seleksi/:id', pengurusController.updateSelectionStatus);
 router.get('/jadwal', pengurusController.showJadwalPage);
 router.post('/jadwal/tambah', pengurusController.handleCreateJadwal);
 router.get('/komunikasi', pengurusController.showKomunikasiPage);

@@ -1,20 +1,25 @@
 const multer = require('multer');
 const path = require('path');
 
-// Konfigurasi penyimpanan file dengan Multer
+// Konfigurasi penyimpanan file
 const storage = multer.diskStorage({
-    // Menentukan folder tujuan untuk menyimpan file
     destination: function (req, file, cb) {
-        cb(null, 'public/uploads/dokumen/');
+        // Tentukan folder berdasarkan nama field (cv, transkrip, ktm)
+        let uploadPath = 'public/uploads/dokumen/';
+        if (file.fieldname === 'cv' || file.fieldname === 'transkrip' || file.fieldname === 'ktm') {
+            uploadPath = `public/uploads/aplikasi/${file.fieldname}/`;
+        } else if (file.fieldname === 'foto_profil') {
+             uploadPath = 'public/uploads/profil/';
+        }
+        cb(null, uploadPath);
     },
-    // Membuat nama file yang unik untuk mencegah konflik
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+        cb(null, req.user.nim + '-' + file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
 
-// Filter untuk hanya menerima jenis file tertentu (misalnya, PDF, gambar)
+// Filter file
 const fileFilter = (req, file, cb) => {
     const allowedTypes = /pdf|jpeg|jpg|png/;
     const mimetype = allowedTypes.test(file.mimetype);
@@ -23,13 +28,13 @@ const fileFilter = (req, file, cb) => {
     if (mimetype && extname) {
         return cb(null, true);
     }
-    cb(new Error('Error: Hanya file dengan format PDF, JPG, dan PNG yang diizinkan!'));
+    cb(new Error('Error: Format file tidak valid! Hanya PDF, JPG, PNG yang diizinkan.'));
 };
 
-// Buat instance Multer dengan konfigurasi di atas
+// Buat instance Multer
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // Batas ukuran file 5 MB
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: fileFilter
 });
 

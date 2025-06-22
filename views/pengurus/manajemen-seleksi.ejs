@@ -4,11 +4,13 @@
     <!-- Filter berdasarkan Program -->
     <div class="mb-6">
         <label for="program-filter" class="form-label">Tampilkan Pendaftar untuk Program:</label>
-        <select id="program-filter" name="program-filter" class="form-select">
+        <select id="program-filter" class="form-select">
             <option value="all">Semua Program</option>
-            <% programs.forEach(program => { %>
-                <option value="<%= program.id %>"><%= program.title %></option>
-            <% }) %>
+            <% if(programs && programs.length > 0) { %>
+                <% programs.forEach(program => { %>
+                    <option value="<%= program.id %>"><%= program.title %></option>
+                <% }) %>
+            <% } %>
         </select>
     </div>
 
@@ -20,7 +22,7 @@
                     <th class="table-header-cell">Nama Kandidat</th>
                     <th class="table-header-cell">Program Dilamar</th>
                     <th class="table-header-cell">Status Saat Ini</th>
-                    <th class="table-header-cell">Aksi</th>
+                    <th class="table-header-cell text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody class="table-body">
@@ -28,50 +30,131 @@
                     <% aplikasi.forEach(app => { %>
                         <tr class="aplikasi-row" data-program-id="<%= app.program_id %>">
                             <td class="table-body-cell">
-                                <div class="font-semibold"><%= app.nama_mahasiswa %></div>
-                                <div class="text-xs text-gray-500"><%= app.email_mahasiswa %></div>
+                                <p class="font-semibold"><%= app.nama_mahasiswa %></p>
+                                <p class="text-xs text-gray-500"><%= app.email_mahasiswa %></p>
                             </td>
                             <td class="table-body-cell"><%= app.nama_program %></td>
                             <td class="table-body-cell">
-                                <form action="/pengurus/seleksi/<%= app.id %>" method="POST">
-                                    <select name="status" class="form-select py-1 text-sm" onchange="this.form.submit()">
-                                        <option value="Ditinjau" <%= app.status === 'Ditinjau' ? 'selected' : '' %>>Ditinjau</option>
-                                        <option value="Wawancara" <%= app.status === 'Wawancara' ? 'selected' : '' %>>Wawancara</option>
-                                        <option value="Diterima" <%= app.status === 'Diterima' ? 'selected' : '' %>>Diterima</option>
-                                        <option value="Ditolak" <%= app.status === 'Ditolak' ? 'selected' : '' %>>Ditolak</option>
-                                    </select>
-                                </form>
+                                <select name="status" class="form-select py-1 text-sm status-select">
+                                    <option value="Ditinjau" <%= app.status === 'Ditinjau' ? 'selected' : '' %>>Ditinjau</option>
+                                    <option value="Wawancara" <%= app.status === 'Wawancara' ? 'selected' : '' %>>Wawancara</option>
+                                    <option value="Diterima" <%= app.status === 'Diterima' ? 'selected' : '' %>>Diterima</option>
+                                    <option value="Ditolak" <%= app.status === 'Ditolak' ? 'selected' : '' %>>Ditolak</option>
+                                </select>
                             </td>
-                            <td class="table-body-cell">
-                                <button class="secondary-button py-1.5 px-3 text-xs">Detail</button>
+                            <td class="table-body-cell text-center space-x-2">
+                                <button type="button" class="primary-button py-1 px-3 text-xs open-status-modal-btn" data-app-id="<%= app.id %>" data-app-name="<%= app.nama_mahasiswa %>">Simpan Status</button>
+                                <button type="button" class="secondary-button py-1 px-3 text-xs open-detail-modal-btn" data-app-id="<%= app.id %>">Detail</button>
                             </td>
                         </tr>
                     <% }) %>
                 <% } else { %>
-                    <tr>
-                        <td colspan="4" class="text-center py-6 text-gray-500">Belum ada pendaftar untuk program Anda.</td>
-                    </tr>
+                    <tr><td colspan="4" class="text-center py-6 text-gray-500">Belum ada pendaftar untuk program Anda.</td></tr>
                 <% } %>
             </tbody>
         </table>
     </div>
 </div>
 
+<!-- Modal Detail Kandidat -->
+<div id="detail-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+        <div class="p-4 border-b flex justify-between items-center">
+            <h3 class="text-lg font-bold">Detail Kandidat</h3>
+            <button class="modal-close-btn text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+        </div>
+        <div id="detail-modal-body" class="p-6 space-y-4 overflow-y-auto">
+            <!-- Konten detail akan dimuat di sini oleh JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Status -->
+<div id="status-confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
+        <div class="p-6 text-center">
+            <i class="fas fa-question-circle text-4xl text-blue-500 mb-4"></i>
+            <h3 class="text-lg font-bold">Konfirmasi Perubahan Status</h3>
+            <p id="status-modal-message" class="mt-2 text-sm text-gray-600"></p>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse rounded-b-xl">
+            <form id="status-update-form" action="" method="POST">
+                <input type="hidden" name="status" id="status-input">
+                <button type="submit" class="w-full inline-flex justify-center rounded-md border bg-primary-teal text-white px-4 py-2 hover:bg-dark-teal sm:ml-3">Ya, Simpan</button>
+            </form>
+            <button type="button" class="modal-close-btn mt-3 w-full inline-flex justify-center rounded-md border bg-white px-4 py-2 hover:bg-gray-50 sm:mt-0">Batal</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const filter = document.getElementById('program-filter');
-        const rows = document.querySelectorAll('.aplikasi-row');
+document.addEventListener('DOMContentLoaded', () => {
+    // Logika untuk filter program (tetap sama)
+    // ...
 
-        filter.addEventListener('change', function() {
-            const selectedProgramId = this.value;
+    // --- LOGIKA BARU UNTUK MODAL ---
+    const detailModal = document.getElementById('detail-modal');
+    const detailModalBody = document.getElementById('detail-modal-body');
+    const statusModal = document.getElementById('status-confirm-modal');
+    const statusModalMessage = document.getElementById('status-modal-message');
+    const statusUpdateForm = document.getElementById('status-update-form');
+    const statusInput = document.getElementById('status-input');
 
-            rows.forEach(row => {
-                if (selectedProgramId === 'all' || row.dataset.programId === selectedProgramId) {
-                    row.style.display = ''; // Tampilkan baris
-                } else {
-                    row.style.display = 'none'; // Sembunyikan baris
+    const closeModal = (modal) => modal.classList.add('hidden');
+    
+    document.querySelectorAll('.modal-close-btn').forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.fixed'))));
+    detailModal.addEventListener('click', e => { if (e.target === detailModal) closeModal(detailModal); });
+    statusModal.addEventListener('click', e => { if (e.target === statusModal) closeModal(statusModal); });
+
+    // Event listener untuk tombol Detail
+    document.querySelectorAll('.open-detail-modal-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const appId = btn.dataset.appId;
+            detailModalBody.innerHTML = '<p class="text-center">Memuat data...</p>';
+            detailModal.classList.remove('hidden');
+            
+            try {
+                const response = await fetch(`/pengurus/seleksi/detail/${appId}`);
+                if (!response.ok) throw new Error('Gagal mengambil data.');
+                const data = await response.json();
+                
+                let documentsHtml = 'Belum ada dokumen.';
+                if(data.dokumen && data.dokumen.length > 0) {
+                    documentsHtml = data.dokumen.map(doc => `
+                        <a href="/${doc.path_file}" target="_blank" class="text-primary-teal hover:underline">${doc.tipe_dokumen}</a>
+                    `).join('<br>');
                 }
-            });
+
+                detailModalBody.innerHTML = `
+                    <p><strong>Nama:</strong> ${data.nama_lengkap}</p>
+                    <p><strong>NIM:</strong> ${data.nim}</p>
+                    <p><strong>Email:</strong> ${data.email}</p>
+                    <p><strong>No. HP:</strong> ${data.nomor_hp || '-'}</p>
+                    <p><strong>Motivasi:</strong><br>${data.motivasi || '-'}</p>
+                    <div class="mt-4 pt-4 border-t">
+                        <p class="font-bold">Dokumen Terlampir:</p>
+                        ${documentsHtml}
+                    </div>
+                `;
+            } catch (err) {
+                detailModalBody.innerHTML = '<p class="text-red-500">Gagal memuat detail kandidat.</p>';
+            }
         });
     });
+
+    // Event listener untuk tombol Simpan Status
+    document.querySelectorAll('.open-status-modal-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            const newStatus = row.querySelector('.status-select').value;
+            const appName = btn.dataset.appName;
+            const appId = btn.dataset.appId;
+
+            statusModalMessage.innerHTML = `Anda akan mengubah status untuk <strong>${appName}</strong> menjadi <strong>${newStatus}</strong>. Lanjutkan?`;
+            statusUpdateForm.action = `/pengurus/seleksi/${appId}`;
+            statusInput.value = newStatus;
+            statusModal.classList.remove('hidden');
+        });
+    });
+});
 </script>

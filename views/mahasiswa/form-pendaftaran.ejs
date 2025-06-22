@@ -1,51 +1,55 @@
-<div class="max-w-3xl mx-auto bg-white border rounded-xl shadow p-10 mt-8">
-    <h2 class="text-3xl font-bold text-center mb-2">Pendaftaran Program Volunteer</h2>
-    <p class="text-center text-lg text-gray-600 mb-8">Untuk Program: <span class="font-semibold"><%= program.title %></span></p>
-    <form class="space-y-6" method="POST" action="/programs/<%= program.id %>/apply" enctype="multipart/form-data">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label class="block font-semibold mb-1">Nama Lengkap (Sesuai KTM)</label>
-                <input type="text" name="nama_lengkap" class="w-full border rounded px-3 py-2" required value="<%= user?.nama_lengkap || '' %>">
-            </div>
-            <div>
-                <label class="block font-semibold mb-1">NIM</label>
-                <input type="text" name="nim" class="w-full border rounded px-3 py-2" required value="<%= user?.nim || '' %>">
-            </div>
-            <div>
-                <label class="block font-semibold mb-1">Alamat Email Aktif</label>
-                <input type="email" name="email" class="w-full border rounded px-3 py-2" required value="<%= user?.email || '' %>">
-            </div>
-            <div>
-                <label class="block font-semibold mb-1">Nomor Telepon/WhatsApp</label>
-                <input type="text" name="telepon" class="w-full border rounded px-3 py-2" required value="<%= user?.telepon || '' %>">
-            </div>
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-xl shadow-lg p-8">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold">Pendaftaran Program Volunteer</h2>
+            <p class="text-gray-600 mt-1">Untuk Program: <strong class="text-primary-teal"><%= program.title %></strong></p>
         </div>
-        <div>
-            <label class="block font-semibold mb-1">Motivasi Mengikuti Program</label>
-            <textarea name="motivasi" class="w-full border rounded px-3 py-2 min-h-[100px]" placeholder="Jelaskan mengapa Anda tertarik..." required></textarea>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-                <label class="block font-semibold mb-1">Unggah CV (PDF)</label>
-                <input type="file" name="cv" accept="application/pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-teal-100 file:text-teal-700">
+        
+        <form action="/programs/<%= program.id %>/apply" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="nama_lengkap" class="form-label">Nama Lengkap (Sesuai KTM)</label>
+                    <input type="text" id="nama_lengkap" class="form-input bg-gray-100 cursor-not-allowed" value="<%= user.nama_lengkap %>" readonly>
+                </div>
+                <div>
+                    <label for="nim" class="form-label">NIM</label>
+                    <input type="text" id="nim" class="form-input bg-gray-100 cursor-not-allowed" value="<%= user.nim %>" readonly>
+                </div>
+                <div>
+                    <label for="email" class="form-label">Alamat Email Aktif</label>
+                    <input type="email" id="email" class="form-input bg-gray-100 cursor-not-allowed" value="<%= user.email %>" readonly>
+                </div>
+                 <div>
+                    <label for="nomor_hp" class="form-label">Nomor Telepon/WhatsApp</label>
+                    <input type="tel" id="nomor_hp" class="form-input bg-gray-100 cursor-not-allowed" value="<%= user.nomor_hp || 'Belum diisi' %>" readonly>
+                     <% if (!user.nomor_hp) { %> <p class="text-xs text-red-500 mt-1">Harap isi nomor HP di <a href="/mahasiswa/profil" class="font-bold underline">halaman profil</a> Anda.</p> <% } %>
+                </div>
             </div>
             <div>
-                <label class="block font-semibold mb-1">Unggah Transkrip Terakhir</label>
-                <input type="file" name="transkrip" accept="application/pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-teal-100 file:text-teal-700">
+                <label for="motivasi" class="form-label">Motivasi Mengikuti Program</label>
+                <textarea name="motivasi" id="motivasi" rows="6" class="form-textarea" placeholder="Jelaskan mengapa Anda tertarik dan cocok untuk program ini..." required></textarea>
             </div>
-            <div>
-                <label class="block font-semibold mb-1">Scan KTM (PDF/JPG/PNG)</label>
-                <input type="file" name="ktm" accept="application/pdf,image/jpeg,image/png" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-teal-100 file:text-teal-700">
+            
+            <fieldset class="border-t pt-4">
+                 <legend class="text-lg font-semibold -translate-y-6 px-2 bg-white">Unggah Dokumen</legend>
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label class="form-label">Unggah CV (PDF)</label><input type="file" name="cv" class="form-input" required accept=".pdf"></div>
+                    <div><label class="form-label">Unggah Transkrip (PDF)</label><input type="file" name="transkrip" class="form-input" required accept=".pdf"></div>
+                    <div><label class="form-label">Scan KTM (PDF/JPG/PNG)</label><input type="file" name="ktm" class="form-input" required accept=".pdf,.jpg,.jpeg,.png"></div>
+                </div>
+            </fieldset>
+            
+            <div class="pt-4">
+                <div class="flex items-center">
+                    <input type="checkbox" id="agreement" name="agreement" class="h-4 w-4 rounded border-gray-300 text-primary-teal focus:ring-primary-teal" required>
+                    <label for="agreement" class="ml-2 block text-sm text-gray-700">Saya menyatakan bahwa semua data yang saya isi adalah benar dan saya bersedia mengikuti seluruh ketentuan program volunteer ini.</label>
+                </div>
             </div>
-        </div>
-        <div class="flex items-center mt-4">
-            <input type="checkbox" name="persetujuan" id="persetujuan" class="mr-2" required>
-            <label for="persetujuan" class="text-sm">Saya menyatakan bahwa semua data yang saya isi adalah benar dan saya bersedia mengikuti seluruh ketentuan program volunteer ini.</label>
-        </div>
-        <div class="text-center mt-6">
-            <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-8 py-3 rounded transition text-lg flex items-center justify-center mx-auto">
-                <i class="fas fa-paper-plane mr-2"></i> Kirim Pendaftaran
-            </button>
-        </div>
-    </form>
+            
+            <div class="pt-6 border-t flex justify-end">
+                <a href="/programs/<%= program.id %>" class="secondary-button mr-3">Batal</a>
+                <button type="submit" class="primary-button text-lg py-3 px-8"><i class="fas fa-paper-plane mr-2"></i>Kirim Pendaftaran</button>
+            </div>
+        </form>
+    </div>
 </div>

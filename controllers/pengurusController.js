@@ -446,3 +446,24 @@ exports.handleDeleteKonten = async (req, res) => {
         res.redirect('/pengurus/konten');
     } catch (error) { res.status(500).send("Gagal menghapus konten."); }
 };
+
+exports.getApplicationDetails = async (req, res) => {
+    try {
+        const applicationDetails = await Aplikasi.findDetailsById(req.params.id);
+        
+        if (!applicationDetails) {
+            return res.status(404).json({ message: 'Aplikasi tidak ditemukan.' });
+        }
+
+        // Verifikasi kepemilikan
+        const programs = await Program.findByCenter(req.user.volunteer_center_id);
+        const programIds = programs.map(p => p.id);
+        if (!programIds.includes(applicationDetails.program_id)) {
+            return res.status(403).json({ message: 'Akses ditolak.' });
+        }
+
+        res.json(applicationDetails);
+    } catch (error) {
+        res.status(500).json({ message: 'Gagal mengambil detail.' });
+    }
+};
