@@ -1,4 +1,5 @@
-const db = require("../config/database"); // Pastikan ini adalah satu-satunya impor koneksi database
+const db = require("../config/database");
+const fs = require("fs").promises;
 
 class Aplikasi {
   /**
@@ -42,22 +43,22 @@ class Aplikasi {
    * Fungsi untuk mahasiswa melamar ke sebuah program.
    */
   static async create(data) {
-        const { mahasiswaId, programId, motivasi, files } = data;
-        
-        const sql = `
-            INSERT INTO aplikasi 
-            (mahasiswa_id, program_id, status, motivasi, cv_path, transkrip_path, ktm_path) 
-            VALUES (?, ?, 'Ditinjau', ?, ?, ?, ?)
-        `;
-        
-        // Ambil path file atau default ke NULL jika tidak ada
-        const cvPath = files.cv ? files.cv[0].path.replace(/\\/g, '/').replace('public/', '') : null;
-        const transkripPath = files.transkrip ? files.transkrip[0].path.replace(/\\/g, '/').replace('public/', '') : null;
-        const ktmPath = files.ktm ? files.ktm[0].path.replace(/\\/g, '/').replace('public/', '') : null;
+    const { mahasiswaId, programId, motivasi, files } = data;
+    
+    const sql = `
+      INSERT INTO aplikasi 
+      (mahasiswa_id, program_id, status, motivasi, cv_path, transkrip_path, ktm_path) 
+      VALUES (?, ?, 'Ditinjau', ?, ?, ?, ?)
+    `;
+    
+    // Ambil path file atau default ke NULL jika tidak ada
+    const cvPath = files.cv ? files.cv[0].path.replace(/\\/g, '/').replace('public/', '') : null;
+    const transkripPath = files.transkrip ? files.transkrip[0].path.replace(/\\/g, '/').replace('public/', '') : null;
+    const ktmPath = files.ktm ? files.ktm[0].path.replace(/\\/g, '/').replace('public/', '') : null;
 
-        const [result] = await db.execute(sql, [mahasiswaId, programId, motivasi, cvPath, transkripPath, ktmPath]);
-        return result.insertId;
-    }
+    const [result] = await db.execute(sql, [mahasiswaId, programId, motivasi, cvPath, transkripPath, ktmPath]);
+    return result.insertId;
+  }
 
   /**
    * Mengecek apakah seorang mahasiswa sudah melamar ke program tertentu.

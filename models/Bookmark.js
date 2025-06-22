@@ -3,8 +3,16 @@ const db = require('../config/database');
 class Bookmark {
     /**
      * Menambahkan program ke daftar bookmark seorang mahasiswa.
+     * Cek dulu apakah sudah ada, jika belum baru insert.
      */
     static async add(mahasiswaId, programId) {
+        // Cek apakah sudah ada
+        const cekSql = "SELECT 1 FROM bookmarks WHERE mahasiswa_id = ? AND program_id = ?";
+        const [cek] = await db.execute(cekSql, [mahasiswaId, programId]);
+        if (cek.length > 0) {
+            // Sudah ada, tidak perlu insert lagi
+            return null;
+        }
         const sql = "INSERT INTO bookmarks (mahasiswa_id, program_id) VALUES (?, ?)";
         const [result] = await db.execute(sql, [mahasiswaId, programId]);
         return result.insertId;

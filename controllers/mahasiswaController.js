@@ -10,6 +10,7 @@ const Faq = require("../models/Faq");
 const VolunteerCenter = require("../models/VolunteerCenter");
 const Konten = require('../models/Konten');
 const bcrypt = require('bcryptjs');
+const Mahasiswa = require("../models/Mahasiswa");
 
 exports.showDashboard = async (req, res) => {
     try {
@@ -273,22 +274,34 @@ exports.handleDeleteDokumen = async (req, res) => {
   }
 };
 // Menampilkan halaman profil
-exports.showProfilePage = (req, res) => {
-  res.render("mahasiswa/profil", {
-    title: "Profil Saya",
-    active: "profil",
-    error: req.query.error, // Ambil pesan error dari query URL
-    success_msg: req.query.success, // Ambil pesan sukses
-  });
+exports.showProfilePage = async (req, res) => {
+  try {
+    const user = await require('../models/Mahasiswa').findById(req.user.id);
+    res.render("mahasiswa/profil", {
+      title: "Profil Saya",
+      active: "profil",
+      error: req.query.error, // Ambil pesan error dari query URL
+      success_msg: req.query.success, // Ambil pesan sukses
+      user // kirim data user terbaru
+    });
+  } catch (error) {
+    res.status(500).send("Gagal memuat profil.");
+  }
 };
 
 // Memproses pembaruan informasi pribadi
 exports.handleUpdateProfile = async (req, res) => {
   try {
-    await Mahasiswa.updateProfile(req.user.id, req.body);
+    console.log('Data diterima dari form:', req.body); // Debug log
+    const result = await Mahasiswa.updateProfile(req.user.id, req.body);
+    if (result === 0) {
+      // Tidak ada baris yang terupdate
+      return res.redirect("/mahasiswa/profil?error=Tidak+ada+data+yang+diubah");
+    }
     res.redirect("/mahasiswa/profil?success=Informasi+berhasil+diperbarui");
   } catch (error) {
-    res.redirect("/mahasiswa/profil?error=Gagal+memperbarui+informasi");
+    console.error('Gagal update profil:', error);
+    res.redirect("/mahasiswa/profil?error=" + encodeURIComponent(error.message || 'Gagal memperbarui informasi'));
   }
 };
 
@@ -297,7 +310,8 @@ exports.handleUpdatePhoto = async (req, res) => {
   try {
     if (!req.file) throw new Error("File tidak ditemukan atau format salah.");
     // Path yang disimpan adalah path relatif dari folder public
-    const filePath = req.file.path.replace("public\\", "").replace(/\\/g, "/");
+    let filePath = req.file.path.replace(/\\/g, "/");
+    if (filePath.startsWith("public/")) filePath = filePath.substring(7);
     await Mahasiswa.updatePhoto(req.user.id, filePath);
     res.redirect("/mahasiswa/profil?success=Foto+berhasil+diperbarui");
   } catch (error) {
