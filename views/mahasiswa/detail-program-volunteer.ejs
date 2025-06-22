@@ -44,7 +44,13 @@
                     </div>
                     <div>
                         <p class="text-xs font-bold text-dark-teal">NARAHUBUNG</p>
-                        <p class="font-semibold text-gray-700"><%= program.kontak_narahubung %></p>
+                        <% if (program.kontak_narahubung) { %>
+                            <a href="https://wa.me/<%= program.kontak_narahubung.replace(/[^0-9]/g, '').replace(/^0/, '62') %>" target="_blank" class="font-semibold text-green-600 underline flex items-center gap-2">
+                                <i class="fab fa-whatsapp"></i> <%= program.kontak_narahubung %>
+                            </a>
+                        <% } else { %>
+                            <p class="font-semibold text-gray-700">-</p>
+                        <% } %>
                     </div>
                 </div>
             </div>
